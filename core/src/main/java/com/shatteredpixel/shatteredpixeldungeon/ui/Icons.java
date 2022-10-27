@@ -46,6 +46,7 @@ public enum Icons {
 	MAGE,
 	ROGUE,
 	HUNTRESS,
+	ZEALOT,
 
 	//grey icons, mainly used for buttons, spacing for 16x16
 	EXIT,
@@ -116,7 +117,9 @@ public enum Icons {
 	KRISTJAN,
 	CUBE_CODE,
 	PURIGRO,
-	ARCNOR;
+	ARCNOR,
+	ARA;
+
 
 	public Image get() {
 		return get( this );
@@ -165,6 +168,9 @@ public enum Icons {
 				break;
 			case HUNTRESS:
 				icon.frame( icon.texture.uvRectBySize( 64, 16, 16, 16 ) );
+				break;
+			case ZEALOT:
+				icon.frame( icon.texture.uvRectBySize( 80, 16, 13, 16 ) );
 				break;
 
 			case EXIT:
@@ -369,6 +375,10 @@ public enum Icons {
 				icon.frame( icon.texture.uvRectBySize( 160, 96, 27, 30 ) );
 				icon.scale.set(PixelScene.align(0.49f));
 				break;
+			case ARA:
+				icon.frame( icon.texture.uvRectBySize( 189, 96, 32, 32 ) );
+				icon.scale.set(PixelScene.align(0.49f));
+				break;
 
 		}
 		return icon;
@@ -398,6 +408,8 @@ public enum Icons {
 			return get( ROGUE );
 		case HUNTRESS:
 			return get( HUNTRESS );
+		case ZEALOT:
+			return get( ZEALOT );
 		default:
 			return null;
 		}

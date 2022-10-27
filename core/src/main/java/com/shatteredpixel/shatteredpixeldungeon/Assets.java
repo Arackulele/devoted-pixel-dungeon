@@ -227,6 +227,7 @@ public class Assets {
 		public static final String MAGE     = "splashes/mage.jpg";
 		public static final String ROGUE    = "splashes/rogue.jpg";
 		public static final String HUNTRESS = "splashes/huntress.jpg";
+		public static final String ZEALOT = "splashes/zealot.jpg";
 	}
 
 	public static class Sprites {
@@ -237,6 +238,7 @@ public class Assets {
 		public static final String MAGE     = "sprites/mage.png";
 		public static final String ROGUE    = "sprites/rogue.png";
 		public static final String HUNTRESS = "sprites/huntress.png";
+		public static final String ZEALOT 	= "sprites/zealot.png";
 		public static final String AVATARS  = "sprites/avatars.png";
 		public static final String PET      = "sprites/pet.png";
 		public static final String AMULET   = "sprites/amulet.png";
@@ -296,5 +298,8 @@ public class Assets {
 		public static final String NINJA_LOG= "sprites/ninja_log.png";
 		public static final String SPIRIT_HAWK= "sprites/spirit_hawk.png";
 		public static final String RED_SENTRY= "sprites/red_sentry.png";
+		public static final String DEMON   = "sprites/demon.png";
+		public static final String FRIENDLY_EYE   = "sprites/friendly_eye.png";
+		public static final String HELL_EYE   = "sprites/helleye.png";
 	}
 }

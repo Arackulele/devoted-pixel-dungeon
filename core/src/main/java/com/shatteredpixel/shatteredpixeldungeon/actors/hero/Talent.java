@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArcaneArmor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
@@ -62,6 +63,20 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.BloodVial;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Drowsy;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Healing;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Slow;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vulnerable;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Weakness;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
@@ -142,6 +157,25 @@ public enum Talent {
 	GROWING_POWER(116, 4), NATURES_WRATH(117, 4), WILD_MOMENTUM(118, 4),
 	//Spirit Hawk T4
 	EAGLE_EYE(119, 4), GO_FOR_THE_EYES(120, 4), SWIFT_SPIRIT(121, 4),
+
+	//Zealot T1
+	VITALISING_MEAL(128), LOST_POSESSIONS(129), HIDDEN_POWER(130), PAIN_IS_GAIN(131),
+	//Zealot T2
+	BLESSED_MEAL(132), CONJURE_BLOOD(133), DISTURBED_SENSES(134), INSTANT_GRATIFICATION(135), VISIBLE_POWER(136),
+	//Zealot T3
+	CORPSE_EATER(140, 3),	ZEALOTS_WRATH(141, 3),
+	//Archangel T3
+	STRONGER_FAITH(137, 3), DEMON_EYE(138, 3), DEMON_HOUND(139, 3),
+	//Devotee T3
+	NIHILISM(142, 3), FACE_OF_DEATH(143, 3), DIVINE_PROTECTION(144, 3),
+	//Final_PrayerT4
+	AUGMENTED_HEALING(145, 4), DOWNTIME(146, 4), STAY_AWAY(147, 4),
+	//Weal_and_woeT4
+	WOE_IS_ME(148, 4), AND_WOE_IS_YOU(149, 4), WEIGHING_THE_DIE(150, 4),
+	//Hell_EyeT4
+	ALL_SEEING(151, 4), DIVINE_CONNECTION(152, 4), CHAOS_WITHIN(153, 4),
+
+
 
 	//universal T4
 	HEROIC_ENERGY(26, 4), //See icon() and title() for special logic for this one
@@ -238,6 +272,8 @@ public enum Talent {
 					return 90;
 				case HUNTRESS:
 					return 122;
+				case ZEALOT:
+					return 154;
 			}
 		} else {
 			return icon;
@@ -340,6 +376,25 @@ public enum Talent {
 			ScrollOfRecharging.charge( hero );
 			SpellSprite.show(hero, SpellSprite.CHARGE);
 		}
+		if (hero.hasTalent(VITALISING_MEAL)){
+			//2/3 bonus wand damage for next 3 zaps
+			Buff.affect( hero, ArcaneArmor.class).set(2 + hero.pointsInTalent(VITALISING_MEAL), 3);
+			ScrollOfRecharging.charge( hero );
+		}
+		if (hero.hasTalent(BLESSED_MEAL)){
+
+			Buff.detach(hero, Cripple.class);
+			Buff.detach(hero, Weakness.class);
+			Buff.detach(hero, Vulnerable.class);
+			Buff.detach(hero, Bleeding.class);
+			if (hero.pointsInTalent(BLESSED_MEAL) == 2) {
+				Buff.detach(hero, Blindness.class);
+				Buff.detach(hero, Drowsy.class);
+				Buff.detach(hero, Slow.class);
+				Buff.detach(hero, Vertigo.class);
+				Buff.detach(hero, Degrade.class);
+			}
+		}
 		if (hero.hasTalent(MYSTICAL_MEAL)){
 			//3/5 turns of recharging
 			ArtifactRecharge buff = Buff.affect( hero, ArtifactRecharge.class);
@@ -367,6 +422,10 @@ public enum Talent {
 		if (item instanceof MeleeWeapon || item instanceof Armor){
 			factor *= 1f + hero.pointsInTalent(ARMSMASTERS_INTUITION);
 		}
+		// 3x/5x for Zealot
+		if (item instanceof MeleeWeapon || item instanceof Ring || item instanceof Armor){
+			factor *= 1f + hero.pointsInTalent(LOST_POSESSIONS);
+		}
 		// 3x/instant for mage (see Wand.wandUsed())
 		if (item instanceof Wand){
 			factor *= 1f + 2*hero.pointsInTalent(SCHOLARS_INTUITION);
@@ -375,6 +434,7 @@ public enum Talent {
 		if (item instanceof Ring){
 			factor *= 1f + hero.pointsInTalent(THIEFS_INTUITION);
 		}
+
 		return factor;
 	}
 
@@ -441,6 +501,7 @@ public enum Talent {
 				Buff.affect(hero, Recharging.class, 4 + 8 * hero.pointsInTalent(ENERGIZING_UPGRADE));
 			}
 		}
+
 		if (hero.hasTalent(MYSTICAL_UPGRADE)){
 			if (hero.heroClass == HeroClass.ROGUE) {
 				CloakOfShadows cloak = hero.belongings.getItem(CloakOfShadows.class);
@@ -556,6 +617,9 @@ public enum Talent {
 			case HUNTRESS:
 				Collections.addAll(tierTalents, NATURES_BOUNTY, SURVIVALISTS_INTUITION, FOLLOWUP_STRIKE, NATURES_AID);
 				break;
+			case ZEALOT:
+				Collections.addAll(tierTalents, VITALISING_MEAL, LOST_POSESSIONS, HIDDEN_POWER, PAIN_IS_GAIN );
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -579,6 +643,9 @@ public enum Talent {
 			case HUNTRESS:
 				Collections.addAll(tierTalents, INVIGORATING_MEAL, RESTORED_NATURE, REJUVENATING_STEPS, HEIGHTENED_SENSES, DURABLE_PROJECTILES);
 				break;
+			case ZEALOT:
+				Collections.addAll(tierTalents, BLESSED_MEAL, CONJURE_BLOOD, DISTURBED_SENSES, INSTANT_GRATIFICATION, VISIBLE_POWER);
+				break;
 		}
 		for (Talent talent : tierTalents){
 			if (replacements.containsKey(talent)){
@@ -601,6 +668,9 @@ public enum Talent {
 				break;
 			case HUNTRESS:
 				Collections.addAll(tierTalents, POINT_BLANK, SEER_SHOT);
+				break;
+			case ZEALOT:
+				Collections.addAll(tierTalents, CORPSE_EATER, ZEALOTS_WRATH);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -653,6 +723,12 @@ public enum Talent {
 				break;
 			case WARDEN:
 				Collections.addAll(tierTalents, DURABLE_TIPS, BARKSKIN, SHIELDING_DEW);
+				break;
+			case ARCHANGEL:
+				Collections.addAll(tierTalents, STRONGER_FAITH, DEMON_EYE, DEMON_HOUND);
+				break;
+			case DEVOTEE:
+				Collections.addAll(tierTalents, NIHILISM, FACE_OF_DEATH, DIVINE_PROTECTION);
 				break;
 		}
 		for (Talent talent : tierTalents){

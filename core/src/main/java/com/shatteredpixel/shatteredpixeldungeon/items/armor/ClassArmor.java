@@ -115,6 +115,9 @@ abstract public class ClassArmor extends Armor {
 		case HUNTRESS:
 			classArmor = new HuntressArmor();
 			break;
+			case ZEALOT:
+				classArmor = new ZealotArmor();
+				break;
 		}
 		
 		classArmor.level(armor.trueLevel());

@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AnkhInvulnerability;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Electricity;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ToxicGas;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
@@ -388,6 +389,10 @@ public abstract class Char extends Actor {
 
 			if ( buff(Weakness.class) != null ){
 				dmg *= 0.67f;
+			}
+
+			if ( Dungeon.hero.hasTalent(Talent.ZEALOTS_WRATH) && Dungeon.hero.buff(AnkhInvulnerability.class) != null ){
+				Buff.affect( enemy, Bleeding.class ).set( Math.round(dmg*(Dungeon.hero.pointsInTalent(Talent.PAIN_IS_GAIN)*0.1) ));
 			}
 			
 			int effectiveDamage = enemy.defenseProc( this, Math.round(dmg) );

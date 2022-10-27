@@ -203,6 +203,7 @@ public class ItemSpriteSheet {
 	static{
 		assignItemRect(WORN_SHORTSWORD, 13, 13);
 		assignItemRect(GLOVES,          12, 16);
+		assignItemRect(RAPIER, 			14, 14);
 		assignItemRect(DAGGER,          12, 13);
 		assignItemRect(MAGES_STAFF,     15, 16);
 	}
@@ -331,9 +332,11 @@ public class ItemSpriteSheet {
 	public static final int HOLY_DART       = TIPPED_DARTS+9;
 	public static final int DISPLACING_DART = TIPPED_DARTS+10;
 	public static final int BLINDING_DART   = TIPPED_DARTS+11;
+	public static final int HOLYWATER   = TIPPED_DARTS+12;
 	static {
-		for (int i = TIPPED_DARTS; i < TIPPED_DARTS+16; i++)
+		for (int i = TIPPED_DARTS; i < TIPPED_DARTS+12; i++)
 			assignItemRect(i, 15, 15);
+		assignItemRect(HOLYWATER,       15, 15);
 	}
 	
 	private static final int ARMOR          =                               xy(1, 12);  //16 slots
@@ -346,6 +349,7 @@ public class ItemSpriteSheet {
 	public static final int ARMOR_MAGE      = ARMOR+6;
 	public static final int ARMOR_ROGUE     = ARMOR+7;
 	public static final int ARMOR_HUNTRESS  = ARMOR+8;
+	public static final int ARMOR_ZEALOT 	= ARMOR+9;
 	static{
 		assignItemRect(ARMOR_CLOTH,     15, 12);
 		assignItemRect(ARMOR_LEATHER,   14, 13);
@@ -356,6 +360,7 @@ public class ItemSpriteSheet {
 		assignItemRect(ARMOR_MAGE,      15, 15);
 		assignItemRect(ARMOR_ROGUE,     14, 12);
 		assignItemRect(ARMOR_HUNTRESS,  13, 15);
+		assignItemRect(ARMOR_ZEALOT,      15, 15);
 	}
 
 	                                                                                    //16 free slots
@@ -421,6 +426,8 @@ public class ItemSpriteSheet {
 	public static final int ARTIFACT_ROSE1      = ARTIFACTS+20;
 	public static final int ARTIFACT_ROSE2      = ARTIFACTS+21;
 	public static final int ARTIFACT_ROSE3      = ARTIFACTS+22;
+
+	public static final int ARTIFACT_VIAL      = ARTIFACTS+23;
 	static{
 		assignItemRect(ARTIFACT_CLOAK,      9,  15);
 		assignItemRect(ARTIFACT_ARMBAND,    16, 13);
@@ -445,6 +452,7 @@ public class ItemSpriteSheet {
 		assignItemRect(ARTIFACT_ROSE1,      14, 14);
 		assignItemRect(ARTIFACT_ROSE2,      14, 14);
 		assignItemRect(ARTIFACT_ROSE3,      14, 14);
+		assignItemRect(ARTIFACT_VIAL,      13, 14);
 	}
 
 	                                                                                    //16 free slots

@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SacrificialFire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AdrenalineSurge;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AnkhInvulnerability;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AscensionChallenge;
@@ -40,6 +41,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Wrath;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Combo;
@@ -55,6 +57,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
@@ -213,6 +216,7 @@ public class Hero extends Char {
 	public Hero() {
 		super();
 
+
 		HP = HT = 20;
 		STR = STARTING_STR;
 		
@@ -220,11 +224,17 @@ public class Hero extends Char {
 		
 		visibleEnemies = new ArrayList<>();
 	}
-	
+
+
 	public void updateHT( boolean boostHP ){
+		int classbonus = 5;
 		int curHT = HT;
-		
-		HT = 20 + 5*(lvl-1) + HTBoost;
+		if (heroClass == HeroClass.ZEALOT) classbonus = 6;
+
+		HT = 20 + classbonus*(lvl-1);
+
+
+
 		float multiplier = RingOfMight.HTMultiplier(this);
 		HT = Math.round(multiplier * HT);
 		
@@ -1235,6 +1245,20 @@ public class Hero extends Char {
 			GLog.w( Messages.get(this, "pain_resist") );
 		}
 
+		if (pointsInTalent(Talent.HIDDEN_POWER) != 0){
+			if (dmg>=HT/5) Buff.affect(this, Invisibility.class, 1f+pointsInTalent(Talent.HIDDEN_POWER));
+
+		}
+
+		if (pointsInTalent(Talent.VISIBLE_POWER) != 0){
+			if (dmg<=HT/10) Buff.affect(this, ArtifactRecharge.class).set( 2 + 4*pointsInTalent(Talent.VISIBLE_POWER) );
+
+		}
+
+		if (subClass == HeroSubClass.DEVOTEE && src instanceof Mob){
+			Buff.affect(this, Wrath.class, dmg);
+		}
+
 		Endure.EndureTracker endure = buff(Endure.EndureTracker.class);
 		if (!(src instanceof Char)){
 			//reduce damage here if it isn't coming from a character (if it is we already reduced it)
@@ -1245,6 +1269,7 @@ public class Hero extends Char {
 			if (buff(ScrollOfChallenge.ChallengeArena.class) != null){
 				dmg *= 0.67f;
 			}
+
 		}
 
 		CapeOfThorns.Thorns thorns = buff( CapeOfThorns.Thorns.class );
@@ -1954,6 +1979,8 @@ public class Hero extends Char {
 		boolean circular = pointsInTalent(Talent.WIDE_SEARCH) == 1;
 		int distance = heroClass == HeroClass.ROGUE ? 2 : 1;
 		if (hasTalent(Talent.WIDE_SEARCH)) distance++;
+
+
 		
 		boolean foresight = buff(Foresight.class) != null;
 		boolean foresightScan = foresight && !Dungeon.level.mapped[pos];

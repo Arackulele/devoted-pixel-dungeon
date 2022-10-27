@@ -56,7 +56,7 @@ public class Combo extends Buff implements ActionIndicator.Action {
 	{
 		type = buffType.POSITIVE;
 	}
-	
+
 	private int count = 0;
 	private float comboTime = 0f;
 	private float initialComboTime = 5f;

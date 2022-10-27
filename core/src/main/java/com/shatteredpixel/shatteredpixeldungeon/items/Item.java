@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.Weal;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -332,7 +333,13 @@ public class Item implements Bundlable {
 	public int buffedLvl(){
 		if (Dungeon.hero.buff( Degrade.class ) != null) {
 			return Degrade.reduceLevel(level());
-		} else {
+		}
+
+		else if (Dungeon.hero.buff( Weal.class ) != null) {
+			return Weal.reduceLevel(level());
+		}
+
+		else {
 			return level();
 		}
 	}

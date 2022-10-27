@@ -39,16 +39,24 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.Smok
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.FinalPrayer;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.WealAndWoe;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.HellsEye;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.KingsCrown;
+import com.shatteredpixel.shatteredpixeldungeon.items.TengusMask;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.BloodVial;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRetribution;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
@@ -58,10 +66,12 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dagger;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Rapier;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gloves;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.HolyWater;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
@@ -71,7 +81,8 @@ public enum HeroClass {
 	WARRIOR( HeroSubClass.BERSERKER, HeroSubClass.GLADIATOR ),
 	MAGE( HeroSubClass.BATTLEMAGE, HeroSubClass.WARLOCK ),
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
-	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN );
+	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
+	ZEALOT(HeroSubClass.ARCHANGEL, HeroSubClass.DEVOTEE);
 
 	private HeroSubClass[] subClasses;
 
@@ -113,6 +124,10 @@ public enum HeroClass {
 
 			case HUNTRESS:
 				initHuntress( hero );
+				break;
+
+			case ZEALOT:
+				initZealot( hero );
 				break;
 		}
 
@@ -196,6 +211,30 @@ public enum HeroClass {
 		new ScrollOfLullaby().identify();
 	}
 
+	private static void initZealot( Hero hero ) {
+		(hero.belongings.weapon = new Rapier()).identify();
+
+		BloodVial vial = new BloodVial();
+		(hero.belongings.artifact = vial).identify();
+		hero.belongings.artifact.activate( hero );
+
+		HolyWater Holyknives = new HolyWater();
+		Holyknives.quantity(3).collect();
+
+		KingsCrown crown = new KingsCrown();
+		crown.quantity(1).collect();
+
+		TengusMask mask = new TengusMask();
+		mask.quantity(1).collect();
+
+
+		Dungeon.quickslot.setSlot(0, vial);
+		Dungeon.quickslot.setSlot(1, Holyknives);
+
+		new ScrollOfRetribution().identify();
+		new PotionOfStrength().identify();
+	}
+
 	public String title() {
 		return Messages.get(HeroClass.class, name());
 	}
@@ -222,6 +261,8 @@ public enum HeroClass {
 				return new ArmorAbility[]{new SmokeBomb(), new DeathMark(), new ShadowClone()};
 			case HUNTRESS:
 				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
+			case ZEALOT:
+				return new ArmorAbility[]{new FinalPrayer(), new WealAndWoe(), new HellsEye()};
 		}
 	}
 
@@ -235,6 +276,8 @@ public enum HeroClass {
 				return Assets.Sprites.ROGUE;
 			case HUNTRESS:
 				return Assets.Sprites.HUNTRESS;
+			case ZEALOT:
+				return Assets.Sprites.ZEALOT;
 		}
 	}
 
@@ -248,6 +291,8 @@ public enum HeroClass {
 				return Assets.Splashes.ROGUE;
 			case HUNTRESS:
 				return Assets.Splashes.HUNTRESS;
+			case ZEALOT:
+				return Assets.Splashes.ZEALOT;
 		}
 	}
 	

@@ -189,6 +189,12 @@ public class WndHeroInfo extends WndTabbed {
 							new ItemSprite(ItemSpriteSheet.GLOVES),
 							new ItemSprite(ItemSpriteSheet.SCROLL_ISAZ)};
 					break;
+				case ZEALOT:
+					icons = new Image[]{ new ItemSprite(ItemSpriteSheet.ARTIFACT_VIAL),
+							new ItemSprite(ItemSpriteSheet.POTION_CRIMSON),
+							new ItemSprite(ItemSpriteSheet.RAPIER),
+							new ItemSprite(ItemSpriteSheet.SCROLL_ISAZ)};
+					break;
 			}
 			for (Image im : icons) {
 				add(im);

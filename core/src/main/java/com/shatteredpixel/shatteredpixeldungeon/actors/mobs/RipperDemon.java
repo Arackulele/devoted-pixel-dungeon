@@ -90,6 +90,8 @@ public class RipperDemon extends Mob {
 	private static final String LEAP_POS = "leap_pos";
 	private static final String LEAP_CD = "leap_cd";
 
+
+
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
