@@ -2,6 +2,12 @@
 
 An expansion mod for shattered pixel dungeon :))
 
+-Adds a brand new class, the Zealot along with all talent tiers, 2 subclasses and 3 armor abilities
+
+-Adds a nwe major quest with 5 new Minibosses and 5 unique mystical items based on each one of the classes
+
+-Adds a Textuer overhaul to many of Shattereds Textures
+
 -- Original Readme below--
 
 A Roguelike RPG, with randomly generated levels, items, enemies, and traps! Based on the [source code of Pixel Dungeon](https://github.com/00-Evan/pixel-dungeon-gradle), by [Watabou](https://www.watabou.ru).
