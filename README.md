@@ -4,9 +4,15 @@ An expansion mod for shattered pixel dungeon :))
 
 -Adds a brand new class, the Zealot along with all talent tiers, 2 subclasses and 3 armor abilities
 
--Adds a nwe major quest with 5 new Minibosses and 5 unique mystical items based on each one of the classes
+-Adds 2 nwe alternate regions, which randomly appear instead of the prisons/sewers
 
--Adds a Textuer overhaul to many of Shattereds Textures
+-Adds a new major quest with 5 new Minibosses and 5 unique mystical items based on each one of the classes
+
+-Adds a Texture overhaul to many of Shattereds Textures
+
+![Untitled](https://user-images.githubusercontent.com/73202349/202907127-3eae113f-d713-40f7-a963-119664a683ec.png)
+
+
 
 -- Original Readme below--
 
