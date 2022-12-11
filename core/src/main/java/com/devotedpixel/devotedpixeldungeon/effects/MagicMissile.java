@@ -66,12 +66,15 @@ public class MagicMissile extends Emitter {
 	public static final int RAINBOW         = 8;
 	public static final int EARTH           = 9;
 	public static final int WARD            = 10;
+	public static final int DEATHSTICK            = 18;
 	
 	public static final int SHAMAN_RED      = 11;
 	public static final int SHAMAN_BLUE     = 12;
 	public static final int SHAMAN_PURPLE   = 13;
 	public static final int TOXIC_VENT      = 14;
 	public static final int ELMO            = 15;
+	public static final int BLIZZARD_BEAM    = 16;
+	public static final int SMOG      = 17;
 
 	public static final int MAGIC_MISS_CONE = 100;
 	public static final int FROST_CONE      = 101;
@@ -166,6 +169,10 @@ public class MagicMissile extends Emitter {
 				size( 4 );
 				pour( WardParticle.FACTORY, 0.01f );
 				break;
+			case DEATHSTICK:
+				size( 4 );
+				pour( DeathParticle.FACTORY, 0.01f );
+				break;
 				
 			case SHAMAN_RED:
 				size( 2 );
@@ -186,6 +193,14 @@ public class MagicMissile extends Emitter {
 			case ELMO:
 				size( 5 );
 				pour( ElmoParticle.FACTORY, 0.01f );
+				break;
+			case BLIZZARD_BEAM:
+				size( 10 );
+				pour( Speck.factory(Speck.BLIZZARD), 0.02f );
+				break;
+			case SMOG:
+				size( 10 );
+				pour( Speck.factory(Speck.SMOKE), 0.02f );
 				break;
 
 			case MAGIC_MISS_CONE:
@@ -632,6 +647,62 @@ public class MagicMissile extends Emitter {
 		public void update() {
 			super.update();
 			
+			am = 1 - left / lifespan;
+		}
+	}
+
+	public static class DeathParticle extends PixelParticle.Shrinking {
+
+		public static final Emitter.Factory FACTORY = new Factory() {
+			@Override
+			public void emit( Emitter emitter, int index, float x, float y ) {
+				((DeathParticle)emitter.recycle( DeathParticle.class )).reset( x, y );
+			}
+			@Override
+			public boolean lightMode() {
+				return true;
+			}
+		};
+
+		public static final Emitter.Factory UP = new Factory() {
+			@Override
+			public void emit( Emitter emitter, int index, float x, float y ) {
+				((DeathParticle)emitter.recycle( DeathParticle.class )).resetUp( x, y );
+			}
+			@Override
+			public boolean lightMode() {
+				return true;
+			}
+		};
+
+		public DeathParticle() {
+			super();
+
+			lifespan = 0.9f;
+
+			color( Random.Int( 0x1000000 ) );
+		}
+
+		public void reset( float x, float y ) {
+			revive();
+
+			this.x = x;
+			this.y = y;
+
+			left = lifespan;
+			size = 8;
+		}
+
+		public void resetUp( float x, float y){
+			reset(x, y);
+
+			speed.set( Random.Float( -8, +8 ), Random.Float( -32, -48 ) );
+		}
+
+		@Override
+		public void update() {
+			super.update();
+
 			am = 1 - left / lifespan;
 		}
 	}

@@ -28,15 +28,21 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.EnvoySprite;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.TrollChild;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Weakness;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTrollChild;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Excalibur;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.SoulgemRing;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+import java.util.ArrayList;
 
 public class Envoy extends Mob {
 
@@ -46,49 +52,115 @@ public class Envoy extends Mob {
 	
 	{
 		spriteClass = EnvoySprite.class;
-		
-		HP = HT = 1;
-		EXP = 0;
 
-		maxLvl = -2;
+		HP = HT = Dungeon.hero.lvl*25;
+		EXP = 0;
 		
 		flying = true;
 
+		baseSpeed = 1.5f;
+
 		state = WANDERING;
 
-		properties.add(Property.MINIBOSS);
+		properties.add(Property.BOSS);
 		properties.add(Property.DEMONIC);
 		properties.add(Property.UNDEAD);
 	}
-	
+
 	private static final String LEVEL = "level";
-	
+	private int timer;
+	private Boolean hasadjacent;
+	@Override
+	protected boolean act() {
+
+		hasadjacent=false;
+
+
+
+		target = Dungeon.hero.pos;
+
+		for (int i : PathFinder.NEIGHBOURS8) {
+			Char character = Actor.findChar(this.pos + i);
+			//Buff.affect(character, Weakness.class, 4);
+			hasadjacent=true;
+		}
+
+		if (hasadjacent==false && this.HP < this.HT) {
+			this.HP += this.HT/25;
+		}
+
+		return super.act();
+	}
+
+
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
 		bundle.put( LEVEL, level );
 	}
-	
+
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		level = bundle.getInt( LEVEL );
-		adjustStats( level );
+		adjustStats();
 	}
-	
+
+	{
+		immunities.add(Doom.class);
+	}
+
+	@Override
+	public void damage( int dmg, Object src ) {
+
+
+		ArrayList<Integer> spawnPoints = new ArrayList<>();
+		for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
+			int p = this.pos + PathFinder.NEIGHBOURS8[i];
+			if (Actor.findChar(p) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
+				spawnPoints.add(p);
+			}
+		}
+
+		if (Random.Int(3) == 1) {
+
+			ArrayList<Integer> respawnPoints = new ArrayList<>();
+
+			for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
+				int p = this.pos + PathFinder.NEIGHBOURS8[i];
+				if (Actor.findChar(p) == null && Dungeon.level.passable[p]) {
+					respawnPoints.add(p);
+				}
+				int index = Random.index(respawnPoints);
+
+				if (respawnPoints.size() > 0) {
+					Wraith mob = new Wraith();
+					GameScene.add(mob);
+					mob.pos = Random.element(spawnPoints);
+					ScrollOfTeleportation.appear(mob, respawnPoints.get(index));
+				}
+
+
+			}
+		}
+		super.damage( dmg, src );
+	}
+
+
 	@Override
 	public int damageRoll() {
-		return Random.NormalIntRange( 1 + level/2, 2 + level );
+		return Random.NormalIntRange( Dungeon.hero.lvl*2, Dungeon.hero.lvl*4 );
 	}
-	
+
 	@Override
 	public int attackSkill( Char target ) {
-		return 10 + level;
+		return 10 + Dungeon.hero.lvl;
 	}
-	
-	public void adjustStats( int level ) {
+
+	public void adjustStats() {
 		this.level = level;
-		defenseSkill = attackSkill( null ) * 5;
+		this.HP = Dungeon.hero.lvl*25;
+		this.HT = this.HP;
+		defenseSkill = Dungeon.hero.lvl*2;
 		enemySeen = true;
 	}
 

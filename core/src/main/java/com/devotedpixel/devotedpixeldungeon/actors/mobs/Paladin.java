@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.PaladinSprite;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.TrollChild;
@@ -33,6 +34,8 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndTrollChild;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Excalibur;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.SoulgemRing;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
@@ -43,26 +46,55 @@ public class Paladin extends Mob {
 	private static final float SPAWN_DELAY	= 2f;
 	
 	private int level;
-	
 	{
 		spriteClass = PaladinSprite.class;
 		
-		HP = HT = 1;
+		HP = HT = Dungeon.hero.lvl*25;
 		EXP = 0;
 
-		maxLvl = 2;
-		
 		flying = true;
 
 		state = WANDERING;
 
-		properties.add(Property.MINIBOSS);
+		properties.add(Property.BOSS);
 		properties.add(Property.DEMONIC);
 		properties.add(Property.UNDEAD);
 	}
 	
 	private static final String LEVEL = "level";
-	
+	private int timer;
+	private Boolean hasadjacent;
+	@Override
+	protected boolean act() {
+		hasadjacent=false;
+
+		Ballistica route = new Ballistica(this.pos, target, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
+		int cell = route.collisionPos;
+
+		for (int i : PathFinder.NEIGHBOURS8) {
+			hasadjacent=true;
+			Char mob = Actor.findChar(this.pos + i);
+			if (mob != null) {
+				if (timer >=6){
+					if (mob.pos == this.pos + i) {
+						Ballistica trajectory = new Ballistica(mob.pos, mob.pos + i, Ballistica.MAGIC_BOLT);
+						int strength = 4;
+						WandOfBlastWave.throwChar(mob, trajectory, strength, true, true, this.getClass());
+						timer=0;
+					}
+				}
+			else timer++;
+			}
+			}
+		if (timer==0 && this.HP < this.HT && hasadjacent==true) this.HP += this.HT/25;
+
+	return super.act();
+	}
+
+	{
+		immunities.add(Doom.class);
+	}
+
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
@@ -72,23 +104,24 @@ public class Paladin extends Mob {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		level = bundle.getInt( LEVEL );
-		adjustStats( level );
+		adjustStats();
 	}
 	
 	@Override
 	public int damageRoll() {
-		return Random.NormalIntRange( 1 + level/2, 2 + level );
+		return Random.NormalIntRange( Dungeon.hero.lvl*2, Dungeon.hero.lvl*4 );
 	}
 	
 	@Override
 	public int attackSkill( Char target ) {
-		return 10 + level;
+		return 10 + Dungeon.hero.lvl;
 	}
-	
-	public void adjustStats( int level ) {
+
+	public void adjustStats() {
 		this.level = level;
-		defenseSkill = attackSkill( null ) * 5;
+		this.HP = Dungeon.hero.lvl*25;
+		this.HT = this.HP;
+		defenseSkill = Dungeon.hero.lvl*2;
 		enemySeen = true;
 	}
 

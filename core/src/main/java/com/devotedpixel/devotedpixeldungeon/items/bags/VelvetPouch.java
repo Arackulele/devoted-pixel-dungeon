@@ -23,6 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.items.bags;
 
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.GooBlob;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.StaffSplinter;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.EmberEssence;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.MetalShard;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.Runestone;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
@@ -37,7 +39,7 @@ public class VelvetPouch extends Bag {
 	@Override
 	public boolean canHold( Item item ) {
 		if (item instanceof Plant.Seed || item instanceof Runestone
-				|| item instanceof GooBlob || item instanceof MetalShard){
+				|| item instanceof GooBlob || item instanceof MetalShard || item instanceof StaffSplinter || item instanceof EmberEssence){
 			return super.canHold(item);
 		} else {
 			return false;

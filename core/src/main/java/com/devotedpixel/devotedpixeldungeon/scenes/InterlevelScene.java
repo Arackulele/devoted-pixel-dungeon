@@ -158,8 +158,10 @@ public class InterlevelScene extends PixelScene {
 			lastRegion = region;
 		}
 
-		if      (lastRegion == 1)    loadingAsset = Assets.Interfaces.LOADING_SEWERS;
-		else if (lastRegion == 2)    loadingAsset = Assets.Interfaces.LOADING_PRISON;
+		if      (lastRegion == 1 && Dungeon.seweralt == false)    loadingAsset = Assets.Interfaces.LOADING_SEWERS;
+		else if (lastRegion == 1)    loadingAsset = Assets.Interfaces.LOADING_GARDEN;
+		else if (lastRegion == 2 && Dungeon.prisonalt == false)    loadingAsset = Assets.Interfaces.LOADING_PRISON;
+		else if (lastRegion == 2)    loadingAsset = Assets.Interfaces.LOADING_COLDHOUSE;
 		else if (lastRegion == 3)    loadingAsset = Assets.Interfaces.LOADING_CAVES;
 		else if (lastRegion == 4)    loadingAsset = Assets.Interfaces.LOADING_CITY;
 		else if (lastRegion == 5)    loadingAsset = Assets.Interfaces.LOADING_HALLS;

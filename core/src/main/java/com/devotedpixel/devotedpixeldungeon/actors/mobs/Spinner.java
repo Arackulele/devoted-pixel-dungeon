@@ -22,6 +22,8 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Web;
@@ -34,9 +36,12 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SpinnerSprite;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.SpinnerQueen;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+import java.util.ArrayList;
 
 public class Spinner extends Mob {
 
@@ -113,6 +118,8 @@ public class Spinner extends Mob {
 				enemy != null && enemySeen && enemy.buff( Poison.class ) == null) {
 			state = HUNTING;
 		}
+
+
 		return result;
 	}
 

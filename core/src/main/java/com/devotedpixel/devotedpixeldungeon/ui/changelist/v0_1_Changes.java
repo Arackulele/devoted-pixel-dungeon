@@ -45,9 +45,128 @@ public class v0_1_Changes {
 		ChangeInfo changes = new ChangeInfo( "v0.1.X", true, "");
 		changes.hardlight( Window.TITLE_COLOR);
 		changeInfos.add(changes);
-		
+
+		add_v0_4_X_Changes(changeInfos);
+		add_v0_3_X_Changes(changeInfos);
+		add_v0_2_X_Changes(changeInfos);
 		add_v0_1_1_Changes(changeInfos);
 		add_v0_1_0_Changes(changeInfos);
+	}
+
+	public static void add_v0_4_X_Changes( ArrayList<ChangeInfo> changeInfos ){
+
+		ChangeInfo changes = new ChangeInfo("v0.4.x", false, "");
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.DEVO), "Developer Commentary",
+				"_-_ Released December 6th, 2022\n" +
+						"_-_ Fourth Update\n" +
+						"\n" +
+						"Insane true and also real.\n" ));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.GOLD), "Old feature changes!",
+				"The Zealots Blood Vial now stales, this means the cooldown gets increased if you are not near an enemy and increased even more if you have already killed all mobs on a floor, this is to prevent a lot of cheese.\nmore texture updates\nA few mobs have been reworked\nThe deathstick now has unique visuals and a unique battlemage effect\nThe Troll Child can no longer die For real this time" ));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.TALENT), "Talent Changes!",
+				"A few of the Zealots Talents have been reworked again, see the changes in game.\n" ));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ESSENCE), "New Region",
+				"The third new Region is _The Forge_\n\n" +
+						"This housing complex of the granite trolls replaces the Caves in half of runs! Including new enemies, rooms and a new boss along with its drops"));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ROYAL_SEAL), "New Region 2",
+				"The fourth new Region is _The dwarven citadel_\n\n" +
+						"This dwarven military base filled with cultists replaces the Dwarven metropolis in half of runs! Including new enemies, rooms and a new boss along with its drops"));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
+				"Balance Tweaks:\n" +
+						"_-_ The beast boss has been nerfed again\n" +
+						"_-_ Various changed to enemies and their drops\n" +
+						"\n" +
+						"Misc:\n" +
+						"_-_ Devoted now has a new logo, made by Cevin_2006\n" +
+						"_-_ The Sprites for the evil sage have been overhauled"));
+
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes") + " 1",
+				"Fixed\n" +
+						"_-_ troll child dying issues\n" +
+						"_-_ issues with the wrath built up by the devotee\n" +
+						"_-_ various issues with the soulgem ring"));
+
+	}
+
+	public static void add_v0_3_X_Changes( ArrayList<ChangeInfo> changeInfos ){
+
+		ChangeInfo changes = new ChangeInfo("v0.3.x", false, "");
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.DEVO), "Developer Commentary",
+				"_-_ Released November 20th, 2022\n" +
+						"_-_ Third Update\n" +
+						"\n" +
+						"Hey this is a really big update, and only 2 weeks after the last one.\n" ));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.GOLD), "Old feature changes!",
+				"The Zealots T2 Talents have changed to actually work and not be overpowered.\nIve gone ahead and updated some old textures\nThe Troll Child can no longer die" ));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.TALENT), "Talent Changes!",
+				"A few of the Zealots Talents have been reworked again, see the changes in game.\n" ));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.SPLINTER), "New Region",
+				"The first new Region is _The Garden_\n\n" +
+						"This overgrown and long abandoned underground greenhouse replaces the Sewers in half of runs! Includng new enemies, rooms and a new boss along with its drops"));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MEAL), "New Region 2",
+				"The second new Region is _The Coldhouse_\n\n" +
+						"This below-freezing region used for storing and preparing food replaces the Prisons in half of runs! Includng new enemies, rooms and a new boss along with its drops"));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.PREFS), Messages.get(ChangesScene.class, "misc"),
+				"Balance Tweaks:\n" +
+						"_-_ The Deathstick has been significantly buffed\n" +
+						"_-_ Minor nerfs to the excalibur\n" +
+						"\n" +
+						"Misc:\n" +
+						"_-_ Devoted now has a new logo, made by Cevin_2006\n" +
+						"_-_ The Sprites for the evil sage have been overhauled"));
+
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes") + " 1",
+				"Fixed\n" +
+						"_-_ troll child saving/spawning issues\n" +
+						"_-_ some bugs with mystical items\n" +
+						"_-_ the envoy healing way too much, to the point where it was unbeatable"));
+
+	}
+
+	public static void add_v0_2_X_Changes( ArrayList<ChangeInfo> changeInfos ){
+
+		ChangeInfo changes = new ChangeInfo("v0.2.x", false, "");
+		changes.hardlight(Window.TITLE_COLOR);
+		changeInfos.add(changes);
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.DEVO), "Developer Commentary",
+				"_-_ Released November 5th, 2022\n" +
+						"_-_ Second Update\n" +
+						"\n" +
+						"New quest n stuff.\n" ));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.GOLD), "Quality of Life Changes!",
+				"The Quickslot for the Blood Vial now automatically updates to stabbing/drinking.\n" ));
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.TALENT), "Talent Changes!",
+				"A few of the Zealots Talents have been reworked.\n" ));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.SOULGEM_RING), "New Mystical Items",
+				"Each Class can now get a unique _Mystical Item_\n\n" +
+						"These Items are exceptionally Powerful and can help you in several different ways"));
+
+		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes") + " 1",
+				"Fixed\n" +
+						"_-_ blood vial charges reset upon load\n" +
+						"_-_ imp sprite being broken\n" +
+						"_-_ other minor bugs"));
+
 	}
 	
 	public static void add_v0_1_1_Changes( ArrayList<ChangeInfo> changeInfos ){
@@ -73,6 +192,9 @@ public class v0_1_Changes {
 						"_-_ the blood vial charges being reset upon reload\n" +
 						"_-_ debug features still being enabled"));
 
+				changes.addButton( new ChangeButton(new Image(Assets.Sprites.TROLL_CHILD, 0, 90, 12, 15), "New Major Quest",
+						"There is a new Class: the _Zealot._\n\n" +
+								"Theres a new major quest that can appear almost anywhere through the dungeon! This involves fighting a very difficult, class based miniboss and the reward is your classes mystical item. But you shouldnt always accept this Quest, it can often lead to your doom."));
 	}
 	
 	public static void add_v0_1_0_Changes( ArrayList<ChangeInfo> changeInfos ){

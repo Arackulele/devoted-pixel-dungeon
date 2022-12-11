@@ -26,8 +26,11 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AscensionChallenge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Envoy;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.SpinnerQueen;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Paladin;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.EvilMage;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Angel;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Beast;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -66,7 +69,7 @@ public class TrollChild extends NPC {
 		spriteClass = TrollChildSprite.class;
 
 		state = WANDERING;
-		target = Dungeon.hero.pos;
+
 	}
 
 	@Override
@@ -74,11 +77,6 @@ public class TrollChild extends NPC {
 		return INFINITE_EVASION;
 	}
 
-	private static boolean spawned;
-
-	private static final String SPAWNED		= "spawned";
-
-	private static final String PROCESSED	= "processed";
 
 	public static Item reward;
 
@@ -89,19 +87,20 @@ public class TrollChild extends NPC {
 		return true;
 	}
 
+	@Override
+	public float speed() {
+		return Quest.processed() ? 2f : 0.5f;
+	}
 
+	private Mob questBoss;
 
 	@Override
 	public boolean interact(Char c) {
 
 
+		sprite.turnTo(pos, Dungeon.hero.pos);
 
-
-
-
-		sprite.turnTo( pos, Dungeon.hero.pos );
-
-		if (c != Dungeon.hero){
+		if (c != Dungeon.hero) {
 			return true;
 
 		}
@@ -120,19 +119,16 @@ public class TrollChild extends NPC {
 			GLog.i(Messages.get(this, "quest_midmessage"));
 
 
-
 		} else {
 			if (Dungeon.hero.heroClass != null) {
 				Game.runOnRenderThread(new Callback() {
 					@Override
 					public void call() {
-						GameScene.show( new WndTrollChild( TrollChild.this, classnum) );
+						GameScene.show(new WndTrollChild(TrollChild.this, classnum));
 					}
 
 				});
 
-
-				Mob questBoss;
 
 				switch (classnum) {
 					case 1:
@@ -145,34 +141,57 @@ public class TrollChild extends NPC {
 					case 3:
 						questBoss = new Envoy();
 						break;
+					case 4:
+						questBoss = new SpinnerQueen();
+						break;
+					case 5:
+						questBoss = new Angel();
+						break;
 
 				}
 
-				questBoss.pos = Dungeon.level.randomRespawnCell(this);
 
-				if (questBoss.pos != -1) {
-					GameScene.add(questBoss);
 
-					WndTrollChild.hasaccepted = true;
-					Quest.given = true;
-					Quest.completed = false;
-					Notes.add(Notes.Landmark.TROLL_CHILD);
-				}
+
+
+				enemySeen = true;
+
 
 			}
+		}
+			return true;
+		}
 
-			};
+
+	public void accept() {
+
+	questBoss.pos = Dungeon.level.randomRespawnCell(this);
+
+	if (questBoss.pos != -1 && !Quest.given) {
+		GameScene.add(questBoss);
+		adjustStats(questBoss);
+		Quest.given = true;
+		WndTrollChild.firsttime = false;
+		Quest.completed = false;
+		Notes.add(Notes.Landmark.TROLL_CHILD);
 
 
-
-
-		return true;
+		enemySeen = true;
+	}
+	}
+	public void adjustStats(Mob mob) {
+		mob.HP = Dungeon.hero.lvl*25;
+		mob.HT = Dungeon.hero.lvl*25;
+		mob.defenseSkill = Dungeon.hero.lvl;
 	}
 
+	@Override
+	public void damage( int dmg, Object src ) {
+	}
 
-
-
-
+	@Override
+	public void add( Buff buff ) {
+	}
 
 	@Override
 	protected boolean act() {
@@ -200,48 +219,120 @@ public class TrollChild extends NPC {
 	public static class Quest {
 
 
-		private static boolean completed;
-		private static boolean spawned;
-
-		private static int type;
-
-		private static boolean given;
-		private static boolean processed;
 
 
-		private static int depth;
-
-
-
-		public static void reset() {
-			spawned = false;
-
-
-		}
 
 		private static final String NODE = "TrollChild";
 
 		private static final String SPAWNED = "spawned";
 		private static final String TYPE = "type";
+
+		private static final String REWARD = "reward";
 		private static final String GIVEN = "given";
 		private static final String PROCESSED = "processed";
 		private static final String DEPTH = "depth";
 
+		private static boolean completed;
+		private static boolean spawned;
 
-		public static void spawn(SewerLevel level) {
+		private static int type;
+
+		public static boolean given;
+		private static boolean processed;
+
+		private static int depth;
+		public static void storeInBundle( Bundle bundle ) {
+
+			Bundle node = new Bundle();
+
+			node.put( SPAWNED, spawned );
+
+			if (spawned) {
+
+				node.put( TYPE, type );
+				node.put( REWARD, reward );
+				node.put( GIVEN, given );
+				node.put( DEPTH, depth );
+				node.put( PROCESSED, processed );
+
+
+			}
+
+			bundle.put( NODE, node );
+		}
+
+		public static void reset() {
+			spawned = false;
+
+			reward = null;
+			completed = false;
+			processed = false;
+
+		}
+
+		public static void restoreFromBundle( Bundle bundle ) {
+
+			Bundle node = bundle.getBundle( NODE );
+
+			if (!node.isNull() && (spawned = node.getBoolean( SPAWNED ))) {
+
+				type = node.getInt(TYPE);
+				given	= node.getBoolean( GIVEN );
+				processed = node.getBoolean( PROCESSED );
+
+				depth	= node.getInt( DEPTH );
+
+				reward	= (Item)node.get( REWARD );
+
+			} else {
+				reset();
+			}
+		}
+
+
+
+
+
+
+
+
+		public static void spawn(Level level) {
+
+
 			int pos = -1;
-			if (!spawned && Dungeon.depth == 2) {
+			if (!spawned && Dungeon.depth > 6 && Random.Int( 20 - Dungeon.depth ) == 0) {
 
 				TrollChild child = new TrollChild();
 
 				do {
 					child.pos = level.randomRespawnCell(child);
+					given = false;
+					processed = false;
+					depth = Dungeon.depth;
+					spawned = true;
 				} while (child.pos == -1);
 				level.mobs.add(child);
 
-				spawned = true;
+
 
 			}
+
+			if (Dungeon.depth==19 && !spawned) {
+
+
+				TrollChild child = new TrollChild();
+
+				do {
+					child.pos = level.randomRespawnCell(child);
+					given = false;
+					processed = false;
+					depth = Dungeon.depth;
+					spawned = true;
+				} while (child.pos == -1);
+				level.mobs.add(child);
+
+			}
+
 		}
 
 		public static void complete() {

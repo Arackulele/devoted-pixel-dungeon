@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.features;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AnkhInvulnerability;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
@@ -33,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.FeatherFall;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CitadelBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.WeakFloorRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -97,10 +99,22 @@ public class Chasm implements Hero.Doom {
 	}
 	
 	public static void heroFall( int pos ) {
+
+		if (Dungeon.level instanceof CitadelBossLevel) Dungeon.hero.die( Chasm.class );
 		
 		jumpConfirmed = false;
 				
 		Sample.INSTANCE.play( Assets.Sounds.FALLING );
+
+		Buff a;
+		if (Dungeon.hero.buff(AnkhInvulnerability.class) != null)
+		{
+			a = Dungeon.hero.buff(AnkhInvulnerability.class);
+
+			a.detach();
+		}
+
+
 
 		TimekeepersHourglass.timeFreeze timeFreeze = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
 		if (timeFreeze != null) timeFreeze.disarmPressedTraps();

@@ -77,8 +77,10 @@ public class Badges {
 		DEATH_FROM_FALLING          ( 18 ),
 		GAMES_PLAYED_1              ( 19, true ),
 		HIGH_SCORE_1                ( 20 ),
+		BOSS_SLAIN_1_ALT                ( 21 ),
 
 		//silver
+		BOSS_SLAIN_2_ALT                ( 57 ),
 		NO_MONSTERS_SLAIN           ( 32 ),
 		MONSTERS_SLAIN_3            ( 33 ),
 		MONSTERS_SLAIN_4            ( 34 ),
@@ -109,6 +111,7 @@ public class Badges {
 		BOSS_SLAIN_1_ALL_CLASSES    ( 54, true ),
 		GAMES_PLAYED_2              ( 55, true ),
 		HIGH_SCORE_2                ( 56 ),
+		BOSS_SLAIN_3_ALT                ( 58 ),
 
 		//gold
 		PIRANHAS                    ( 64 ),
@@ -136,8 +139,12 @@ public class Badges {
 		VICTORY                     ( 82 ),
 		BOSS_CHALLENGE_1            ( 83 ),
 		BOSS_CHALLENGE_2            ( 84 ),
+		BOSS_CHALLENGE_1_ALT            ( 87 ),
+		BOSS_CHALLENGE_2_ALT            ( 88 ),
 		GAMES_PLAYED_3              ( 85, true ),
 		HIGH_SCORE_3                ( 86 ),
+		BOSS_SLAIN_4_ALT               ( 89 ),
+
 
 		//platinum
 		ITEM_LEVEL_5                ( 96 ),
@@ -170,6 +177,8 @@ public class Badges {
 		GAMES_PLAYED_4              ( 108, true ),
 		HIGH_SCORE_4                ( 109 ),
 		CHAMPION_1                  ( 110 ),
+		BOSS_CHALLENGE_3_ALT            ( 111 ),
+		BOSS_CHALLENGE_4_ALT            ( 112 ),
 
 		//diamond
 		BOSS_CHALLENGE_5            ( 120 ),
@@ -734,10 +743,12 @@ public class Badges {
 		Badge badge = null;
 		switch (Dungeon.depth) {
 		case 5:
-			badge = Badge.BOSS_SLAIN_1;
+			if (Dungeon.seweralt == false) badge = Badge.BOSS_SLAIN_1;
+			else badge = Badge.BOSS_SLAIN_1_ALT;
 			break;
 		case 10:
-			badge = Badge.BOSS_SLAIN_2;
+			if (Dungeon.prisonalt == false) badge = Badge.BOSS_SLAIN_2;
+			else badge = Badge.BOSS_SLAIN_2_ALT;
 			break;
 		case 15:
 			badge = Badge.BOSS_SLAIN_3;
@@ -799,16 +810,20 @@ public class Badges {
 		Badge badge = null;
 		switch (Dungeon.depth) {
 			case 5:
-				badge = Badge.BOSS_CHALLENGE_1;
+				if (Dungeon.seweralt == false) badge = Badge.BOSS_CHALLENGE_1;
+				else badge = Badge.BOSS_CHALLENGE_1_ALT;
 				break;
 			case 10:
-				badge = Badge.BOSS_CHALLENGE_2;
+				if (Dungeon.prisonalt == false) badge = Badge.BOSS_CHALLENGE_2;
+				else badge = Badge.BOSS_CHALLENGE_2_ALT;
 				break;
 			case 15:
-				badge = Badge.BOSS_CHALLENGE_3;
+				if (Dungeon.cavealt == false) badge = Badge.BOSS_CHALLENGE_3;
+				else badge = Badge.BOSS_CHALLENGE_3_ALT;
 				break;
 			case 20:
-				badge = Badge.BOSS_CHALLENGE_4;
+				if (Dungeon.cityalt == false) badge = Badge.BOSS_CHALLENGE_4;
+				else badge = Badge.BOSS_CHALLENGE_4_ALT;
 				break;
 			case 25:
 				badge = Badge.BOSS_CHALLENGE_5;
@@ -1076,9 +1091,13 @@ public class Badges {
 	//don't show the later badge if the earlier one isn't unlocked
 	private static final Badge[][] prerequisiteBadges = new Badge[][]{
 			{Badge.BOSS_SLAIN_1, Badge.BOSS_CHALLENGE_1},
+			{Badge.BOSS_SLAIN_1_ALT, Badge.BOSS_CHALLENGE_1_ALT},
 			{Badge.BOSS_SLAIN_2, Badge.BOSS_CHALLENGE_2},
+			{Badge.BOSS_SLAIN_2_ALT, Badge.BOSS_CHALLENGE_2_ALT},
 			{Badge.BOSS_SLAIN_3, Badge.BOSS_CHALLENGE_3},
+			{Badge.BOSS_SLAIN_3_ALT, Badge.BOSS_CHALLENGE_3_ALT},
 			{Badge.BOSS_SLAIN_4, Badge.BOSS_CHALLENGE_4},
+			{Badge.BOSS_SLAIN_4_ALT, Badge.BOSS_CHALLENGE_4_ALT},
 			{Badge.VICTORY,      Badge.BOSS_CHALLENGE_5},
 	};
 

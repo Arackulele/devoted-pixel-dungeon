@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.painters.SewerPainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.AlarmTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ChillingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ConfusionTrap;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.SpinnerQueen;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FlockTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GatewayTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GeyserTrap;
@@ -121,8 +122,6 @@ public class SewerLevel extends RegularLevel {
 	@Override
 	protected void createItems() {
 		Ghost.Quest.spawn( this );
-		TrollChild.Quest.spawn(this);
-		
 		super.createItems();
 	}
 	

@@ -23,6 +23,9 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 
 public class Excalibur extends MeleeWeapon {
 
@@ -30,7 +33,7 @@ public class Excalibur extends MeleeWeapon {
 		image = ItemSpriteSheet.EXCALIBUR;
 		hitSound = Assets.Sounds.HIT_SLASH;
 		hitSoundPitch = 1f;
-
+		ACC = 1.1f;
 		tier = 6;
 
 		unique = true;
@@ -39,13 +42,21 @@ public class Excalibur extends MeleeWeapon {
 
 	@Override
 	public int max(int lvl) {
-		return  5*(tier+4) +
+		return  5*(tier+2) +
 				lvl*(tier+1);
 	}
 
 	@Override
+	public int proc( Char attacker, Char defender, int damage ) {
+
+		if (attacker.HP > attacker.HT*0.9 || attacker.HP < attacker.HT*0.1) Buff.prolong(defender, Paralysis.class, 2 + this.buffedLvl());
+
+		return damage;
+	}
+
+	@Override
 	public int STRReq(int lvl) {
-		return STRReq(tier-3, lvl); //14 base strength req, down from 18
+		return STRReq(tier-2, lvl); //14 base strength req, down from 18
 	}
 
 }

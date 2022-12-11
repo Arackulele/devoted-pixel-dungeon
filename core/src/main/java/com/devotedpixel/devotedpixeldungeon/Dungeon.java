@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.TrollChild;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
@@ -51,18 +52,27 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CavesLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CitadelLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CitadelBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.DeadEndLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.HallsLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.VoidLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.LastLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CavesBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ForgeLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.GardenBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.HallsBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ForgeBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ColdhouseLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ColdhouseBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.GardenLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
@@ -198,6 +208,10 @@ public class Dungeon {
 	public static boolean dailyReplay;
 	public static String customSeedText = "";
 	public static long seed;
+	public static boolean seweralt;
+	public static boolean prisonalt;
+	public static boolean cavealt;
+	public static boolean cityalt;
 	
 	public static void init() {
 
@@ -259,6 +273,7 @@ public class Dungeon {
 		Ghost.Quest.reset();
 		Wandmaker.Quest.reset();
 		Blacksmith.Quest.reset();
+		TrollChild.Quest.reset();
 		Imp.Quest.reset();
 
 		hero = new Hero();
@@ -272,9 +287,12 @@ public class Dungeon {
 	public static boolean isChallenged( int mask ) {
 		return (challenges & mask) != 0;
 	}
-	
+
+	private static int sewersrandom;
+	private static int prisonsrandom;
+	private static int caverandom;
+	private static int cityrandom;
 	public static Level newLevel() {
-		
 		Dungeon.level = null;
 		Actor.clear();
 
@@ -287,45 +305,93 @@ public class Dungeon {
 				Statistics.completedWithNoKilling = false;
 			}
 		}
-		
 		Level level;
-		if (branch == 0) {
+		if (branch == 0 ) {
 			switch (depth) {
 				case 1:
+					if (SPDSettings.regiontamper()==false) {
+						caverandom = Random.Int(100);
+						prisonsrandom = Random.Int(100);
+						sewersrandom = Random.Int(100);
+					}
+					else {
+						if (SPDSettings.forge()==true) caverandom = 1;
+						else caverandom = 99;
+
+						if (SPDSettings.gardens()==true) sewersrandom = 1;
+						else sewersrandom = 99;
+
+						if (SPDSettings.coldhouse()==true) prisonsrandom = 1;
+						else prisonsrandom = 99;
+
+					}
 				case 2:
 				case 3:
 				case 4:
-					level = new SewerLevel();
+					if (sewersrandom >= 51) {
+						level = new SewerLevel();
+						seweralt = false;
+					}
+					else {
+						level = new GardenLevel();
+						seweralt = true;
+					}
 					break;
 				case 5:
-					level = new SewerBossLevel();
+					if (seweralt == true) level = new GardenBossLevel();
+					else level = new SewerBossLevel();
 					break;
 				case 6:
 				case 7:
 				case 8:
-				case 9:
-					level = new PrisonLevel();
+				case 9: {
+					if (prisonsrandom >= 51) {
+						level = new PrisonLevel();
+						prisonalt = false;
+					}
+					else {
+						level = new ColdhouseLevel();
+						prisonalt = true;
+					}
 					break;
+				}
 				case 10:
-					level = new PrisonBossLevel();
+					if (prisonalt == true) level = new ColdhouseBossLevel();
+					else level = new PrisonBossLevel();
 					break;
 				case 11:
 				case 12:
 				case 13:
 				case 14:
-					level = new CavesLevel();
+					if (caverandom >= 51) {
+						level = new CavesLevel();
+						cavealt = false;
+					}
+					else {
+						level = new ForgeLevel();
+						cavealt = true;
+					}
 					break;
 				case 15:
-					level = new CavesBossLevel();
+					if (cavealt == false)level = new CavesBossLevel();
+					else level = new ForgeBossLevel();
 					break;
 				case 16:
 				case 17:
 				case 18:
 				case 19:
-					level = new CityLevel();
+					if (cityrandom >= 51) {
+						level = new CityLevel();
+						cityalt = false;
+					}
+					else {
+						level = new CitadelLevel();
+						cityalt = true;
+					}
 					break;
 				case 20:
-					level = new CityBossLevel();
+					if (cityalt = false)level = new CityBossLevel();
+					else level = new CitadelBossLevel();
 					break;
 				case 21:
 				case 22:
@@ -515,6 +581,15 @@ public class Dungeon {
 		return Random.Int(5 - floorThisSet) < asLeftThisSet;
 	}
 
+	private static final String SEWERRANDOM	= "SEWERRANDOM";
+
+	private static final String PRISONSRANDOM	= "PRISONSRANDOM";
+	private static final String ALT1	= "alt1";
+	private static final String ALT2	= "alt2";
+
+	private static final String ALT3	= "alt3";
+
+	private static final String ALT4	= "alt4";
 	private static final String INIT_VER	= "init_ver";
 	private static final String VERSION		= "version";
 	private static final String SEED		= "seed";
@@ -542,6 +617,10 @@ public class Dungeon {
 
 			bundle.put( INIT_VER, initialVersion );
 			bundle.put( VERSION, version = Game.versionCode );
+			bundle.put( ALT1, seweralt );
+			bundle.put( ALT2, prisonalt );
+			bundle.put( ALT3, cavealt );
+			bundle.put( ALT4, cityalt );
 			bundle.put( SEED, seed );
 			bundle.put( CUSTOM_SEED, customSeedText );
 			bundle.put( DAILY, daily );
@@ -551,6 +630,8 @@ public class Dungeon {
 			bundle.put( HERO, hero );
 			bundle.put( DEPTH, depth );
 			bundle.put( BRANCH, branch );
+			bundle.put( SEWERRANDOM, sewersrandom );
+			bundle.put( PRISONSRANDOM, prisonsrandom );
 
 			bundle.put( GOLD, gold );
 			bundle.put( ENERGY, energy );
@@ -581,6 +662,7 @@ public class Dungeon {
 			Wandmaker	.Quest.storeInBundle( quests );
 			Blacksmith	.Quest.storeInBundle( quests );
 			Imp			.Quest.storeInBundle( quests );
+			TrollChild  .Quest.storeInBundle( quests );
 			bundle.put( QUESTS, quests );
 			
 			SpecialRoom.storeRoomsInBundle( bundle );
@@ -644,7 +726,6 @@ public class Dungeon {
 		}
 
 		version = bundle.getInt( VERSION );
-
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
 		customSeedText = bundle.getString( CUSTOM_SEED );
 		daily = bundle.getBoolean( DAILY );
@@ -687,11 +768,13 @@ public class Dungeon {
 				Wandmaker.Quest.restoreFromBundle( quests );
 				Blacksmith.Quest.restoreFromBundle( quests );
 				Imp.Quest.restoreFromBundle( quests );
+				TrollChild.Quest.restoreFromBundle( quests );
 			} else {
 				Ghost.Quest.reset();
 				Wandmaker.Quest.reset();
 				Blacksmith.Quest.reset();
 				Imp.Quest.reset();
+				TrollChild.Quest.reset();
 			}
 			
 			SpecialRoom.restoreRoomsFromBundle(bundle);
@@ -709,7 +792,12 @@ public class Dungeon {
 		
 		hero = null;
 		hero = (Hero)bundle.get( HERO );
-		
+		seweralt = bundle.getBoolean( ALT1 );
+		prisonalt = bundle.getBoolean( ALT2 );
+		cavealt = bundle.getBoolean( ALT3 );
+		cityalt = bundle.getBoolean( ALT4 );
+		sewersrandom = bundle.getInt(SEWERRANDOM);
+		prisonsrandom = bundle.getInt(PRISONSRANDOM);
 		depth = bundle.getInt( DEPTH );
 		branch = bundle.getInt( BRANCH );
 

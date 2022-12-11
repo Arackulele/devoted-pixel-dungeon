@@ -105,6 +105,7 @@ public class Armor extends EquipableItem {
 	public Glyph glyph;
 	public boolean curseInfusionBonus = false;
 	public boolean masteryPotionBonus = false;
+	public boolean GildDegrade = false;
 	
 	protected BrokenSeal seal;
 	
@@ -124,6 +125,8 @@ public class Armor extends EquipableItem {
 	private static final String CURSE_INFUSION_BONUS = "curse_infusion_bonus";
 	private static final String MASTERY_POTION_BONUS = "mastery_potion_bonus";
 	private static final String SEAL            = "seal";
+
+	private static final String GILD_DEGRADE = "GILD_DEGRADE";
 	private static final String AUGMENT			= "augment";
 
 	@Override
@@ -134,6 +137,7 @@ public class Armor extends EquipableItem {
 		bundle.put( GLYPH, glyph );
 		bundle.put( CURSE_INFUSION_BONUS, curseInfusionBonus );
 		bundle.put( MASTERY_POTION_BONUS, masteryPotionBonus );
+		bundle.put( GILD_DEGRADE, GildDegrade );
 		bundle.put( SEAL, seal);
 		bundle.put( AUGMENT, augment);
 	}
@@ -146,6 +150,7 @@ public class Armor extends EquipableItem {
 		inscribe((Glyph) bundle.get(GLYPH));
 		curseInfusionBonus = bundle.getBoolean( CURSE_INFUSION_BONUS );
 		masteryPotionBonus = bundle.getBoolean( MASTERY_POTION_BONUS );
+		GildDegrade = bundle.getBoolean( GILD_DEGRADE );
 		seal = (BrokenSeal)bundle.get(SEAL);
 		
 		augment = bundle.getEnum(AUGMENT, Augment.class);
@@ -547,6 +552,9 @@ public class Armor extends EquipableItem {
 		int req = STRReq(level());
 		if (masteryPotionBonus){
 			req -= 2;
+		}
+		if (GildDegrade){
+			req += 5;
 		}
 		return req;
 	}

@@ -57,23 +57,19 @@ public class SoulgemRing extends Ring {
 
 		unique = true;
 		bones = false;
+
 	}
+
+
 
 	@Override
-	protected RingBuff buff( ) {
-		return new Accuracy();
+	protected RingBuff buff() {
+		return new shell();
 	}
 
-	public static float accuracyMultiplier( Char target ){
-		return (float)Math.pow(1.1f, getBuffedBonus(target, Accuracy.class));
-	}
-
+	public class shell extends RingBuff {}
 	public String statsInfo() {
-		if (isIdentified()){
 			return Messages.get(this, "stats", new DecimalFormat("#.##").format(100f * (Math.pow(1.1f, soloBuffedBonus()) - 1f)));
-		} else {
-			return Messages.get(this, "typical_stats", new DecimalFormat("#.##").format(30f));
-		}
 	}
 
 	public class Accuracy extends RingBuff {

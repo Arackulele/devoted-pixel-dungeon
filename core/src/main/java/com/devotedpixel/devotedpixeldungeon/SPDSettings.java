@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndRegion;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
@@ -194,6 +195,16 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_LAST_DAILY	= "last_daily";
 	public static final String KEY_INTRO		= "intro";
 
+	public static final String GARDENS = "GARDENS";
+
+	public static final String FORGE = "FORGE";
+
+	public static final String CITADEL = "CITADEL";
+
+	public static final String REGIONTAMPER = "REGIONTAMPER";
+
+	public static final String COLDHOUSE = "COLDHOUSE";
+
 	public static final String KEY_SUPPORT_NAGGED= "support_nagged";
 	
 	public static void intro( boolean value ) {
@@ -218,6 +229,46 @@ public class SPDSettings extends GameSettings {
 	
 	public static int challenges() {
 		return getInt( KEY_CHALLENGES, 0, 0, Challenges.MAX_VALUE );
+	}
+
+	public static boolean gardens() {
+		return getBoolean(GARDENS, false );
+	}
+
+	public static void putgardens( boolean garden) {
+		put( GARDENS, garden );
+	}
+
+	public static boolean forge() {
+		return getBoolean(FORGE, false );
+	}
+
+	public static void putforge( boolean forge) {
+		put( FORGE, forge );
+	}
+
+	public static boolean citadel() {
+		return getBoolean(CITADEL, false );
+	}
+
+	public static void putcitadel( boolean citadel ) {
+		put( CITADEL, citadel );
+	}
+
+	public static boolean regiontamper() {
+		return getBoolean(REGIONTAMPER, false );
+	}
+
+	public static void putregiontamper( boolean tamper) {
+		put( REGIONTAMPER, tamper );
+	}
+
+	public static boolean coldhouse() {
+		return getBoolean( COLDHOUSE, false );
+	}
+
+	public static void putcoldhouse( boolean cold) {
+		put( COLDHOUSE, cold );
 	}
 
 	public static void customSeed( String value ){

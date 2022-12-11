@@ -683,6 +683,8 @@ public abstract class Mob extends Char {
 	@Override
 	public void damage( int dmg, Object src ) {
 
+
+
 		if (state == SLEEPING) {
 			state = WANDERING;
 		}

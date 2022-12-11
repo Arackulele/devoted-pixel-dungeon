@@ -54,7 +54,7 @@ public class WndTrollChild extends Window {
 	private static final int GAP        = 2;
 	private static String msgtype;
 
-	public static boolean hasaccepted;
+	public static boolean firsttime = true;
 
 
 	public WndTrollChild( final TrollChild child,final int classnum ) {
@@ -68,7 +68,7 @@ public class WndTrollChild extends Window {
 		add(titlebar);
 
 
-		if (hasaccepted) {
+		if (firsttime == true) {
 
 
 			switch (classnum) {
@@ -85,10 +85,16 @@ public class WndTrollChild extends Window {
 				case 3:
 					msgtype = "message_rogue";
 					break;
+				case 4:
+					msgtype = "message_huntress";
+					break;
+				case 5:
+					msgtype = "message_zealot";
+					break;
 			}
 
 		}
-		else if (TrollChild.reward != null){
+		else if (TrollChild.Quest.given == true){
 			switch (classnum) {
 				case 1:
 				default:
@@ -100,6 +106,12 @@ public class WndTrollChild extends Window {
 					break;
 				case 3:
 					msgtype = "completedmessage_rogue";
+					break;
+				case 4:
+					msgtype = "completedmessage_huntress";
+					break;
+				case 5:
+					msgtype = "completedmessage_zealot";
 					break;
 			}
 		}
@@ -131,11 +143,41 @@ public class WndTrollChild extends Window {
 			add(btnReward);
 			resize(WIDTH, (int) btnReward.bottom());
 		}
+		else {
+
+			RedButton btnAccept = new RedButton(Messages.get(this, "accept")) {
+				@Override
+				protected void onClick() {
+					hide();
+					child.accept();
+				}
+
+
+			};
+
+			RedButton btnDeny = new RedButton(Messages.get(this, "deny")) {
+				@Override
+				protected void onClick() {
+					hide();
+				}
+
+
+			};
+
+			btnAccept.setRect(0, btnAccept.bottom() + message.bottom() + GAP, WIDTH/2, BTN_HEIGHT);
+			add(btnAccept);
+			btnDeny.setRect(60, btnDeny.bottom() + message.bottom() + GAP, WIDTH/2, BTN_HEIGHT);
+			add(btnDeny);
+			resize(WIDTH, (int) btnDeny.bottom());
+		}
+
+
 
 
 
 
 	}
+
 
 		private void takeReward( TrollChild child, Item reward ) {
 

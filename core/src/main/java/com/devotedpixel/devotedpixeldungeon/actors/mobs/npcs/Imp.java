@@ -29,11 +29,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Golem;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Trapper;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Giant;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.DwarfToken;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
-import com.shatteredpixel.shatteredpixeldungeon.levels.CityLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ImpSprite;
@@ -198,7 +200,7 @@ public class Imp extends NPC {
 			}
 		}
 		
-		public static void spawn( CityLevel level ) {
+		public static void spawn( Level level ) {
 			if (!spawned && Dungeon.depth > 16 && Random.Int( 20 - Dungeon.depth ) == 0) {
 				
 				Imp npc = new Imp();
@@ -241,8 +243,8 @@ public class Imp extends NPC {
 		
 		public static void process( Mob mob ) {
 			if (spawned && given && !completed && Dungeon.depth != 20) {
-				if ((alternative && mob instanceof Monk) ||
-					(!alternative && mob instanceof Golem)) {
+				if ((alternative && mob instanceof Monk || mob instanceof Trapper) ||
+					(!alternative && mob instanceof Golem || mob instanceof Giant)) {
 					
 					Dungeon.level.drop( new DwarfToken(), mob.pos ).sprite.drop();
 				}

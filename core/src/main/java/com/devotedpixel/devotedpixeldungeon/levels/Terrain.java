@@ -58,6 +58,8 @@ public class Terrain {
 	public static final int ALCHEMY			= 28;
 
 	public static final int WATER		    = 29;
+
+	//public static final int GRASS_PLATFORM		= 20;
 	
 	public static final int PASSABLE		= 0x01;
 	public static final int LOS_BLOCKING	= 0x02;

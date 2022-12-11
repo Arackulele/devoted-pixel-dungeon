@@ -121,7 +121,9 @@ public abstract class RegularLevel extends Level {
 		for (int i = 0; i < standards; i++) {
 			StandardRoom s;
 			do {
-				s = StandardRoom.createRoom();
+				if ( this instanceof ColdhouseLevel || this instanceof GardenLevel || this instanceof ForgeLevel || this instanceof CitadelLevel) s = StandardRoom.createAltRoom();
+				else s = StandardRoom.createRoom();
+
 			} while (!s.setSizeCat( standards-i ));
 			i += s.sizeCat.roomValue-1;
 			initRooms.add(s);

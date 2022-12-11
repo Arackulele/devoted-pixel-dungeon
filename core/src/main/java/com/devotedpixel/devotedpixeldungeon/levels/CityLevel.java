@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.TrollChild;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.CityPainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
@@ -80,7 +81,16 @@ public class CityLevel extends RegularLevel {
 		//2 to 3, average 2.33
 		return 2 + Random.chances(new float[]{2, 1});
 	}
-	
+
+	@Override
+	protected void createItems() {
+
+
+		TrollChild.Quest.spawn(this);
+
+		super.createItems();
+	}
+
 	@Override
 	public String tilesTex() {
 		return Assets.Environment.TILES_CITY;

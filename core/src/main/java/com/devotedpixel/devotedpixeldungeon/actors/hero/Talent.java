@@ -389,7 +389,7 @@ public enum Talent {
 			Buff.detach(hero, Bleeding.class);
 			if (hero.pointsInTalent(BLESSED_MEAL) == 2) {
 				Buff.detach(hero, Blindness.class);
-				Buff.detach(hero, Drowsy.class);
+				//Buff.detach(hero, Drowsy.class);
 				Buff.detach(hero, Slow.class);
 				Buff.detach(hero, Vertigo.class);
 				Buff.detach(hero, Degrade.class);

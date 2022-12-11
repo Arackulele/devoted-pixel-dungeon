@@ -26,6 +26,9 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.StaffSplinter;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Sungrass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
@@ -42,31 +45,39 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.En
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.FinalPrayer;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.WealAndWoe;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.HellsEye;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.*;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KingsCrown;
 import com.shatteredpixel.shatteredpixeldungeon.items.TengusMask;
+import com.shatteredpixel.shatteredpixeldungeon.items.RoyalSeal;
+import com.shatteredpixel.shatteredpixeldungeon.items.Meal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.BloodVial;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfOvergrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRetribution;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.SoulgemRing;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.DeathStick;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.SoulgemRing;
+import com.shatteredpixel.shatteredpixeldungeon.items.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Gild;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Sharanga;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Rapier;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Excalibur;
@@ -76,7 +87,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortswor
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.HolyWater;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Gungnir;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.FeatherFall;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
 
@@ -95,6 +106,32 @@ public enum HeroClass {
 	}
 
 	public void initHero( Hero hero ) {
+
+		if (DeviceCompat.isDebug()) {
+			ScrollOfUpgrade splinter = new ScrollOfUpgrade();
+			splinter.quantity(99).collect();
+
+			FeatherFall fall = new FeatherFall();
+			fall.quantity(99).collect();
+
+			DeathStick missile = new DeathStick();
+			missile.quantity(1).collect();
+			missile.identify();
+
+			PotionOfExperience ex = new PotionOfExperience();
+			ex.quantity(99).collect();
+			ex.identify();
+
+			PotionOfHealing he = new PotionOfHealing();
+			he.quantity(99).collect();
+			he.identify();
+
+			TengusMask res = new TengusMask();
+			res.quantity(1).collect();
+
+			RoyalSeal ror = new RoyalSeal();
+			ror.quantity(1).collect();
+		}
 
 		hero.heroClass = this;
 		Talent.initClassTalents(hero);
@@ -164,8 +201,6 @@ public enum HeroClass {
 		stones.quantity(3).collect();
 		Dungeon.quickslot.setSlot(0, stones);
 
-		Gungnir stick = new Gungnir();
-		stick.quantity(1).collect();
 
 		if (hero.belongings.armor != null){
 			hero.belongings.armor.affixSeal(new BrokenSeal());
@@ -198,6 +233,8 @@ public enum HeroClass {
 
 		ThrowingKnife knives = new ThrowingKnife();
 		knives.quantity(3).collect();
+
+
 
 		Dungeon.quickslot.setSlot(0, cloak);
 		Dungeon.quickslot.setSlot(1, knives);

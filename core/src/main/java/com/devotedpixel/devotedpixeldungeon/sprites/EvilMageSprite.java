@@ -24,6 +24,11 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.TextureFilm;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.EvilMage;
+import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.watabou.noosa.TextureFilm;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.Callback;
 
 public class EvilMageSprite extends MobSprite {
 
@@ -33,22 +38,49 @@ public class EvilMageSprite extends MobSprite {
 		
 		texture( Assets.Sprites.EVILMAGE );
 		
-		TextureFilm frames = new TextureFilm( texture, 9, 14 );
+		TextureFilm frames = new TextureFilm( texture, 10, 16 );
 
 		idle = new Animation( 2, true );
-		idle.frames( frames, 0, 0, 0 );
+		idle.frames( frames, 0, 1, 2, 3, 4 );
 
 		run = new Animation( 12, true );
-		run.frames( frames, 1, 2, 1, 2 );
+		run.frames( frames, 9, 10, 11, 12 );
 
 		attack = new Animation( 12, false );
-		attack.frames( frames, 3, 3, 4, 0 );
+		attack.frames( frames, 5, 6, 7, 8 );
 
+		zap = attack.clone();
 
 		die = new Animation( 15, false );
-		die.frames( frames, 0, 5, 5, 5 );
+		die.frames( frames, 0, 13, 14, 15, 16 );
 		
 		play( idle );
+	}
+
+	public void zap( int cell ) {
+
+		turnTo( ch.pos , cell );
+		play( zap );
+
+		MagicMissile.boltFromChar( parent,
+				MagicMissile.SHADOW,
+				this,
+				cell,
+				new Callback() {
+					@Override
+					public void call() {
+						((EvilMage)ch).onZapComplete();
+					}
+				} );
+		Sample.INSTANCE.play( Assets.Sounds.ZAP );
+	}
+
+	@Override
+	public void onComplete( Animation anim ) {
+		if (anim == zap) {
+			idle();
+		}
+		super.onComplete( anim );
 	}
 
 

@@ -33,8 +33,11 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Chill;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Lightning;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfFrost;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ForgeBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Embers;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
@@ -44,6 +47,7 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ElementalSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CoalElementalSprite;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -227,6 +231,192 @@ public abstract class Elemental extends Mob {
 				Buff.affect( enemy, Burning.class ).reignite( enemy, 4f );
 			}
 			if (enemy.sprite.visible) Splash.at( enemy.sprite.center(), sprite.blood(), 5);
+		}
+	}
+
+	public static class CoalElemental extends FireElemental {
+
+
+		{
+			spriteClass = CoalElementalSprite.class;
+
+			HP = HT = 50;
+			defenseSkill = 17;
+
+			if (Dungeon.level instanceof ForgeBossLevel) {
+
+				maxLvl = -2;
+
+			}
+			else {
+				EXP = 9;
+				maxLvl = 17;
+
+				loot = Generator.Category.WAND;
+				lootChance = 0.03f; //initially, see lootChance()
+			}
+
+			properties.add( Property.FIERY );
+
+			rangedCooldown = Integer.MAX_VALUE;
+
+			harmfulBuffs.add( com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost.class );
+			harmfulBuffs.add( Chill.class );
+		}
+
+		private int pumpedUp;
+
+		@Override
+		protected boolean canAttack( Char enemy ) {
+			if (pumpedUp > 0){
+				//we check both from and to in this case as projectile logic isn't always symmetrical.
+				//this helps trim out BS edge-cases
+				return Dungeon.level.distance(enemy.pos, pos) <= 2
+						&& new Ballistica( pos, enemy.pos, Ballistica.PROJECTILE).collisionPos == enemy.pos
+						&& new Ballistica( enemy.pos, pos, Ballistica.PROJECTILE).collisionPos == pos;
+			} else {
+				return super.canAttack(enemy);
+			}
+		}
+
+		@Override
+		public float lootChance() {
+			//each drop makes future drops 1/3 as likely
+			// so loot chance looks like: 1/33, 1/100, 1/300, 1/900, etc.
+			return super.lootChance() * (float)Math.pow(1/3f, Dungeon.LimitedDrops.SHAMAN_WAND.count);
+		}
+
+		@Override
+		public Item createLoot() {
+			Dungeon.LimitedDrops.SHAMAN_WAND.count++;
+			return super.createLoot();
+		}
+
+		@Override
+		public void updateSpriteState() {
+			super.updateSpriteState();
+
+			if (pumpedUp > 0){
+				((CoalElementalSprite)sprite).pumpUp( pumpedUp );
+			}
+		}
+		@Override
+		public int damageRoll() {
+
+			if (pumpedUp > 0) {
+				pumpedUp = 0;
+				return Random.NormalIntRange( 20, 40 );
+			}
+
+			else return Random.NormalIntRange( 2, 30 );
+		}
+
+		@Override
+		protected boolean doAttack( Char enemy ) {
+			if (pumpedUp == 1) {
+				pumpedUp++;
+				((CoalElementalSprite)sprite).pumpUp( pumpedUp );
+
+				spend( attackDelay() );
+
+				return true;
+			} else if (pumpedUp >= 2 || Random.Int(2) > 0) {
+
+				boolean visible = Dungeon.level.heroFOV[pos];
+
+				if (visible) {
+					if (pumpedUp >= 2) {
+						((CoalElementalSprite) sprite).pumpAttack();
+					} else {
+						sprite.attack(enemy.pos);
+					}
+				} else {
+					if (pumpedUp >= 2){
+						((CoalElementalSprite)sprite).triggerEmitters();
+					}
+					attack( enemy );
+					Invisibility.dispel(this);
+					spend( attackDelay() );
+				}
+
+				return !visible;
+
+			} else {
+
+
+					pumpedUp++;
+					spend( attackDelay() );
+
+				((CoalElementalSprite)sprite).pumpUp( pumpedUp );
+
+
+
+				return true;
+			}
+		}
+
+		@Override
+		public boolean attack( Char enemy, float dmgMulti, float dmgBonus, float accMulti ) {
+			boolean result = super.attack( enemy, dmgMulti, dmgBonus, accMulti );
+			if (pumpedUp > 0) {
+				pumpedUp = 0;
+
+			}
+			return result;
+		}
+
+		ForgeBossLevel level;
+
+		@Override
+		public float speed() {
+			float newspeed = 1;
+			if (Dungeon.level instanceof ForgeBossLevel)
+			{
+				level = (ForgeBossLevel)Dungeon.level;
+				newspeed = 2f;
+			}
+			return super.speed() * newspeed;
+		}
+
+		@Override
+		protected boolean getCloser( int target ) {
+
+			if (Dungeon.level instanceof ForgeBossLevel)
+			{
+
+				level = (ForgeBossLevel)Dungeon.level;
+
+				Mob golem = level.boss;
+				target = golem.pos;
+
+			}
+
+			if (pumpedUp != 0) {
+				pumpedUp = 0;
+				sprite.idle();
+			}
+
+
+
+			return super.getCloser( target );
+		}
+
+		@Override
+		protected boolean getFurther(int target) {
+			if (pumpedUp != 0) {
+				pumpedUp = 0;
+				sprite.idle();
+			}
+			return super.getFurther( target );
+		}
+		@Override
+		public int attackSkill( Char target ) {
+			return 20;
+		}
+
+		@Override
+		public int drRoll() {
+			return Random.NormalIntRange(0, 5);
 		}
 	}
 	

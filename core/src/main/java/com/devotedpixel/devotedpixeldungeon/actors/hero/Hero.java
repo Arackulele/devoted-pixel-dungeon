@@ -25,6 +25,9 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Bones;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.BloodVial;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Leader;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.SoulgemRing;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
@@ -42,12 +45,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Wrath;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RingOfSouls;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Combo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Drowsy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Foresight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.HoldFast;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
@@ -657,7 +662,23 @@ public class Hero extends Char {
 	
 	@Override
 	public boolean act() {
-		
+
+		BloodVial vial = belongings.getItem(BloodVial.class);
+		if (vial != null) {
+			vial.getcharge();
+			if (vial.BloodVialEmpty == true) vial.defaultAction = BloodVial.AC_STAB;
+			else vial.defaultAction = BloodVial.AC_DRINK;
+		}
+
+		SoulgemRing ring = belongings.getItem(SoulgemRing.class);
+		if (ring != null && ring.isEquipped(this))
+		{
+			ring.identify();
+			RingOfSouls.setLvl(ring.level());
+			Buff.affect(this, RingOfSouls.class);
+		}
+		else Buff.detach(this, RingOfSouls.class);
+
 		//calls to dungeon.observe will also update hero's local FOV.
 		fieldOfView = Dungeon.level.heroFOV;
 
@@ -1169,6 +1190,9 @@ public class Hero extends Char {
 	@Override
 	public int attackProc( final Char enemy, int damage ) {
 		damage = super.attackProc( enemy, damage );
+
+		if (buff(AnkhInvulnerability.class) != null && hasTalent(Talent.ZEALOTS_WRATH)) Buff.affect(enemy, Bleeding.class).set((int)(damage*(0.1*pointsInTalent(Talent.ZEALOTS_WRATH))));
+
 		
 		KindOfWeapon wep = belongings.weapon();
 
@@ -1250,8 +1274,8 @@ public class Hero extends Char {
 
 		}
 
-		if (pointsInTalent(Talent.VISIBLE_POWER) != 0 && src instanceof Mob){
-			if (dmg<=HT/10) Buff.affect(this, ArtifactRecharge.class).set( 2 + 4*pointsInTalent(Talent.VISIBLE_POWER) );
+		if (pointsInTalent(Talent.VISIBLE_POWER) != 0 && src instanceof Mob && dmg > 1){
+			Buff.affect(Dungeon.hero, Hunger.class).affectHunger(Dungeon.hero.pointsInTalent(Talent.VISIBLE_POWER)*1.5f);
 
 		}
 
@@ -1269,6 +1293,10 @@ public class Hero extends Char {
 			if (buff(ScrollOfChallenge.ChallengeArena.class) != null){
 				dmg *= 0.67f;
 			}
+			if (buff(Leader.LeaderArena.class) != null){
+				dmg *= 1.66f;
+			}
+
 
 		}
 
@@ -1646,7 +1674,8 @@ public class Hero extends Char {
 	public boolean isStarving() {
 		return Buff.affect(this, Hunger.class).isStarving();
 	}
-	
+
+	public boolean isHungry() { return Buff.affect(this, Hunger.class).isHungry(); }
 	@Override
 	public void add( Buff buff ) {
 

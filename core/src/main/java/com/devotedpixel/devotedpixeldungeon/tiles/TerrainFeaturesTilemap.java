@@ -27,6 +27,10 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.LastShopLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ColdhouseLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.GardenLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ForgeLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CitadelLevel;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.tweeners.ScaleTweener;
 import com.watabou.utils.PointF;
@@ -66,17 +70,58 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 
 		int stage = (Dungeon.depth-1)/5;
 		if (Dungeon.depth == 21 && Dungeon.level instanceof LastShopLevel) stage--;
-		if (tile == Terrain.HIGH_GRASS){
-			return 9 + 16*stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-		} else if (tile == Terrain.FURROWED_GRASS){
-			return 11 + 16*stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-		} else if (tile == Terrain.GRASS) {
-			return 13 + 16*stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-		} else if (tile == Terrain.EMBERS) {
-			return 9 * (16*5) + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-		}
 
-		return -1;
+		if (Dungeon.level instanceof ColdhouseLevel) {
+			if (tile == Terrain.HIGH_GRASS) {
+				return 9 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.FURROWED_GRASS) {
+				return 11 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.GRASS) {
+				return 13 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			}
+		}
+		else if (Dungeon.level instanceof ForgeLevel) {
+			if (tile == Terrain.HIGH_GRASS) {
+				return 9 + 16 * 8 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.FURROWED_GRASS) {
+				return 11 + 16 * 8 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.GRASS) {
+				return 13 + 16 * 8 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			}
+		}
+		else if (Dungeon.level instanceof GardenLevel) {
+			if (tile == Terrain.HIGH_GRASS) {
+				return 9 + 16 * 20 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.FURROWED_GRASS) {
+				return 11 + 16 * 20 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.GRASS) {
+				return 13 + 16 * 20 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			}
+		}
+		else if (Dungeon.level instanceof CitadelLevel) {
+			if (tile == Terrain.HIGH_GRASS) {
+				return 9 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.FURROWED_GRASS) {
+				return 11 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.GRASS) {
+				return 13 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			}
+		}
+			else {
+			if (tile == Terrain.HIGH_GRASS) {
+				return 9 + 16 * stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.FURROWED_GRASS) {
+				return 11 + 16 * stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.GRASS) {
+				return 13 + 16 * stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			}
+		}
+			 if (tile == Terrain.EMBERS) {
+				return 9 * (16 * 5) + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			}
+
+			return -1;
+
 	}
 
 	public static Image tile(int pos, int tile ) {

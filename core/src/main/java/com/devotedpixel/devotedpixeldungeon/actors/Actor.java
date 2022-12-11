@@ -20,7 +20,6 @@
  */
 
 package com.shatteredpixel.shatteredpixeldungeon.actors;
-
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;

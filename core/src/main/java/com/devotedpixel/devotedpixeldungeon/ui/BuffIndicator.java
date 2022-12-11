@@ -113,6 +113,7 @@ public class BuffIndicator extends Component {
 	public static final int WRATH       = 60;
 	public static final int DEMONENERGY  = 61;
 	public static final int WEAL  = 62;
+	public static final int ROS  = 63;
 
 	public static final int SIZE_SMALL  = 7;
 	public static final int SIZE_LARGE  = 16;

@@ -34,6 +34,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Shuriken;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingSpear;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Trident;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Gungnir;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Sharanga;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.noosa.Visual;
@@ -95,8 +97,10 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 		ANGULAR_SPEEDS.put(Kunai.class,         0);
 		ANGULAR_SPEEDS.put(Javelin.class,       0);
 		ANGULAR_SPEEDS.put(Trident.class,       0);
+		ANGULAR_SPEEDS.put(Gungnir.class,       0);
 		
 		ANGULAR_SPEEDS.put(SpiritBow.SpiritArrow.class,       0);
+		ANGULAR_SPEEDS.put(Sharanga.SpiritArrow.class,       0);
 		ANGULAR_SPEEDS.put(ScorpioSprite.ScorpioShot.class,   0);
 		
 		//720 is default

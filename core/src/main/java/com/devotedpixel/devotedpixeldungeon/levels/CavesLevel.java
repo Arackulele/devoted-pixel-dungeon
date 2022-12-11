@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.TrollChild;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.CavesPainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
@@ -103,7 +104,15 @@ public class CavesLevel extends RegularLevel {
 	public String waterTex() {
 		return Assets.Environment.WATER_CAVES;
 	}
-	
+
+	@Override
+	protected void createItems() {
+
+		TrollChild.Quest.spawn(this);
+
+		super.createItems();
+	}
+
 	@Override
 	protected Class<?>[] trapClasses() {
 		return new Class[]{

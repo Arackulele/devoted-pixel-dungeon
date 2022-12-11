@@ -49,11 +49,23 @@ public class AscensionChallenge extends Buff {
 		modifiers.put(Crab.class,           6f);
 		modifiers.put(Slime.class,          6f);
 
+		modifiers.put(Toad.class,            8f);
+		modifiers.put(Grub.class,            8f);
+		modifiers.put(ThornLasher.class,          7f);
+		modifiers.put(Butterfly.class,          6.5f);
+		modifiers.put(Druid.class,           6f);
+
 		modifiers.put(Skeleton.class,       5f);
 		modifiers.put(Thief.class,          5f);
 		modifiers.put(DM100.class,          4.5f);
 		modifiers.put(Guard.class,          4f);
 		modifiers.put(Necromancer.class,    4f);
+
+		modifiers.put(Frosthead.class,       5f);
+		modifiers.put(MeatRack.class,          5f);
+		modifiers.put(CM01.class,          4.5f);
+		modifiers.put(GlassKnight.class,          4.5f);
+		modifiers.put(LongLegs.class,          4f);
 
 		modifiers.put(Bat.class,            2.5f);
 		modifiers.put(Brute.class,          2.25f);
@@ -61,11 +73,23 @@ public class AscensionChallenge extends Buff {
 		modifiers.put(Spinner.class,        2f);
 		modifiers.put(DM200.class,          2f);
 
+		modifiers.put(GraniteTroll.class,            2.5f);
+		modifiers.put(TrollBrawler.class,          2.25f);
+		modifiers.put(TrollArcher.class,         2.25f);
+		modifiers.put(Elemental.class,        2f);
+		modifiers.put(RockGolem.class,          2f);
+
 		modifiers.put(Ghoul.class,          1.5f);
 		modifiers.put(Elemental.class,      1.5f);
 		modifiers.put(Warlock.class,        1.33f);
 		modifiers.put(Monk.class,           1.33f);
 		modifiers.put(Golem.class,          1.33f);
+
+		modifiers.put(Cultist.class,          1.5f);
+		modifiers.put(Leader.class,      1.5f);
+		modifiers.put(Giant.class,        1.33f);
+		modifiers.put(Trapper.class,           1.33f);
+		modifiers.put(Alchemist.class,          1.33f);
 
 		modifiers.put(RipperDemon.class,    1.2f);
 		modifiers.put(Succubus.class,       1.2f);

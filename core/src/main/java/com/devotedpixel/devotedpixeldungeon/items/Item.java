@@ -35,6 +35,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.SoulgemRing;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RingOfSouls;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -44,6 +48,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.InventoryPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
@@ -327,10 +332,15 @@ public class Item implements Bundlable {
 	public int level(){
 		return level;
 	}
+
+	public Belongings belongings;
 	
 	//returns the level of the item, after it may have been modified by temporary boosts/reductions
 	//note that not all item properties should care about buffs/debuffs! (e.g. str requirement)
 	public int buffedLvl(){
+
+
+
 		if (Dungeon.hero.buff( Degrade.class ) != null) {
 			return Degrade.reduceLevel(level());
 		}
@@ -338,10 +348,17 @@ public class Item implements Bundlable {
 		else if (Dungeon.hero.buff( Weal.class ) != null) {
 			return Weal.reduceLevel(level());
 		}
+		else if (Dungeon.hero.buff( RingOfSouls.class ) != null) {
+			if(this instanceof SoulgemRing) return level;
+			else if(this instanceof Scroll) return level;
+			else if(this instanceof Potion) return level;
+			else return RingOfSouls.reduceLevel(level());
+		}
 
 		else {
 			return level();
 		}
+
 	}
 
 	public void level( int value ){

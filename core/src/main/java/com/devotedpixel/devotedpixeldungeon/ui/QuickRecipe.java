@@ -42,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.CausticBrew;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.InfernalBrew;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.ShockingBrew;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfAquaticRejuvenation;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfOvergrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfArcaneArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfDragonsBlood;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfHoneyedHealing;
@@ -56,8 +57,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.ArcaneCatalyst;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.BeaconOfReturning;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.CurseInfusion;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Gild;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.FeatherFall;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.MagicalInfusion;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Harden;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.MagicalPorter;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.PhaseShift;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.ReclaimTrap;
@@ -370,6 +373,7 @@ public class QuickRecipe extends Component {
 				result.add(null);
 				result.add(new QuickRecipe(new ElixirOfHoneyedHealing.Recipe()));
 				result.add(new QuickRecipe(new ElixirOfAquaticRejuvenation.Recipe()));
+				result.add(new QuickRecipe(new ElixirOfOvergrowth.Recipe()));
 				result.add(new QuickRecipe(new ElixirOfMight.Recipe()));
 				result.add(new QuickRecipe(new ElixirOfDragonsBlood.Recipe()));
 				result.add(new QuickRecipe(new ElixirOfIcyTouch.Recipe()));
@@ -389,7 +393,9 @@ public class QuickRecipe extends Component {
 				result.add(null);
 				result.add(new QuickRecipe(new Alchemize.Recipe()));
 				result.add(new QuickRecipe(new MagicalInfusion.Recipe()));
+				result.add(new QuickRecipe(new Harden.Recipe()));
 				result.add(new QuickRecipe(new CurseInfusion.Recipe()));
+				result.add(new QuickRecipe(new Gild.Recipe()));
 				result.add(new QuickRecipe(new Recycle.Recipe()));
 				return result;
 		}

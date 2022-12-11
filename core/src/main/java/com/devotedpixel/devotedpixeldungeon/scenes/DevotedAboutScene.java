@@ -156,7 +156,7 @@ public class DevotedAboutScene extends PixelScene {
 				Window.TITLE_COLOR,
 				"Artist Credit",
 				null,
-				"TarzHel#2821(:soiled:) on discord for the Envoy Sprite",
+				"TarzHel#2821(:soiled:) on discord for the Envoy , Angel and Shranga Sprites\n\nCevin2006™ (◕‿◕)#7971 on discord for the new logo, thorn lasher, new evil sage, gnoll emperor and poison toad sprites",
 				null,
 				null);
 

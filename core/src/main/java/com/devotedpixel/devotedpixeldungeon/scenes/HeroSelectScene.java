@@ -39,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTextInput;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndRegion;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndChallenges;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHeroInfo;
@@ -364,7 +365,10 @@ public class HeroSelectScene extends PixelScene {
 			btnOptions.icon().hardlight(1f, 1.5f, 0.67f);
 		} else if (SPDSettings.challenges() != 0){
 			btnOptions.icon().hardlight(2f, 1.33f, 0.5f);
-		} else {
+		}  else if (SPDSettings.regiontamper() == true){
+		btnOptions.icon().hardlight(1.2f, 1.33f, 0.36f);
+	}
+	else {
 			btnOptions.icon().resetColor();
 		}
 	}
@@ -705,6 +709,24 @@ public class HeroSelectScene extends PixelScene {
 				add(dailyButton);
 				buttons.add(dailyButton);
 
+				StyledButton regionButton = new StyledButton(Chrome.Type.BLANK, Messages.get(WndRegion.class, "title"), 6){
+					@Override
+					protected void onClick() {
+						ShatteredPixelDungeon.scene().addToFront(new WndRegion(SPDSettings.challenges(), true) {
+							public void onBackPressed() {
+								super.onBackPressed();
+								icon(Icons.get(SPDSettings.regiontamper() ? Icons.REGION_ACTIVE : Icons.REGION));
+								updateOptionsColor();
+							}
+						} );
+					}
+				};
+				regionButton.leftJustify = true;
+				regionButton.icon(Icons.get(SPDSettings.regiontamper() ? Icons.REGION_ACTIVE : Icons.REGION));
+				add(regionButton);
+				buttons.add(regionButton);
+
+
 				StyledButton challengeButton = new StyledButton(Chrome.Type.BLANK, Messages.get(WndChallenges.class, "title"), 6){
 					@Override
 					protected void onClick() {
@@ -721,6 +743,8 @@ public class HeroSelectScene extends PixelScene {
 				challengeButton.icon(Icons.get(SPDSettings.challenges() > 0 ? Icons.CHALLENGE_ON : Icons.CHALLENGE_OFF));
 				add(challengeButton);
 				buttons.add(challengeButton);
+
+
 			}
 
 			for (int i = 1; i < buttons.size(); i++){

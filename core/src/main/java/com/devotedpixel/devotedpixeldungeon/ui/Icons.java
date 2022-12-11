@@ -65,6 +65,8 @@ public enum Icons {
 	RENAME_OFF,
 	RENAME_ON,
 	SEED,
+	REGION,
+	REGION_ACTIVE,
 	LEFTARROW,
 	RIGHTARROW,
 	CALENDAR,
@@ -230,6 +232,12 @@ public enum Icons {
 				break;
 			case RIGHTARROW:
 				icon.frame( icon.texture.uvRectBySize( 240, 32, 14, 8 ) );
+				break;
+			case REGION:
+				icon.frame( icon.texture.uvRectBySize( 227, 15, 15, 13 ) );
+				break;
+			case REGION_ACTIVE:
+				icon.frame( icon.texture.uvRectBySize( 213, 15, 15, 13 ) );
 				break;
 			case CALENDAR:
 				icon.frame( icon.texture.uvRectBySize( 240, 16, 15, 12 ) );

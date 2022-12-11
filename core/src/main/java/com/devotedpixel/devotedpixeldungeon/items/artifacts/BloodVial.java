@@ -72,7 +72,7 @@ public class BloodVial extends Artifact {
         exp = 0;
         levelCap = 10;
 
-        charge = 0;
+        charge = (1 + (level() / 3));
         partialCharge = 0;
         chargeCap = (1 + (level() / 3));
 
@@ -85,13 +85,11 @@ public class BloodVial extends Artifact {
 
     public static final String AC_DRINK = "DRINK";
     public static final String AC_STAB = "STAB";
-    public static final String COOLDOWN = "cooldown";
     private int damage;
     private Demon demon = null;
     private FriendlyEye eye = null;
 
     public int bloodvialcooldown;
-    public int wrathamount;
     @Override
     protected ArtifactBuff passiveBuff() {
         return new vialRecharge();
@@ -121,13 +119,24 @@ public class BloodVial extends Artifact {
         if (hero.hasTalent(Talent.CONJURE_BLOOD)) {
             BloodVial vial = hero.belongings.getItem(BloodVial.class);
             if (vial != null) {
-                if (hero.pointsInTalent(Talent.CONJURE_BLOOD) == 2) vial.charge();
-                else if (Random.Int(100) < 66) vial.charge();
+                if (hero.pointsInTalent(Talent.CONJURE_BLOOD) == 2) {
+                    vial.charge();
+                    vial.charge();
+                }
+                else if(hero.hasTalent(Talent.CONJURE_BLOOD)) vial.charge();
             }
         }
     }
+    public Boolean BloodVialEmpty;
+    public void getcharge()
+    {
+        if (this.charge > 0) BloodVialEmpty = false;
+                else BloodVialEmpty = true;
 
 
+    }
+
+    private int staling;
 
     public void charge()
     {
@@ -135,6 +144,7 @@ public class BloodVial extends Artifact {
     }
     @Override
     public void execute( Hero hero, String action ) {
+
 
         super.execute(hero, action);
 
@@ -163,15 +173,32 @@ public class BloodVial extends Artifact {
                     Sample.INSTANCE.play(Assets.Sounds.MELD);
                     Talent.onArtifactUsed(Dungeon.hero);
                     hero.sprite.operate(hero.pos);
-                    Buff.prolong(hero, AnkhInvulnerability.class, 2 + level());
+                    Buff.prolong(hero, AnkhInvulnerability.class, 2 + (int)(level()*(hero.pointsInTalent(Talent.INSTANT_GRATIFICATION)*0.5+1)));
                     charge--;
-                    bloodvialcooldown = 5 + level();
+
+                    boolean visible = false;
+                    boolean anymobs = false;
+
+                    for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+                        anymobs = true;
+                        if (Dungeon.level.heroFOV[mob.pos] ) {
+                            visible = true;
+                        }
+                    }
+
+                    if (visible == false) staling++;
+                    else staling = 0;
+
+                    int variableamt = 4+(staling * staling+3);
+
+                    if (anymobs == false) variableamt+=100;
+
+                    bloodvialcooldown = (int)(variableamt + hero.pointsInTalent(Talent.INSTANT_GRATIFICATION)*0.6 + level());
 
                     if (hero.pointsInTalent(Talent.DISTURBED_SENSES) != 0) {
                         if (hero.pointsInTalent(Talent.DISTURBED_SENSES) == 2)  Buff.affect(hero, Haste.class, 4);
-                         else if (Random.Int(10)>4)  Buff.affect(hero, Haste.class, 4);
+                         else Buff.affect(hero, Haste.class, 2);
                     }
-
                     if (hero.subClass == HeroSubClass.ARCHANGEL) {
 
                         ArrayList<Integer> respawnPoints = new ArrayList<>();
@@ -183,33 +210,34 @@ public class BloodVial extends Artifact {
                             }
                         }
 
-                        int index = Random.index( respawnPoints );
+
 
                         if (respawnPoints.size() > 0) {
+                            int index = Random.index( respawnPoints );
                             Demon mob = new Demon();
                             mob.summonDemon(hero);
                             GameScene.add(mob);
                             mob.pos = Random.element(spawnPoints);
                             ScrollOfTeleportation.appear(mob, respawnPoints.get(index));
+                            respawnPoints.remove( index );
                         }
                         if (respawnPoints.size() > 0) {
                         if (hero.pointsInTalent(Talent.DEMON_EYE) > 0) {
+                            int index = Random.index( respawnPoints );
                             FriendlyEye mob2 = new FriendlyEye();
                             mob2.summonDemon(hero);
                             GameScene.add( mob2 );
                             mob2.pos = Random.element(spawnPoints);
                             ScrollOfTeleportation.appear( mob2, respawnPoints.get( index ) );
+                            respawnPoints.remove( index );
                         }
 
                         }
-                        respawnPoints.remove( index );
+
                     }
 
-                    if (hero.pointsInTalent(Talent.INSTANT_GRATIFICATION) != 0) {
-                        if (hero.pointsInTalent(Talent.INSTANT_GRATIFICATION) == 2) {}
-                        else if(Random.Int(10)>5) hero.spend(1f);
-                    }
-                    else hero.spend(1f);
+
+                    hero.spend(1f);
                 }
 
             }
@@ -217,6 +245,7 @@ public class BloodVial extends Artifact {
         }
         else if (action.equals(AC_STAB)) {
 
+            updateQuickslot();
 
             if (bloodvialcooldown <= 0) {
                 if (!isEquipped(hero))
@@ -240,16 +269,15 @@ public class BloodVial extends Artifact {
                     if (hero.pointsInTalent(Talent.PAIN_IS_GAIN) != 0) {
                         Buff.affect(hero, Barrier.class).setShield(2 * hero.pointsInTalent(Talent.PAIN_IS_GAIN));
                     }
-                        if (hero.buff(Wrath.class) != null) wrathamount = (int)hero.buff(Wrath.class).visualcooldown();
 
-                        if (hero.subClass == HeroSubClass.DEVOTEE && wrathamount > 0){
+                        if (hero.subClass == HeroSubClass.DEVOTEE && hero.buff(Wrath.class) != null){
 
                             if (hero.hasTalent(Talent.DIVINE_PROTECTION))
                             {
-                                Buff.affect(hero, Bless.class,(int) (wrathamount*0.2)*hero.pointsInTalent(Talent.DIVINE_PROTECTION));
+                                Buff.affect(hero, Bless.class,(int) ( (int)hero.buff(Wrath.class).cooldown() *0.2)*hero.pointsInTalent(Talent.DIVINE_PROTECTION));
                             };
 
-                            Buff.affect(hero, Healing.class).setHeal(wrathamount,(float)wrathamount,0);
+                            Buff.affect(hero, Healing.class).setHeal( (int)hero.buff(Wrath.class).cooldown() , 3f ,0);
                             //for_talent
                             //Buff.affect(hero, ArtifactRecharge.class);
                             Buff.detach(hero, Wrath.class);
@@ -258,7 +286,7 @@ public class BloodVial extends Artifact {
                             for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
                                 if (Dungeon.level.heroFOV[mob.pos]) {
                                     //deals 10%HT, plus half of wrath
-                                    mob.damage(Math.round(mob.HT/10f + wrathamount/2), this);
+                                    mob.damage(Math.round(mob.HT/10f + (int)hero.buff(Wrath.class).cooldown()/2), this);
                                     if (hero.pointsInTalent(Talent.FACE_OF_DEATH) > 0) Buff.affect(mob, Charm.class, hero.pointsInTalent(Talent.FACE_OF_DEATH));
                                 }
                             }
@@ -272,10 +300,42 @@ public class BloodVial extends Artifact {
 
 
     }
+
+    private static String STALING = "STALING";
+    private static String COOLDOWN = "COOLDOWN";
+
+    private static String REALCHARGE = "REALCHARGE";
+    @Override
+    public void storeInBundle( Bundle bundle ) {
+
+        bundle.put(COOLDOWN, bloodvialcooldown);
+        bundle.put(STALING, staling);
+
+
+        //this is here because of some stupid bug where it just does not update the charge cap automatically in the restoure function, so that also resets the charge to 1
+        //so i have to manually save and apply it again later
+        bundle.put(REALCHARGE, charge);
+
+        super.storeInBundle(bundle);
+
+    }
+
+    @Override
+    public void restoreFromBundle( Bundle bundle ) {
+        super.restoreFromBundle(bundle);
+        chargeCap = (1 + (level() / 3));
+        charge = bundle.getInt( REALCHARGE );
+        staling = bundle.getInt( STALING );
+        bloodvialcooldown = bundle.getInt( COOLDOWN );
+
+        updateQuickslot();
+    }
+
     public class vialRecharge extends ArtifactBuff{
 
         @Override
         public boolean act() {
+            updateQuickslot();
             if (bloodvialcooldown > 0) {
                 updateQuickslot();
 
@@ -285,6 +345,7 @@ public class BloodVial extends Artifact {
                 exp-= 3+level()*7;
                 upgrade();
                 chargeCap = (1 + (level() / 3));
+                updateQuickslot();
             };
             spend( TICK );
             return true;

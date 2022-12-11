@@ -21,8 +21,20 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
+import com.watabou.utils.PathFinder;
+import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class Gungnir extends MissileWeapon {
 	
@@ -40,6 +52,57 @@ public class Gungnir extends MissileWeapon {
 	@Override
 	public int STRReq(int lvl) {
 		return STRReq(tier-3, lvl); //14 base strength req, down from 18
+	}
+
+	@Override
+	public int proc(Char attacker, Char defender, int damage) {
+		int level = Math.max( 0, this.buffedLvl() );
+
+		float plants = (1f + 0.1f*level);
+		if (Random.Float() < plants%1){
+			plants = (float)Math.ceil(plants);
+		} else {
+			plants = (float)Math.floor(plants);
+		}
+
+		if (plantGrass(defender.pos)){
+			plants--;
+			if (plants <= 0){
+				return damage;
+			}
+		}
+
+		ArrayList<Integer> positions = new ArrayList<>();
+		for (int i : PathFinder.NEIGHBOURS8){
+			if (defender.pos + i != attacker.pos) {
+				positions.add(defender.pos + i);
+			}
+		}
+		Random.shuffle( positions );
+
+		for (int i : positions){
+			if (plantGrass(i)){
+				plants--;
+				if (plants <= 0) {
+					return damage;
+				}
+			}
+		}
+
+		return super.proc(attacker, defender, damage);
+	}
+
+	private boolean plantGrass(int cell){
+		int t = Dungeon.level.map[cell];
+		if ((t == Terrain.EMPTY || t == Terrain.EMPTY_DECO || t == Terrain.EMBERS
+				|| t == Terrain.GRASS || t == Terrain.FURROWED_GRASS)
+				&& Dungeon.level.plants.get(cell) == null){
+			Level.set(cell, Terrain.HIGH_GRASS);
+			GameScene.updateMap(cell);
+			CellEmitter.get( cell ).burst( LeafParticle.LEVEL_SPECIFIC, 4 );
+			return true;
+		}
+		return false;
 	}
 	
 }

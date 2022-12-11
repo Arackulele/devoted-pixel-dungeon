@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.BlizzardBrew
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.CausticBrew;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.InfernalBrew;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.ShockingBrew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfOvergrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfAquaticRejuvenation;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfArcaneArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfDragonsBlood;
@@ -43,11 +44,13 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfTo
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.ExoticPotion;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Harden;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.Alchemize;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.AquaBlast;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.ArcaneCatalyst;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.BeaconOfReturning;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.CurseInfusion;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Gild;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.FeatherFall;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.MagicalInfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.MagicalPorter;
@@ -187,6 +190,7 @@ public abstract class Recipe {
 		new ArcaneCatalyst.Recipe(),
 		new ElixirOfArcaneArmor.Recipe(),
 		new ElixirOfAquaticRejuvenation.Recipe(),
+		new ElixirOfOvergrowth.Recipe(),
 		new ElixirOfDragonsBlood.Recipe(),
 		new ElixirOfIcyTouch.Recipe(),
 		new ElixirOfMight.Recipe(),
@@ -198,6 +202,7 @@ public abstract class Recipe {
 		new CausticBrew.Recipe(),
 		new AquaBlast.Recipe(),
 		new BeaconOfReturning.Recipe(),
+		new Gild.Recipe(),
 		new CurseInfusion.Recipe(),
 		new FeatherFall.Recipe(),
 		new MagicalInfusion.Recipe(),
@@ -207,6 +212,7 @@ public abstract class Recipe {
 		new Recycle.Recipe(),
 		new WildEnergy.Recipe(),
 		new TelekineticGrab.Recipe(),
+		new Harden.Recipe(),
 		new SummonElemental.Recipe(),
 		new StewedMeat.twoMeat()
 	};
