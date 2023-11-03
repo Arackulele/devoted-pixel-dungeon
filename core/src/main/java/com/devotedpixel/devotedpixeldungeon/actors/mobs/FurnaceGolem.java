@@ -296,6 +296,7 @@ public class FurnaceGolem extends Mob {
 
 	{
 		immunities.add(Sleep.class);
+		immunities.add(Paralysis.class);
 
 		resistances.add(Terror.class);
 		resistances.add(Charm.class);

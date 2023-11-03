@@ -55,7 +55,7 @@ public class Bestiary {
 							Grub.class));
 				} else {
 					return new ArrayList<>(Arrays.asList(
-							Rat.class, Rat.class, Rat.class,
+							ShadowStalker.class, Rat.class, Rat.class,
 							Snake.class));
 				}
 

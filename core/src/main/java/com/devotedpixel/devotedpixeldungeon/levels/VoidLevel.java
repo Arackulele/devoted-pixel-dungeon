@@ -27,7 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Torch;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.VoidPainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.DemonSpawnerRoom;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.AshenLungRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.BlazingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.CorrosionTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.CursingTrap;
@@ -80,7 +80,7 @@ public class VoidLevel extends RegularLevel {
 	protected ArrayList<Room> initRooms() {
 		ArrayList<Room> rooms = super.initRooms();
 
-		rooms.add(new DemonSpawnerRoom());
+		rooms.add(new AshenLungRoom());
 
 		return rooms;
 	}
@@ -180,11 +180,11 @@ public class VoidLevel extends RegularLevel {
 	}
 	
 	public static void addHallsVisuals( Level level, Group group ) {
-	//	for (int i=0; i < level.length(); i++) {
-	//		if (level.map[i] == Terrain.WATER) {
-	//			group.add( new Stream( i ) );
-	//		}
-	//	}
+		for (int i=0; i < level.length(); i++) {
+			if (level.map[i] == Terrain.WATER) {
+				group.add( new Stream( i ) );
+			}
+		}
 	}
 	
 	private static class Stream extends Group {
@@ -238,7 +238,7 @@ public class VoidLevel extends RegularLevel {
 		public FireParticle() {
 			super();
 			
-			color( 0xEE7722 );
+			color( 0x4b1c35 );
 			lifespan = 1f;
 			
 			acc.set( 0, +80 );
@@ -252,8 +252,8 @@ public class VoidLevel extends RegularLevel {
 			
 			left = lifespan;
 			
-			speed.set( 0, -40 );
-			size = 4;
+			speed.set( 0, -30 );
+			size = 3;
 		}
 		
 		@Override

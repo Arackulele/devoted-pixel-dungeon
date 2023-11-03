@@ -53,6 +53,8 @@ public class WndRegion extends Window {
 	private CheckBox cb3;
 
 	private CheckBox cb4;
+
+	private CheckBox cb5;
 	private boolean camefromrandom;
 
 	private boolean editable;
@@ -170,6 +172,27 @@ public class WndRegion extends Window {
 
 
 
+		cb5 = new CheckBox( Messages.titleCase(Messages.get(WndRegion.class, "region5")) );
+		cb5.checked( SPDSettings.Ash() != false );
+		cb5.active = editable;
+		pos += GAP;
+		cb5.setRect( 0, pos, WIDTH-16, BTN_HEIGHT );
+
+		add( cb5 );
+
+		IconButton info5 = new IconButton(Icons.get(Icons.INFO)){
+			@Override
+			protected void onClick() {
+				super.onClick();
+				ShatteredPixelDungeon.scene().add(
+						new WndMessage(Messages.get(WndRegion.class, "region5desc"))
+				);
+			}
+		};
+		info5.setRect(cb5.right(), pos, 16, BTN_HEIGHT);
+		add(info5);
+
+		pos = cb5.bottom();
 
 		RedButton Random = new RedButton(Messages.get(WndRegion.class, "random")) {
 			@Override
@@ -182,7 +205,7 @@ public class WndRegion extends Window {
 
 		};
 
-		Random.setRect(0, Random.bottom() + info4.bottom() + GAP, WIDTH, BTN_HEIGHT);
+		Random.setRect(0, Random.bottom() + info5.bottom() + GAP, WIDTH, BTN_HEIGHT);
 		add(Random);
 		resize(WIDTH, (int) Random.bottom());
 

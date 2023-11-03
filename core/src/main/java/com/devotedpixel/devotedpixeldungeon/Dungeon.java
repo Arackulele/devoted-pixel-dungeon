@@ -212,6 +212,7 @@ public class Dungeon {
 	public static boolean prisonalt;
 	public static boolean cavealt;
 	public static boolean cityalt;
+	public static boolean hallsalt;
 	
 	public static void init() {
 
@@ -292,6 +293,9 @@ public class Dungeon {
 	private static int prisonsrandom;
 	private static int caverandom;
 	private static int cityrandom;
+
+	private static int hallsrandom;
+
 	public static Level newLevel() {
 		Dungeon.level = null;
 		Actor.clear();
@@ -313,6 +317,8 @@ public class Dungeon {
 						caverandom = Random.Int(100);
 						prisonsrandom = Random.Int(100);
 						sewersrandom = Random.Int(100);
+						cityrandom = Random.Int(100);
+						hallsrandom = Random.Int(100);
 					}
 					else {
 						if (SPDSettings.forge()==true) caverandom = 1;
@@ -324,12 +330,15 @@ public class Dungeon {
 						if (SPDSettings.coldhouse()==true) prisonsrandom = 1;
 						else prisonsrandom = 99;
 
+						if (SPDSettings.Ash()==true) hallsrandom = 1;
+						else hallsrandom = 99;
+
 					}
 				case 2:
 				case 3:
 				case 4:
 					if (sewersrandom >= 51) {
-						level = new SewerLevel();
+						level = new VoidLevel();
 						seweralt = false;
 					}
 					else {
@@ -397,7 +406,14 @@ public class Dungeon {
 				case 22:
 				case 23:
 				case 24:
-					level = new HallsLevel();
+					if (hallsrandom >= 51) {
+						level = new HallsLevel();
+						hallsalt = false;
+					}
+					else {
+						level = new VoidLevel();
+						hallsalt = true;
+					}
 					break;
 				case 25:
 					level = new HallsBossLevel();
@@ -621,6 +637,7 @@ public class Dungeon {
 			bundle.put( ALT2, prisonalt );
 			bundle.put( ALT3, cavealt );
 			bundle.put( ALT4, cityalt );
+			bundle.put( ALT5, hallsalt );
 			bundle.put( SEED, seed );
 			bundle.put( CUSTOM_SEED, customSeedText );
 			bundle.put( DAILY, daily );
@@ -796,6 +813,7 @@ public class Dungeon {
 		prisonalt = bundle.getBoolean( ALT2 );
 		cavealt = bundle.getBoolean( ALT3 );
 		cityalt = bundle.getBoolean( ALT4 );
+		hallsalt = bundle.getBoolean( ALT5 );
 		sewersrandom = bundle.getInt(SEWERRANDOM);
 		prisonsrandom = bundle.getInt(PRISONSRANDOM);
 		depth = bundle.getInt( DEPTH );

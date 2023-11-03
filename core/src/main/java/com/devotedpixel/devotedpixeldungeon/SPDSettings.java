@@ -201,6 +201,8 @@ public class SPDSettings extends GameSettings {
 
 	public static final String CITADEL = "CITADEL";
 
+	public static final String ASH = "ASHEN";
+
 	public static final String REGIONTAMPER = "REGIONTAMPER";
 
 	public static final String COLDHOUSE = "COLDHOUSE";
@@ -253,6 +255,11 @@ public class SPDSettings extends GameSettings {
 
 	public static void putcitadel( boolean citadel ) {
 		put( CITADEL, citadel );
+	}
+
+	public static boolean Ash() { return getBoolean( ASH, false ); }
+	public static void putAsh( boolean Ash ) {
+		put( ASH, Ash );
 	}
 
 	public static boolean regiontamper() {

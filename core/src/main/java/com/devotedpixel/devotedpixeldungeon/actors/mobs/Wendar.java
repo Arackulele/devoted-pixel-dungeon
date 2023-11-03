@@ -150,6 +150,9 @@ public class Wendar extends Mob {
 	@Override
 	public int defenseProc( Char enemy, int damage ) {
 
+		LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
+		if (lock != null) lock.addTime(damage*2);
+
 		if (charge != 0)
 		{
 			charge = 0;

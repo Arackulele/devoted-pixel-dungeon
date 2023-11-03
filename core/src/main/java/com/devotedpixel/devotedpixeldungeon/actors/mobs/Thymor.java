@@ -142,6 +142,9 @@ public class Thymor extends Mob {
 	@Override
 	public void damage(int dmg, Object src) {
 
+		LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
+		if (lock != null) lock.addTime(dmg*2);
+
 		if (Dungeon.level instanceof CitadelBossLevel) level = (CitadelBossLevel)Dungeon.level;
 
 		super.damage(dmg/3, src);
@@ -171,6 +174,7 @@ public class Thymor extends Mob {
 
 	{
 		immunities.add(Sleep.class);
+		immunities.add(Paralysis.class);
 
 		resistances.add(Terror.class);
 		resistances.add(Charm.class);

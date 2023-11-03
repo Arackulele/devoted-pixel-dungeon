@@ -663,6 +663,7 @@ public class Hero extends Char {
 	@Override
 	public boolean act() {
 
+
 		BloodVial vial = belongings.getItem(BloodVial.class);
 		if (vial != null) {
 			vial.getcharge();

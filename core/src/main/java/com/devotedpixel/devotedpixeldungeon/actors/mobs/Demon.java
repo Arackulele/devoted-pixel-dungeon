@@ -49,22 +49,30 @@ public class Demon extends Mob {
 
 	}
 
-	private static final String HEROID	= "hero_id";
+	private static final String DAMAGETIMER	= "DAMAGETIMER";
 	private int heroID;
 	private Hero hero;
 
 	@Override
+	public void storeInBundle(Bundle bundle) {
+
+		super.storeInBundle(bundle);
+		bundle.put(DAMAGETIMER, damagetimer);
+
+	}
+
+	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		heroID = bundle.getInt( HEROID );
+		damagetimer = bundle.getInt( DAMAGETIMER );
 	}
 
 
 	public void summonDemon( Hero hero) {
 		this.hero = hero;
 		heroID = this.hero.id();
-		this.HP = hero.lvl*(5);
-		HT = hero.lvl*(5);
+		this.HP = hero.lvl*(4);
+		HT = hero.lvl*(4);
 	}
 
 	@Override
@@ -81,8 +89,19 @@ public class Demon extends Mob {
 		}
 	}
 
+	private int damagetimer = 20;
+
 	@Override
 	protected boolean act() {
+
+		if (damagetimer > 0) damagetimer--;
+		else {
+			damage( HT/20, this);
+
+		damagetimer = 20;
+		}
+
+
 
 			if (state == SLEEPING) state = WANDERING;
 
@@ -91,7 +110,7 @@ public class Demon extends Mob {
 
 	@Override
 	public int attackProc(Char enemy, int damage) {
-		Buff.affect(enemy, Vulnerable.class, 3f);
+		Dungeon.hero.attackProc(enemy, damage);
 		return super.attackProc(enemy, damage);
 	}
 
@@ -107,10 +126,13 @@ public class Demon extends Mob {
 
 	@Override
 	public int attackSkill( Char target ) {
-		return 10;
+		return 5+(Dungeon.hero.lvl*2);
 	}
 
-
+	@Override
+	public int defenseSkill( Char target ) {
+		return 5+(Dungeon.hero.lvl*2);
+	}
 
 
 

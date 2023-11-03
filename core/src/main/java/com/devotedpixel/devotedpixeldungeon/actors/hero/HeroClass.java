@@ -71,6 +71,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.DeathStick;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.SoulgemRing;
@@ -114,8 +115,8 @@ public enum HeroClass {
 			FeatherFall fall = new FeatherFall();
 			fall.quantity(99).collect();
 
-			DeathStick missile = new DeathStick();
-			missile.quantity(1).collect();
+			ScrollOfEnchantment missile = new ScrollOfEnchantment();
+			missile.quantity(99).collect();
 			missile.identify();
 
 			PotionOfExperience ex = new PotionOfExperience();

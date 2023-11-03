@@ -14,8 +14,8 @@ allprojects {
         appName = 'Devoted Pixel Dungeon'
         appPackageName = 'com.devotedpixel.devotedpixeldungeon'
 
-        appVersionCode = 677
-        appVersionName = '0.4.3'
+        appVersionCode = 678
+        appVersionName = '0.4.4'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
 

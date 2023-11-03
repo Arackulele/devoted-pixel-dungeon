@@ -71,6 +71,7 @@ public class Assets {
 		public static final String CITY_BOSS        = "environment/custom_tiles/city_boss.png";
 		public static final String CITADEL_BOSS       = "environment/custom_tiles/citadel_boss.png";
 		public static final String HALLS_SP         = "environment/custom_tiles/halls_special.png";
+		public static final String VOID_SP         = "environment/custom_tiles/void_special.png";
 		public static final String COLDHOUSE_BOSS        = "environment/custom_tiles/coldhouse_boss.png";
 	}
 	
@@ -302,6 +303,7 @@ public class Assets {
 		public static final String ALCHEMIST    = "sprites/alchemist.png";
 		public static final String STATUE   = "sprites/statue.png";
 		public static final String SUCCUBUS = "sprites/succubus.png";
+		public static final String STALKER = "sprites/stalker.png";
 		public static final String SCORPIO  = "sprites/scorpio.png";
 		public static final String FISTS    = "sprites/yog_fists.png";
 		public static final String YOG      = "sprites/yog.png";
@@ -313,6 +315,7 @@ public class Assets {
 		public static final String COURT    = "sprites/council.png";
 		public static final String GRANITETROLL    = "sprites/granite_troll.png";
 		public static final String COALELEMENTAL    = "sprites/CoalElemental.png";
+		public static final String GUSTBEING    = "sprites/gust_being.png";
 		public static final String TROLLARCHER    = "sprites/troll_archer.png";
 		public static final String ROCKGOLEM    = "sprites/rock_golem.png";
 		public static final String FURNACEGOLEM    = "sprites/furnace_golem.png";
@@ -336,6 +339,7 @@ public class Assets {
 		public static final String GIANT    = "sprites/giant.png";
 		public static final String RIPPER   = "sprites/ripper.png";
 		public static final String SPAWNER  = "sprites/spawner.png";
+		public static final String LUNG  = "sprites/ashen_lung.png";
 		public static final String DM100    = "sprites/dm100.png";
 		public static final String PYLON    = "sprites/pylon.png";
 		public static final String DM200    = "sprites/dm200.png";

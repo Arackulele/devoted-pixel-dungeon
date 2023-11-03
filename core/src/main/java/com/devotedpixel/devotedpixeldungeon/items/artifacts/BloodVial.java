@@ -254,7 +254,7 @@ public class BloodVial extends Artifact {
                 else if (charge > chargeCap) GLog.i(Messages.get(this, "no_charge"));
                 else if
                 (hero.hasTalent(Talent.NIHILISM)) {
-                        if (Random.Int(10)<=hero.pointsInTalent(Talent.NIHILISM)) damage = ((int)hero.lvl/2);
+                        if (Random.Int(10)<=hero.pointsInTalent(Talent.NIHILISM)) damage = ((int)hero.lvl/4);
                             else damage = (2 + hero.lvl);
                     }
                     else damage = (2 + hero.lvl);

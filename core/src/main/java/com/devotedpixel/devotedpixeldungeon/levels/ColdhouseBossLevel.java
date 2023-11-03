@@ -172,12 +172,14 @@ public class ColdhouseBossLevel extends Level {
 
 	}
 
-
+	private static final String KILLED = "KILLED";
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 
 		super.storeInBundle( bundle );
+
+		bundle.put( KILLED, killed );
 
 		bundle.put( BOSS, boss );
 
@@ -188,6 +190,8 @@ public class ColdhouseBossLevel extends Level {
 		super.restoreFromBundle(bundle);
 
 		boss = (Mob)bundle.get( BOSS );
+
+		killed = bundle.getBoolean( KILLED );
 
 		//pre-1.3.0 saves, modifies exit transition with custom size
 		if (bundle.contains("exit")){

@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.ColdhouseLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.GardenLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ForgeLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CitadelLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.VoidLevel;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.tweeners.ScaleTweener;
 import com.watabou.utils.PointF;
@@ -105,6 +106,15 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 				return 11 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 			} else if (tile == Terrain.GRASS) {
 				return 13 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			}
+		}
+		else if (Dungeon.level instanceof VoidLevel) {
+			if (tile == Terrain.HIGH_GRASS) {
+				return 9 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.FURROWED_GRASS) {
+				return 11 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.GRASS) {
+				return 13 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 			}
 		}
 			else {
