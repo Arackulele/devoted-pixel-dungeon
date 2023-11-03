@@ -606,6 +606,8 @@ public class Dungeon {
 	private static final String ALT3	= "alt3";
 
 	private static final String ALT4	= "alt4";
+
+	private static final String ALT5	= "alt5";
 	private static final String INIT_VER	= "init_ver";
 	private static final String VERSION		= "version";
 	private static final String SEED		= "seed";
