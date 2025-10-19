@@ -12,10 +12,10 @@ allprojects {
 
     ext {
         appName = 'Devoted Pixel Dungeon'
-        appPackageName = 'com.devotedpixel.devotedpixeldungeon'
+        appPackageName = 'com.arackulele.devotedpixeldungeon'
 
         appVersionCode = 678
-        appVersionName = '0.4.4'
+        appVersionName = '3.2.5'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
 
@@ -23,9 +23,9 @@ allprojects {
         appAndroidMinSDK = 14
         appAndroidTargetSDK = 31
 
-        gdxVersion = '1.11.0'
-        gdxControllersVersion = '2.2.3-SNAPSHOT'
-        robovmVersion = '2.3.16'
+        gdxVersion = '1.13.5' //using snapshot as 1.13.5 has issues with Android R8
+        gdxControllersVersion = '2.2.4'
+        robovmVersion = '2.3.23'
     }
     version = appVersionName
 

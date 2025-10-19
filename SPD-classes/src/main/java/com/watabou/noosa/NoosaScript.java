@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2022 Evan Debenham
+ * Copyright (C) 2014-2025 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import com.watabou.glwrap.Attribute;
 import com.watabou.glwrap.Quad;
 import com.watabou.glwrap.Uniform;
 import com.watabou.glwrap.Vertexbuffer;
+import com.watabou.utils.DeviceCompat;
 
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
@@ -166,12 +167,12 @@ public class NoosaScript extends Script {
 				//This fixes pixel scaling issues on some hidpi displays (mainly on macOS)
 				// because for some reason all other openGL operations work on virtual pixels
 				// but glScissor operations work on real pixels
-				float xScale = (Gdx.graphics.getBackBufferWidth() / (float)Game.width );
-				float yScale = ((Gdx.graphics.getBackBufferHeight()-Game.bottomInset) / (float)Game.height );
+				float xScale = DeviceCompat.getRealPixelScaleX();
+				float yScale = DeviceCompat.getRealPixelScaleY();
 
 				Gdx.gl20.glScissor(
 						Math.round(camera.x * xScale),
-						Math.round((Game.height - camera.screenHeight - camera.y) * yScale) + Game.bottomInset,
+						Math.round((Game.height - camera.screenHeight - camera.y) * yScale),
 						Math.round(camera.screenWidth * xScale),
 						Math.round(camera.screenHeight * yScale));
 			} else {

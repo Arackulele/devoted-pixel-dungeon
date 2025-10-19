@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2022 Evan Debenham
+ * Copyright (C) 2014-2025 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,6 +89,26 @@ public class TextureFilm {
 				add( i * cols + j, rect );
 			}
 		}
+	}
+
+	//creates a film for a texture with known size without needing to reference it
+	public TextureFilm( int txWidth, int txHeight, int width, int height){
+
+		texWidth = txWidth;
+		texHeight = txHeight;
+
+		float uw = (float)width / texWidth;
+		float vh = (float)height / texHeight;
+		int cols = texWidth / width;
+		int rows = texHeight / height;
+
+		for (int i=0; i < rows; i++) {
+			for (int j=0; j < cols; j++) {
+				RectF rect = new RectF( j * uw, i * vh, (j+1) * uw, (i+1) * vh );
+				add( i * cols + j, rect );
+			}
+		}
+
 	}
 	
 	public void add( Object id, RectF rect ) {

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2022 Evan Debenham
+ * Copyright (C) 2014-2025 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,12 @@
 package com.watabou.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.PixmapPacker;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.watabou.input.ControllerHandler;
 import com.watabou.noosa.Game;
 
 import java.util.HashMap;
@@ -33,14 +35,41 @@ import java.util.HashMap;
 public abstract class PlatformSupport {
 	
 	public abstract void updateDisplaySize();
+
+	public boolean supportsFullScreen(){
+		return true; //default
+	}
+
+	public static final int INSET_ALL = 3; //All insets, from hole punches to nav bars
+	public static final int INSET_LRG = 2; //Only big insets, full size notches and nav bars
+	public static final int INSET_BLK = 1; //only complete blocker assets like navbars
+
+	public RectF getSafeInsets( int level ){
+		return new RectF(
+				Gdx.graphics.getSafeInsetLeft(),
+				Gdx.graphics.getSafeInsetTop(),
+				Gdx.graphics.getSafeInsetRight(),
+				Gdx.graphics.getSafeInsetBottom()
+		);
+	}
+
+	//returns a display cutout (if one is present) in device pixels, or empty if none is present
+	public RectF getDisplayCutout(){
+		return new RectF();
+	}
 	
 	public abstract void updateSystemUI();
 
 	public abstract boolean connectedToUnmeteredNetwork();
 
+	public abstract boolean supportsVibration();
+
 	public void vibrate( int millis ){
-		//regular GDX vibration by default
-		Gdx.input.vibrate( millis );
+		if (ControllerHandler.isControllerConnected()) {
+			ControllerHandler.vibrate(millis);
+		} else {
+			Gdx.input.vibrate( millis );
+		}
 	}
 
 	public void setHonorSilentSwitch( boolean value ){
@@ -51,8 +80,9 @@ public abstract class PlatformSupport {
 		return Gdx.net.openURI( uri );
 	}
 
-	public void setOnscreenKeyboardVisible(boolean value){
-		Gdx.input.setOnscreenKeyboardVisible(value);
+	public void setOnscreenKeyboardVisible(boolean value, boolean multiline){
+		//by default ignore multiline
+		Gdx.input.setOnscreenKeyboardVisible(value, Input.OnscreenKeyboardType.Default);
 	}
 
 	//TODO should consider spinning this into its own class, rather than platform support getting ever bigger

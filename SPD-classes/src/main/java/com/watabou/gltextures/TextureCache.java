@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2022 Evan Debenham
+ * Copyright (C) 2014-2025 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ public class TextureCache {
 		} else {
 			
 			Pixmap pixmap =new Pixmap( 1, 1, Pixmap.Format.RGBA8888 );
-			// In the rest of the code ARGB is used
+			// convert from Noosa ARGB to libGdx RGBA
 			pixmap.setColor( (color << 8) | (color >>> 24) );
 			pixmap.fill();
 			
@@ -65,7 +65,7 @@ public class TextureCache {
 			
 			Pixmap pixmap = new Pixmap( colors.length, 1, Pixmap.Format.RGBA8888);
 			for (int i=0; i < colors.length; i++) {
-				// In the rest of the code ARGB is used
+				// convert from Noosa ARGB to libGdx RGBA
 				pixmap.drawPixel( i, 0, (colors[i] << 8) | (colors[i] >>> 24) );
 			}
 			SmartTexture tx = new SmartTexture( pixmap );
