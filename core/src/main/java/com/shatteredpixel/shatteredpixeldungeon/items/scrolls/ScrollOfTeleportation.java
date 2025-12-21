@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.VelTaleth;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -100,7 +101,7 @@ public class ScrollOfTeleportation extends Scroll {
 			return teleportInNonRegularLevel( ch, false );
 		}
 
-		if (Char.hasProp(ch, Char.Property.IMMOVABLE) || ch.isImmune(source)){
+		if ((Char.hasProp(ch, Char.Property.IMMOVABLE) || ch.isImmune(source)) && !(ch instanceof VelTaleth)){
 			GLog.w( Messages.get(ScrollOfTeleportation.class, "no_tele") );
 			return false;
 		}
@@ -214,7 +215,7 @@ public class ScrollOfTeleportation extends Scroll {
 	//prefers not seen(optional) > not visible > visible
 	private static boolean teleportInNonRegularLevel(Char ch, boolean preferNotSeen ){
 
-		if (Char.hasProp(ch, Char.Property.IMMOVABLE)){
+		if (Char.hasProp(ch, Char.Property.IMMOVABLE) && !(ch instanceof VelTaleth)){
 			GLog.w( Messages.get(ScrollOfTeleportation.class, "no_tele") );
 			return false;
 		}

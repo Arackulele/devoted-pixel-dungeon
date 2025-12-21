@@ -23,28 +23,32 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AscensionChallenge;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.*;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.ClericSpell;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.PhantomMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RevenantSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Callback;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class Revenant extends Banshee implements Callback {
 	
-	private static final float TIME_TO_ZAP	= 2f;
+	private static final float TIME_TO_ZAP	= 1f;
 	
 	{
 		spriteClass = RevenantSprite.class;
 
-		HP = HT = 17;
+		HP = HT = 38;
 		defenseSkill = 20;
 
 		EXP = 6;
@@ -85,6 +89,19 @@ public class Revenant extends Banshee implements Callback {
 		} else {
 			enemy.sprite.showStatus( CharSprite.NEUTRAL,  enemy.defenseVerb() );
 		}
+	}
+
+	@Override
+	public void damage(int dmg, Object src) {
+
+
+
+		int newHP = HP - dmg;
+		//Teleport away once at half HP
+		//This enemy would be much too easy otherwise
+		if ( HP * 2 > HT && newHP * 2 <= HT )ScrollOfTeleportation.teleportChar( this );
+
+		super.damage(dmg, src);
 	}
 	
 	@Override

@@ -39,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SageCorpseSprite;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSageCorpse;
 import com.watabou.noosa.Game;
@@ -215,35 +216,43 @@ public class SageCorpse extends NPC {
 						@Override
 						public void hide() {
 							super.hide();
+
 							GameScene.show(new WndQuest(SageCorpse.this, msg2Final));
+
+							Item m;
+
+							switch (Quest.type)
+							{
+								default:
+								case 1:
+									m = new WandOfMalaise();
+									break;
+
+								case 2:
+									m = new EndothermicRing();
+									break;
+
+								case 3:
+									m = new CloakOfThorns();
+									break;
+
+							}
+
+							m.identify();
+
+							if (m.doPickUp( Dungeon.hero )) {
+								GLog.i( Messages.capitalize(Messages.get(Dungeon.hero, "you_now_have", m.name())) );
+							} else {
+								Dungeon.level.drop( m, Dungeon.hero.pos ).sprite.drop();
+							}
+
+							Quest.given = true;
 						}
 					});
 				}
 			});
 
-			Item m;
 
-			switch (Quest.type)
-			{
-				default:
-				case 1:
-					m = new WandOfMalaise();
-					break;
-
-				case 2:
-					m = new EndothermicRing();
-					break;
-
-				case 3:
-					m = new CloakOfThorns();
-					break;
-
-			}
-
-			m.collect();
-			m.identify();
-
-			Quest.given = true;
 		}
 
 		return true;

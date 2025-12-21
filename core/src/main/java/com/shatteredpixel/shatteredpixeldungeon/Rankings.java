@@ -111,6 +111,7 @@ public enum Rankings {
 		rec.score       = calculateScore();
 		rec.customSeed  = Dungeon.customSeedText;
 		rec.daily       = Dungeon.daily;
+		rec.finalregion = Dungeon.hallsalt;
 
 		Badges.validateHighScore( rec.score );
 		
@@ -461,6 +462,9 @@ public enum Rankings {
 		private static final String SEED    = "custom_seed";
 		private static final String DAILY   = "daily";
 
+		private static final String FINALREGION   = "finalregion";
+
+
 		private static final String DATE    = "date";
 		private static final String VERSION = "version";
 
@@ -472,6 +476,7 @@ public enum Rankings {
 		public int herolevel;
 		public int depth;
 		public boolean ascending;
+		public boolean finalregion;
 
 		public Bundle gameData;
 		public String gameID;
@@ -488,9 +493,11 @@ public enum Rankings {
 		public String desc(){
 			if (win){
 				if (ascending){
-					return Messages.get(this, "ascended");
+					if (finalregion)return Messages.get(this, "ascendedalt");
+					else return Messages.get(this, "ascended");
 				} else {
-					return Messages.get(this, "won");
+					if (finalregion) return Messages.get(this, "wonalt");
+					else return Messages.get(this, "won");
 				}
 			} else if (cause == null) {
 				return Messages.get(this, "something");
@@ -517,6 +524,8 @@ public enum Rankings {
 			score	    = bundle.getInt( SCORE );
 			customSeed  = bundle.getString( SEED );
 			daily       = bundle.getBoolean( DAILY );
+			finalregion = bundle.getBoolean( FINALREGION );
+
 
 			heroClass	= bundle.getEnum( CLASS, HeroClass.class );
 			armorTier	= bundle.getInt( TIER );
@@ -547,6 +556,7 @@ public enum Rankings {
 			bundle.put( SCORE, score );
 			bundle.put( SEED, customSeed );
 			bundle.put( DAILY, daily );
+			bundle.put( FINALREGION, finalregion );
 
 			bundle.put( CLASS, heroClass );
 			bundle.put( TIER, armorTier );

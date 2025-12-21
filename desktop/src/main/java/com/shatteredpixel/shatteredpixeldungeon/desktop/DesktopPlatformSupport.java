@@ -92,7 +92,7 @@ public class DesktopPlatformSupport extends PlatformSupport {
 			}
 		} );
 	}
-
+	
 	@Override
 	public boolean connectedToUnmeteredNetwork() {
 		return true; //no easy way to check this in desktop, just assume user doesn't care
@@ -105,12 +105,12 @@ public class DesktopPlatformSupport extends PlatformSupport {
 	}
 
 	/* FONT SUPPORT */
-
+	
 	//custom pixel font, for use with Latin and Cyrillic languages
 	private static FreeTypeFontGenerator basicFontGenerator;
 	//droid sans fallback, for asian fonts
 	private static FreeTypeFontGenerator asianFontGenerator;
-
+	
 	@Override
 	public void setupFontGenerators(int pageSize, boolean systemfont) {
 		//don't bother doing anything if nothing has changed
@@ -129,13 +129,13 @@ public class DesktopPlatformSupport extends PlatformSupport {
 			basicFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/pixel_font.ttf"));
 			asianFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/droid_sans.ttf"));
 		}
-
+		
 		fonts.put(basicFontGenerator, new HashMap<>());
 		fonts.put(asianFontGenerator, new HashMap<>());
-
+		
 		packer = new PixmapPacker(pageSize, pageSize, Pixmap.Format.RGBA8888, 1, false);
 	}
-
+	
 	private static Matcher asianMatcher = Pattern.compile("\\p{InHangul_Syllables}|" +
 			"\\p{InCJK_Unified_Ideographs}|\\p{InCJK_Symbols_and_Punctuation}|\\p{InHalfwidth_and_Fullwidth_Forms}|" +
 			"\\p{InHiragana}|\\p{InKatakana}").matcher("");
@@ -148,7 +148,7 @@ public class DesktopPlatformSupport extends PlatformSupport {
 			return basicFontGenerator;
 		}
 	}
-
+	
 	//splits on newline (for layout), chinese/japanese (for font choice), and '_'/'**' (for highlighting)
 	private Pattern regularsplitter = Pattern.compile(
 			"(?<=\n)|(?=\n)|(?<=_)|(?=_)|(?<=\\*\\*)|(?=\\*\\*)|" +
@@ -156,7 +156,7 @@ public class DesktopPlatformSupport extends PlatformSupport {
 					"(?<=\\p{InKatakana})|(?=\\p{InKatakana})|" +
 					"(?<=\\p{InCJK_Unified_Ideographs})|(?=\\p{InCJK_Unified_Ideographs})|" +
 					"(?<=\\p{InCJK_Symbols_and_Punctuation})|(?=\\p{InCJK_Symbols_and_Punctuation})");
-
+	
 	//additionally splits on spaces, so that each word can be laid out individually
 	private Pattern regularsplitterMultiline = Pattern.compile(
 			"(?<= )|(?= )|(?<=\n)|(?=\n)|(?<=_)|(?=_)|(?<=\\*\\*)|(?=\\*\\*)|" +
@@ -164,7 +164,7 @@ public class DesktopPlatformSupport extends PlatformSupport {
 					"(?<=\\p{InKatakana})|(?=\\p{InKatakana})|" +
 					"(?<=\\p{InCJK_Unified_Ideographs})|(?=\\p{InCJK_Unified_Ideographs})|" +
 					"(?<=\\p{InCJK_Symbols_and_Punctuation})|(?=\\p{InCJK_Symbols_and_Punctuation})");
-
+	
 	@Override
 	public String[] splitforTextBlock(String text, boolean multiline) {
 		if (multiline) {

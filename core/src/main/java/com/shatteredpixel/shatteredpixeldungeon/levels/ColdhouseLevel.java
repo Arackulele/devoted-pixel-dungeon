@@ -43,6 +43,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ShockingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.TeleportationTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ToxicTrap;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Music;
 import com.watabou.utils.Random;
@@ -90,6 +91,9 @@ public class ColdhouseLevel extends RegularLevel {
 	protected void createItems() {
 
 		//TrollChild.Quest.spawn(this);
+        addColdhouseVisuals(this);
+        buildFlagMaps();
+        cleanWalls();
 
 		super.createItems();
 	}
@@ -97,6 +101,7 @@ public class ColdhouseLevel extends RegularLevel {
 	@Override
 	protected void createMobs() {
 		SageCorpse.Quest.spawnSageCorpse(this, roomEntrance);
+		GameScene.updateMap();
 		super.createMobs();
 	}
 	
@@ -169,7 +174,6 @@ public class ColdhouseLevel extends RegularLevel {
 	
 	@Override
 	public Group addVisuals() {
-		addColdhouseVisuals(this);
 		super.addVisuals();
 		return visuals;
 	}
@@ -179,6 +183,7 @@ public class ColdhouseLevel extends RegularLevel {
 			if (level.map[i] == Terrain.REGION_DECO_ALT) {
 				level.map[i] = Terrain.CHASM;
 			}
+
 		}
 	}
 

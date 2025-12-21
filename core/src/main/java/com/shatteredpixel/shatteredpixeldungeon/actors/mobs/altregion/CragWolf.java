@@ -98,7 +98,7 @@ public class CragWolf extends Mob {
 			}
 			howlmeter = 0;
 			spend(2f);
-
+            return true;
 
 		}
 

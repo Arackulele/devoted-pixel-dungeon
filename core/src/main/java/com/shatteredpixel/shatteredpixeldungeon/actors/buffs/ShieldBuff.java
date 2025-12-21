@@ -61,6 +61,10 @@ public abstract class ShieldBuff extends Buff {
 	public int shielding(){
 		return shielding;
 	}
+
+    public void shielding(int i){
+        shielding += i;
+    }
 	
 	public void setShield( int shield ) {
 		if (this.shielding <= shield) this.shielding = shield;

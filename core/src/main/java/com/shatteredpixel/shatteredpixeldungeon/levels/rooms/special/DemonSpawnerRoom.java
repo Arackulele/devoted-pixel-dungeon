@@ -24,7 +24,10 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DemonSpawner;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.EldritchBrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
@@ -47,7 +50,9 @@ public class DemonSpawnerRoom extends SpecialRoom {
 		Door door = entrance();
 		door.set(Room.Door.Type.UNLOCKED);
 
-		DemonSpawner spawner = new DemonSpawner();
+		Mob spawner;
+        if (!Dungeon.hallsalt) spawner = new DemonSpawner();
+        else spawner = new EldritchBrain();
 		spawner.pos = cx + cy * level.width();
 		level.mobs.add( spawner );
 
@@ -82,7 +87,8 @@ public class DemonSpawnerRoom extends SpecialRoom {
 	public static class CustomFloor extends CustomTilemap {
 
 		{
-			texture = Assets.Environment.HALLS_SP;
+            if (!Dungeon.hallsalt)texture = Assets.Environment.HALLS_SP;
+            else texture = Assets.Environment.VOID_SP;
 		}
 
 		@Override
@@ -96,7 +102,7 @@ public class DemonSpawnerRoom extends SpecialRoom {
 					cell = tileX + (tileY + i / tileW) * Dungeon.level.width();
 				}
 
-				if (Dungeon.level.findMob(cell) instanceof DemonSpawner){
+				if ( Dungeon.level.findMob(cell) != null && Char.hasProp(Dungeon.level.findMob(cell), Char.Property.MINIBOSS) ){
 					data[i-1] = 5 + 4*8;
 					data[i] = 6 + 4*8;
 					data[i+1] = 7 + 4*8;

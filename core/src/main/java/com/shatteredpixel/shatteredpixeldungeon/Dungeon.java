@@ -201,6 +201,7 @@ public class Dungeon {
 	public static boolean prisonalt;
 	public static boolean cavealt;
     public static boolean cityalt;
+	public static boolean hallsalt;
 
 	//we initialize the seed separately so that things like interlevelscene can access it early
 	public static void initSeed(){
@@ -285,6 +286,7 @@ public class Dungeon {
 	private static int prisonsrandom;
 	private static int cavesrandom;
     private static int cityrandom;
+	private static int hallsrandom;
 
 	public static boolean levelHasBeenGenerated(int depth, int branch){
 		return generatedLevels.contains(depth + 1000*branch);
@@ -299,10 +301,29 @@ public class Dungeon {
 		if (branch == 0) {
 			switch (depth) {
 				case 1:
-					sewersrandom = Random.Int(100);
-					prisonsrandom = Random.Int(100);
-					cavesrandom = Random.Int(100);
-                    cityrandom = Random.Int(100);
+					if (SPDSettings.regiontamper()==false) {
+						sewersrandom = Random.Int(100);
+						prisonsrandom = Random.Int(100);
+						cavesrandom = Random.Int(100);
+						cityrandom = Random.Int(100);
+						hallsrandom = Random.Int(100);
+					}
+					else {
+						if (SPDSettings.gardens()==true) sewersrandom = 1;
+						else sewersrandom = 99;
+
+						if (SPDSettings.coldhouse()==true) prisonsrandom = 1;
+						else prisonsrandom = 99;
+
+						if (SPDSettings.forge()==true) cavesrandom = 1;
+						else cavesrandom = 99;
+
+						if (SPDSettings.citadel()==true) cityrandom = 1;
+						else cityrandom = 99;
+
+						if (SPDSettings.ashen()==true) hallsrandom = 1;
+						else hallsrandom = 99;
+					}
 				case 2:
 				case 3:
 				case 4:
@@ -362,26 +383,34 @@ public class Dungeon {
                         cityalt = false;
                     }
                     else {
-                        //ToDo: Replace with CitadelLevel
                         level = new CitadelLevel();
                         cityalt = true;
                     }
 					break;
 				case 20:
-                    if (cityalt == true) level = new ForgeBossLevel();
+                    if (cityalt == true) level = new CitadelBossLevel();
                     else level = new CityBossLevel();
 					break;
 				case 21:
 				case 22:
 				case 23:
 				case 24:
-					level = new HallsLevel();
+					if (hallsrandom >= 51) {
+						level = new HallsLevel();
+						hallsalt = false;
+					}
+					else {
+						level = new VoidLevel();
+						hallsalt = true;
+					}
 					break;
 				case 25:
-					level = new HallsBossLevel();
+					if (hallsalt) level = new VoidBossLevel();
+					else level = new HallsBossLevel();
 					break;
 				case 26:
-					level = new LastLevel();
+					if (hallsalt) level = new AltLastLevel();
+					else level = new LastLevel();
 					break;
 				default:
 					level = new DeadEndLevel();
@@ -395,6 +424,9 @@ public class Dungeon {
 					if (cavealt == true) level = new LavaLakeLevel();
 					else level = new MiningLevel();
 					break;
+                case 25:
+                    level = new VoidTrapLevel();
+                    break;
 				default:
 					level = new DeadEndLevel();
 			}
@@ -672,6 +704,7 @@ public class Dungeon {
 			bundle.put( ALT2, prisonalt );
 			bundle.put( ALT3, cavealt );
             bundle.put( ALT4, cityalt );
+			bundle.put( ALT5, hallsalt );
 			bundle.put( SEED, seed );
 			bundle.put( CUSTOM_SEED, customSeedText );
 			bundle.put( DAILY, daily );
@@ -686,6 +719,7 @@ public class Dungeon {
 			bundle.put( PRISONSRANDOM, prisonsrandom );
 			bundle.put( CAVESRANDOM, cavesrandom );
             bundle.put( CITYRANDOM, cityrandom );
+			bundle.put( HALLSRANDOM, hallsrandom );
 
 			bundle.put( GOLD, gold );
 			bundle.put( ENERGY, energy );
@@ -878,6 +912,9 @@ public class Dungeon {
 
         cityrandom = bundle.getInt(CITYRANDOM);
         cityalt = bundle.getBoolean( ALT4 );
+
+		hallsrandom = bundle.getInt(HALLSRANDOM);
+		hallsalt = bundle.getBoolean( ALT5 );
 		
 		depth = bundle.getInt( DEPTH );
 		branch = bundle.getInt( BRANCH );

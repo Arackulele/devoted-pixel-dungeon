@@ -31,8 +31,8 @@ import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.News;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.NewsImpl;
-import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.shatteredpixel.shatteredpixeldungeon.services.updates.UpdateImpl;
+import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.watabou.noosa.Game;
 import com.watabou.utils.FileUtils;
 import com.watabou.utils.Point;
@@ -47,7 +47,7 @@ public class DesktopLauncher {
 
 	public static void main (String[] args) {
 
-		if (!com.shatteredpixel.shatteredpixeldungeon.desktop.DesktopLaunchValidator.verifyValidJVMState(args)){
+		if (!DesktopLaunchValidator.verifyValidJVMState(args)){
 			return;
 		}
 
@@ -59,14 +59,14 @@ public class DesktopLauncher {
 			SharedLibraryLoader.isIos = false;
 			SharedLibraryLoader.is64Bit = System.getProperty("os.arch").contains("64") || System.getProperty("os.arch").startsWith("armv8");
 		}
-
+		
 		final String title;
 		if (DesktopLauncher.class.getPackage().getSpecificationTitle() == null){
 			title = System.getProperty("Specification-Title");
 		} else {
 			title = DesktopLauncher.class.getPackage().getSpecificationTitle();
 		}
-
+		
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, Throwable throwable) {
@@ -111,12 +111,12 @@ public class DesktopLauncher {
 				System.exit(1);
 			}
 		});
-
+		
 		Game.version = DesktopLauncher.class.getPackage().getSpecificationVersion();
 		if (Game.version == null) {
 			Game.version = System.getProperty("Specification-Version");
 		}
-
+		
 		try {
 			Game.versionCode = Integer.parseInt(DesktopLauncher.class.getPackage().getImplementationVersion());
 		} catch (NumberFormatException e) {
@@ -129,9 +129,9 @@ public class DesktopLauncher {
 		if (NewsImpl.supportsNews()){
 			News.service = NewsImpl.getNewsService();
 		}
-
+		
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-
+		
 		config.setTitle( title );
 
 		//if I were implementing this from scratch I would use the full implementation title for saves
@@ -168,7 +168,7 @@ public class DesktopLauncher {
 		config.setPreferencesConfig( basePath, baseFileType );
 		SPDSettings.set( new Lwjgl3Preferences( new Lwjgl3FileHandle(basePath + SPDSettings.DEFAULT_PREFS_FILE, baseFileType) ));
 		FileUtils.setDefaultFileProperties( baseFileType, basePath );
-
+		
 		config.setWindowSizeLimits( 720, 400, -1, -1 );
 		Point p = SPDSettings.windowResolution();
 		config.setWindowedMode( p.x, p.y );
@@ -180,12 +180,12 @@ public class DesktopLauncher {
 		//config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 
 		//records whether window is maximized or not for settings
-		com.shatteredpixel.shatteredpixeldungeon.desktop.DesktopWindowListener listener = new com.shatteredpixel.shatteredpixeldungeon.desktop.DesktopWindowListener();
+		DesktopWindowListener listener = new DesktopWindowListener();
 		config.setWindowListener( listener );
-
+		
 		config.setWindowIcon("icons/icon_16.png", "icons/icon_32.png", "icons/icon_48.png",
 				"icons/icon_64.png", "icons/icon_128.png", "icons/icon_256.png");
 
-		new Lwjgl3Application(new ShatteredPixelDungeon(new com.shatteredpixel.shatteredpixeldungeon.desktop.DesktopPlatformSupport()), config);
+		new Lwjgl3Application(new ShatteredPixelDungeon(new DesktopPlatformSupport()), config);
 	}
 }

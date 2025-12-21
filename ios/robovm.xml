@@ -2,7 +2,7 @@
 	<executableName>${appExecutable}</executableName>
 	<mainClass>${appMainclass}</mainClass>
 	<os>ios</os>
-	<arch>thumbv7</arch>
+	<arch>arm64</arch>
 	<target>ios</target>
 	<iosInfoPList>Info.plist</iosInfoPList>
 	<resources>
@@ -11,6 +11,9 @@
 			<includes>
 				<include>**</include>
 			</includes>
+			<excludes>
+				<exclude>**/*.ogg</exclude>
+			</excludes>
 			<skipPngCrush>true</skipPngCrush>
 		</resource>
 		<resource>

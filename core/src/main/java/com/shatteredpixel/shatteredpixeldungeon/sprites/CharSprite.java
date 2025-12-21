@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SnowParticle;
@@ -139,6 +140,11 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		if (curAnim == null || curAnim != die) {
 			super.play(anim);
 		}
+
+		if (Dungeon.depth == 25 && ch != null && ch.HT == 1 && !(ch instanceof Wraith)){
+			brightness(0.0f);
+			alpha(0.8f);
+		}
 	}
 	
 	//intended to be used for placing a character in the game world
@@ -161,6 +167,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		}
 
 		ch.updateSpriteState();
+
 	}
 
 	@Override
@@ -650,6 +657,12 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		if (invisible != null){
 			alpha(0.4f);
 		}
+		//This is scuffed, but a way to select for specifically summoned enemies on this depth
+		if (Dungeon.depth == 25 && ch != null && ch.HT == 1 && !(ch instanceof Wraith)){
+			brightness(0.0f);
+			alpha(0.8f);
+		}
+
 	}
 	
 	public void showSleep() {

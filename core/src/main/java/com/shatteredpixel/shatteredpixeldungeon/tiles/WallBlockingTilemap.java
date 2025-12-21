@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.HallsBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.levels.VoidBossLevel;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.Tilemap;
 
@@ -69,7 +70,7 @@ public class WallBlockingTilemap extends Tilemap {
 
 		//FIXME this is to address the wall blocking looking odd on the new yog floor.
 		// The true solution is to improve the fog of war so the blockers aren't necessary.
-		if (Dungeon.level instanceof HallsBossLevel){
+		if (Dungeon.level instanceof HallsBossLevel || Dungeon.level instanceof VoidBossLevel){
 			data[cell] = CLEARED;
 			super.updateMapCell(cell);
 			return;

@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.remains.RemainsItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.Trinket;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -70,6 +71,7 @@ public class Badges {
 		MASTERY_HUNTRESS,
 		MASTERY_DUELIST,
 		MASTERY_CLERIC,
+		MASTERY_ZEALOT,
 		FOUND_RATMOGRIFY,
 
 		//bronze
@@ -78,6 +80,7 @@ public class Badges {
 		UNLOCK_HUNTRESS             ( 3 ),
 		UNLOCK_DUELIST              ( 4 ),
 		UNLOCK_CLERIC               ( 5 ),
+		UNLOCK_ZEALOT               ( 25 ),
 		MONSTERS_SLAIN_1            ( 6 ),
 		MONSTERS_SLAIN_2            ( 7 ),
 		GOLD_COLLECTED_1            ( 8 ),
@@ -129,6 +132,7 @@ public class Badges {
 		BOSS_SLAIN_1_HUNTRESS,
 		BOSS_SLAIN_1_DUELIST,
 		BOSS_SLAIN_1_CLERIC,
+		BOSS_SLAIN_1_ZEALOT,
 		BOSS_SLAIN_1_ALL_CLASSES    ( 54, BadgeType.GLOBAL ),
 		RESEARCHER_2                ( 55, BadgeType.JOURNAL ),
 		GAMES_PLAYED_2              ( 56, BadgeType.GLOBAL ),
@@ -183,6 +187,7 @@ public class Badges {
 		VICTORY_HUNTRESS,
 		VICTORY_DUELIST,
 		VICTORY_CLERIC,
+		VICTORY_ZEALOT,
 		VICTORY_ALL_CLASSES         ( 102, BadgeType.GLOBAL ),
 		DEATH_FROM_ALL              ( 103, BadgeType.GLOBAL ),
 		BOSS_SLAIN_3_GLADIATOR,
@@ -197,6 +202,8 @@ public class Badges {
 		BOSS_SLAIN_3_MONK,
 		BOSS_SLAIN_3_PRIEST,
 		BOSS_SLAIN_3_PALADIN,
+		BOSS_SLAIN_3_CONJURER,
+		BOSS_SLAIN_3_DEVOTEE,
 		BOSS_SLAIN_3_ALL_SUBCLASSES ( 104, BadgeType.GLOBAL ),
 		BOSS_CHALLENGE_3            ( 105 ),
 		BOSS_CHALLENGE_4            ( 106 ),
@@ -805,6 +812,7 @@ public class Badges {
 		firstBossClassBadges.put(HeroClass.HUNTRESS, Badge.BOSS_SLAIN_1_HUNTRESS);
 		firstBossClassBadges.put(HeroClass.DUELIST, Badge.BOSS_SLAIN_1_DUELIST);
 		firstBossClassBadges.put(HeroClass.CLERIC, Badge.BOSS_SLAIN_1_CLERIC);
+		firstBossClassBadges.put(HeroClass.ZEALOT, Badge.BOSS_SLAIN_1_ZEALOT);
 	}
 
 	private static LinkedHashMap<HeroClass, Badge> victoryClassBadges = new LinkedHashMap<>();
@@ -815,6 +823,7 @@ public class Badges {
 		victoryClassBadges.put(HeroClass.HUNTRESS, Badge.VICTORY_HUNTRESS);
 		victoryClassBadges.put(HeroClass.DUELIST, Badge.VICTORY_DUELIST);
 		victoryClassBadges.put(HeroClass.CLERIC, Badge.VICTORY_CLERIC);
+		victoryClassBadges.put(HeroClass.ZEALOT, Badge.VICTORY_ZEALOT);
 	}
 
 	private static LinkedHashMap<HeroSubClass, Badge> thirdBossSubclassBadges = new LinkedHashMap<>();
@@ -831,6 +840,8 @@ public class Badges {
 		thirdBossSubclassBadges.put(HeroSubClass.MONK, Badge.BOSS_SLAIN_3_MONK);
 		thirdBossSubclassBadges.put(HeroSubClass.PRIEST, Badge.BOSS_SLAIN_3_PRIEST);
 		thirdBossSubclassBadges.put(HeroSubClass.PALADIN, Badge.BOSS_SLAIN_3_PALADIN);
+		thirdBossSubclassBadges.put(HeroSubClass.CONJURER, Badge.BOSS_SLAIN_3_CONJURER);
+		thirdBossSubclassBadges.put(HeroSubClass.DEVOTEE, Badge.BOSS_SLAIN_3_DEVOTEE);
 	}
 	
 	public static void validateBossSlain() {
@@ -954,7 +965,7 @@ public class Badges {
 				badge = Badge.MASTERY_CLERIC;
 				break;
 			case ZEALOT:
-				badge = Badge.MASTERY_CLERIC;
+				badge = Badge.MASTERY_ZEALOT;
 				break;
 		}
 		
@@ -1003,6 +1014,12 @@ public class Badges {
 	public static void validateClericUnlock(){
 		if (!isUnlocked(Badge.UNLOCK_CLERIC)){
 			displayBadge( Badge.UNLOCK_CLERIC );
+		}
+	}
+
+	public static void validateZealotUnlock(){
+		if (!isUnlocked(Badge.UNLOCK_ZEALOT)){
+			displayBadge( Badge.UNLOCK_ZEALOT );
 		}
 	}
 	

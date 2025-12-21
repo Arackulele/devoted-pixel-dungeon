@@ -30,10 +30,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.*;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Torch;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Ruby;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.MiningLevelPainter;
@@ -43,10 +45,6 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.quest.*;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.*;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.LavaPiranha;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Pyronaut;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.QuakeWolf;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Vault;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.BountyHunter;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.RockBlock;
@@ -144,7 +142,7 @@ public class LavaLakeLevel extends ForgeLevel {
 
 	@Override
 	public float respawnCooldown() {
-		//normal enemies respawn much more slowly here
+        //normal enemies respawn much more slowly here
 		return 2*TIME_TO_RESPAWN;
 	}
 
@@ -152,45 +150,34 @@ public class LavaLakeLevel extends ForgeLevel {
 	protected void createItems() {
 		ReplaceWalls(this);
 
+        Random.pushGenerator(Random.Long());
+        ArrayList<Item> bonesItems = Bones.get();
+        if (bonesItems != null) {
+            int cell = randomDropCell();
+            if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
+                map[cell] = Terrain.GRASS;
+                losBlocking[cell] = false;
+            }
+            for (Item i : bonesItems) {
+                drop(i, cell).setHauntedIfCursed().type = Heap.Type.REMAINS;
+            }
+        }
+        Random.popGenerator();
 
 
-		Random.pushGenerator(Random.Long());
-			ArrayList<Item> bonesItems = Bones.get();
-			if (bonesItems != null) {
-				int cell = randomDropCell();
-				if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
-					map[cell] = Terrain.GRASS;
-					losBlocking[cell] = false;
-				}
-				for (Item i : bonesItems) {
-					drop(i, cell).setHauntedIfCursed().type = Heap.Type.REMAINS;
-				}
-			}
-		Random.popGenerator();
+        for (int i = 10; i > 0; i--) {
+            addItemToSpawn(new RockBlock().quantity(Random.Int(4) + 3));
+        }
+        addItemToSpawn(Generator.randomUsingDefaults(Generator.Category.FOOD));
 
-		int cell = randomDropCell();
-		if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
-			map[cell] = Terrain.GRASS;
-			losBlocking[cell] = false;
-		}
-		drop( Generator.randomUsingDefaults(Generator.Category.FOOD), cell );
 
-		if (Dungeon.isChallenged(Challenges.DARKNESS)){
-			cell = randomDropCell();
-			if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
-				map[cell] = Terrain.GRASS;
-				losBlocking[cell] = false;
-			}
-			drop( new Torch(), cell );
-		}
+        for(Item i : itemsToSpawn)
+        {
+            drop( i, randomDropCell() );
+        }
 
-		drop( new RockBlock().quantity(Random.Int(5) + 2), randomDropCell() );
-		drop( new RockBlock().quantity(Random.Int(5) + 2), randomDropCell() );
-		drop( new RockBlock().quantity(Random.Int(5) + 2), randomDropCell() );
-		drop( new RockBlock().quantity(Random.Int(5) + 2), randomDropCell() );
-		drop( new RockBlock().quantity(Random.Int(5) + 2), randomDropCell() );
-		drop( new RockBlock().quantity(Random.Int(5) + 2), randomDropCell() );
-	}
+    }
+
 
 	@Override
 	protected int randomDropCell( Class<?extends Room> roomType ) {
@@ -336,7 +323,7 @@ public class LavaLakeLevel extends ForgeLevel {
 		ArrayList<Integer> VaultPositions = new ArrayList<>();
 
 		for (Mob mob : level.mobs.toArray( new Mob[0] )) {
-			if (mob instanceof Vault || mob instanceof QuakeWolf) {
+			if (mob instanceof Vault || mob instanceof QuakeWolf || mob instanceof TrollKnight) {
 				VaultPositions.add(mob.pos);
 			}
 		}
@@ -388,7 +375,7 @@ public class LavaLakeLevel extends ForgeLevel {
 				|| (Char.hasProp(ch, Char.Property.LARGE) && !openSpace[cell])
 				|| Actor.findChar( cell ) != null
 				|| (!ch.flying && Dungeon.level.map[cell] == Terrain.WATER)
-				|| (ch instanceof Piranha && Dungeon.level.map[cell] != Terrain.WATER)
+				|| ((ch instanceof Piranha | ch instanceof Pyronaut) && Dungeon.level.map[cell] != Terrain.WATER)
 		);
 		return cell;
 	}

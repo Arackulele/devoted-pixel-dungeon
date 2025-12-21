@@ -59,12 +59,12 @@ public class Wasp extends NPC {
 	
 	@Override
 	public int damageRoll() {
-		return Random.NormalIntRange( 6 + (Dungeon.hero.lvl / 3 ), 8 + (int)(Dungeon.hero.lvl / 1.2f ));
+		return Random.NormalIntRange( 6 + (Wisp.GetHeroLevel() / 3 ), 8 + (int)(Wisp.GetHeroLevel() / 1.2f ));
 	}
 
 	@Override
 	public int attackSkill( Char target ) {
-		return 15 + Dungeon.hero.lvl;
+		return 15 + Wisp.GetHeroLevel();
 	}
 	
 	@Override
@@ -76,7 +76,7 @@ public class Wasp extends NPC {
 	public int attackProc(Char enemy, int damage) {
 		damage = super.attackProc( enemy, damage );
 		if (Random.Int(2) == 0) {
-			int duration = Random.IntRange(3 + (Dungeon.hero.lvl / 1 ), 3 + (Dungeon.hero.lvl / 3 ));
+			int duration = Random.IntRange(3 + (Wisp.GetHeroLevel() / 1 ), 3 + (Wisp.GetHeroLevel() / 3 ));
 			Buff.affect(enemy, Poison.class).set(duration);
 		}
 

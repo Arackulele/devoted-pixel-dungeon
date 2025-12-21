@@ -96,15 +96,13 @@ public abstract class TrollBrawler extends Mob {
 	}
 
 	@Override
-	protected boolean act() {
-
+	protected void spend( float time ) {
 		if (cooldown > 0) {
-			cooldown--;
+			cooldown-= time;
 
 			if (cooldown < 1) sprite.showStatus(CharSprite.POSITIVE, Messages.get(TrollBrawler.class, "charged"));
 		}
-
-		return super.act();
+		super.spend( time );
 	}
 
 	@Override

@@ -36,7 +36,8 @@ public class Effects {
 		DEATH_RAY,
 		LIGHT_RAY,
 		HEALTH_RAY,
-		INFERNO_RAY
+        VOID_DOTS,
+        INFERNO_RAY
 	}
 	
 	public static Image get( Type type ) {
@@ -72,6 +73,9 @@ public class Effects {
 			case INFERNO_RAY:
 				icon.frame(icon.texture.uvRect(16, 37, 32, 44));
 				break;
+            case VOID_DOTS:
+                icon.frame(icon.texture.uvRect(16, 44, 32, 51));
+                break;
 		}
 		return icon;
 	}

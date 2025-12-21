@@ -422,8 +422,10 @@ public class BountyHunter extends NPC {
 			}
 
 			RockBlock blocks = Dungeon.hero.belongings.getItem(RockBlock.class);
-			blocks.detachAll(Dungeon.hero.belongings.backpack);
-			Quest.pickaxe = blocks;
+			if (blocks != null) {
+				blocks.detachAll(Dungeon.hero.belongings.backpack);
+				Quest.pickaxe = blocks;
+			}
 
 			if (bossBeaten) favor += 1000;
 

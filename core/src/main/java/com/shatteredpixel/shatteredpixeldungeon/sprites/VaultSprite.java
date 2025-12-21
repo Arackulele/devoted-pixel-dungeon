@@ -22,7 +22,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Pylon;
 import com.watabou.noosa.TextureFilm;
 
 public class VaultSprite extends MobSprite {
@@ -59,6 +61,12 @@ public class VaultSprite extends MobSprite {
 
 		play( idle );
 	}
+
+    @Override
+    public void link(Char ch) {
+        super.link(ch);
+        renderShadow = false;
+    }
 
 
 	@Override

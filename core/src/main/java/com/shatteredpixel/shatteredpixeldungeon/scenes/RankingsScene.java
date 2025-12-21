@@ -192,6 +192,9 @@ public class RankingsScene extends PixelScene {
 		private static final float GAP	= 4;
 		
 		private static final int[] TEXT_WIN	= {0xFFFF88, 0xB2B25F};
+
+		private static final int[] TEXT_WIN_ALT	= {0x87FF93, 0x4FAF44};
+
 		private static final int[] TEXT_LOSE= {0xDDDDDD, 0x888888};
 		private static final int FLARE_WIN	= 0x888866;
 		private static final int FLARE_LOSE	= 0x666666;
@@ -230,11 +233,20 @@ public class RankingsScene extends PixelScene {
 			int odd = pos % 2;
 			
 			if (rec.win) {
-				shield.copy( new ItemSprite(ItemSpriteSheet.AMULET, null) );
-				position.hardlight( TEXT_WIN[odd] );
-				desc.hardlight( TEXT_WIN[odd] );
-				depth.hardlight( TEXT_WIN[odd] );
-				level.hardlight( TEXT_WIN[odd] );
+				if (rec.finalregion) {
+					shield.copy( new ItemSprite(ItemSpriteSheet.BRACELET, null) );
+					position.hardlight(TEXT_WIN_ALT[odd]);
+					desc.hardlight(TEXT_WIN_ALT[odd]);
+					depth.hardlight(TEXT_WIN_ALT[odd]);
+					level.hardlight(TEXT_WIN_ALT[odd]);
+				}
+				else {
+					shield.copy(new ItemSprite(ItemSpriteSheet.AMULET, null));
+					position.hardlight(TEXT_WIN[odd]);
+					desc.hardlight(TEXT_WIN[odd]);
+					depth.hardlight(TEXT_WIN[odd]);
+					level.hardlight(TEXT_WIN[odd]);
+				}
 			} else {
 				position.hardlight( TEXT_LOSE[odd] );
 				desc.hardlight( TEXT_LOSE[odd] );
@@ -251,8 +263,14 @@ public class RankingsScene extends PixelScene {
 				}
 
 				if (rec.ascending){
-					shield.copy( new ItemSprite(ItemSpriteSheet.AMULET, null) );
-					shield.hardlight(0.4f, 0.4f, 0.7f);
+					if (rec.finalregion) {
+						shield.copy( new ItemSprite(ItemSpriteSheet.BRACELET, null) );
+						shield.hardlight(0.4f, 0.4f, 0.7f);
+					}
+					else {
+						shield.copy(new ItemSprite(ItemSpriteSheet.AMULET, null));
+						shield.hardlight(0.4f, 0.4f, 0.7f);
+					}
 				}
 
 			}

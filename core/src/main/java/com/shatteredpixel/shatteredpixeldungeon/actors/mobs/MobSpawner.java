@@ -25,7 +25,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.*;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.RatSkull;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.*;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -259,62 +258,111 @@ public class MobSpawner extends Actor {
 				}
 				// City
 			case 16:
-				if (Dungeon.cavealt == true) {
+				if (Dungeon.cityalt == true) {
 					return new ArrayList<>(Arrays.asList(
 							Cultist.class, Cultist.class, Cultist.class,
+							Giant.class,
+							Leader.class));
+				} else {
+					//3x ghoul, 1x elemental, 1x warlock
+					return new ArrayList<>(Arrays.asList(
+							Ghoul.class, Ghoul.class, Ghoul.class,
 							Elemental.random(),
 							Warlock.class));
 				}
-				else {
-				//3x ghoul, 1x elemental, 1x warlock
-				return new ArrayList<>(Arrays.asList(
-						Ghoul.class, Ghoul.class, Ghoul.class,
-						Elemental.random(),
-						Warlock.class));
-				}
 			case 17:
 				//1x ghoul, 2x elemental, 1x warlock, 1x monk
+				if (Dungeon.cityalt == true) {
+					return new ArrayList<>(Arrays.asList(
+							Cultist.class,
+							Giant.class, Giant.class,
+							Leader.class,
+							Trapper.class));
+				}
+				else {
 				return new ArrayList<>(Arrays.asList(
 						Ghoul.class,
 						Elemental.random(), Elemental.random(),
 						Warlock.class,
 						Monk.class));
+					}
 			case 18:
 				//1x ghoul, 1x elemental, 2x warlock, 2x monk, 1x golem
-				return new ArrayList<>(Arrays.asList(
-						Ghoul.class,
-						Elemental.random(),
-						Warlock.class, Warlock.class,
-						Monk.class, Monk.class,
-						Golem.class));
+				if (Dungeon.cityalt == true) {
+					return new ArrayList<>(Arrays.asList(
+							Cultist.class,
+                            Giant.class,
+							Leader.class, Leader.class,
+							Trapper.class, Trapper.class,
+							Warden.class));
+				}
+				else {
+					return new ArrayList<>(Arrays.asList(
+							Ghoul.class,
+							Elemental.random(),
+							Warlock.class, Warlock.class,
+							Monk.class, Monk.class,
+							Golem.class));
+				}
 			case 19: case 20:
 				//1x elemental, 2x warlock, 2x monk, 3x golem
-				return new ArrayList<>(Arrays.asList(
-						Elemental.random(),
-						Warlock.class, Warlock.class,
-						Monk.class, Monk.class,
-						Golem.class, Golem.class, Golem.class));
-
+                if (Dungeon.cityalt == true) {
+                    return new ArrayList<>(Arrays.asList(
+                            Cultist.class,
+                            Leader.class, Leader.class,
+                            Trapper.class, Trapper.class,
+                            Warden.class, Warden.class, Warden.class));
+                }
+                else {
+                    return new ArrayList<>(Arrays.asList(
+                            Elemental.random(),
+                            Warlock.class, Warlock.class,
+                            Monk.class, Monk.class,
+                            Golem.class, Golem.class, Golem.class));
+                }
 			// Halls
 			case 21:
 				//2x succubus, 1x evil eye
-				return new ArrayList<>(Arrays.asList(
-						Succubus.class, Succubus.class,
-						Eye.class));
+				if (Dungeon.hallsalt == true) {
+					return new ArrayList<>(Arrays.asList(
+                            Frogeat.random(),
+							Puppet.class));
+				} else {
+					return new ArrayList<>(Arrays.asList(
+							Succubus.class, Succubus.class,
+							Eye.class));
+				}
 			case 22:
 				//1x succubus, 1x evil eye
-				return new ArrayList<>(Arrays.asList(
-						Succubus.class,
-						Eye.class));
+                if (Dungeon.hallsalt == true) {
+                    return new ArrayList<>(Arrays.asList(
+                            Sacrifice.class, Frogeat.random(), BedrockGolem.class,
+                            Puppet.class));
+                } else {
+                    return new ArrayList<>(Arrays.asList(
+                            Succubus.class,
+                            Eye.class));
+                }
 			case 23:
 				//1x succubus, 2x evil eye, 1x scorpio
-				return new ArrayList<>(Arrays.asList(
-						Succubus.class,
-						Eye.class, Eye.class,
-						Scorpio.class));
+                if (Dungeon.hallsalt == true) {
+                    return new ArrayList<>(Arrays.asList(
+                            Sacrifice.class, BedrockGolem.class, BedrockGolem.class ,Frogeat.random(),
+                            Puppet.class));
+                } else {
+                    return new ArrayList<>(Arrays.asList(
+                            Succubus.class,
+                            Eye.class, Eye.class,
+                            Scorpio.class));
+                }
 			case 24: case 25: case 26:
 				//1x succubus, 2x evil eye, 3x scorpio
-				return new ArrayList<>(Arrays.asList(
+                if (Dungeon.hallsalt == true) {
+                    return new ArrayList<>(Arrays.asList(
+                            Sacrifice.class, BedrockGolem.class, BedrockGolem.class ,
+                            Puppet.class));
+                }
+				else return new ArrayList<>(Arrays.asList(
 						Succubus.class,
 						Eye.class, Eye.class,
 						Scorpio.class, Scorpio.class, Scorpio.class));
@@ -381,6 +429,8 @@ public class MobSpawner extends Actor {
 
 				else if (cl == GraniteTroll.class)  cl = GraniteElder.class;
 				else if (cl == Mole.class)        	cl = FlamingMole.class;
+
+				else if (cl == Leader.class)        cl = Conjurer.class;
 
 				rotation.set(i, cl);
 			}

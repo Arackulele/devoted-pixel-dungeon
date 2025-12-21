@@ -29,11 +29,18 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Slow;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.Door;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MoleSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.*;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Mole extends Mob {
 	
@@ -106,6 +113,15 @@ public class Mole extends Mob {
 
 	}
 
+	public void SpreadEffect(int p)
+	{
+		Char ch = Actor.findChar( pos + com.watabou.utils.PathFinder.NEIGHBOURS8[p] );
+		if (ch != null && ch.isAlive()) {
+			Buff.affect(ch, Slow.class, 2f);
+		}
+
+	}
+
 	private class Hunting extends Mob.Hunting {
 
 		@Override
@@ -120,8 +136,34 @@ public class Mole extends Mob {
 
 				return true;
 			}
-			else if (digging && enemyInFOV && Dungeon.level.distance(enemy.pos, pos) < 2 && Actor.findChar(pos) == null)
+			else if (digging && enemyInFOV && Dungeon.level.distance(enemy.pos, pos) < 2)
 			{
+
+                if (Actor.findChar(pos) != null) {
+
+					int pushPos = pos;
+					for (int c : PathFinder.NEIGHBOURS8) {
+						if (findChar(pos + c) == null
+								&& Dungeon.level.passable[pos + c]
+								&& (Dungeon.level.openSpace[pos + c] || !hasProp(findChar(pos), Property.LARGE))
+								&& Dungeon.level.trueDistance(pos, pos + c) > Dungeon.level.trueDistance(pos, pushPos)) {
+							pushPos = pos + c;
+						}
+					}
+
+
+					//push enemy, or wait a turn if there is no valid pushing position
+					if (pushPos != pos) {
+						Char ch = findChar(pos);
+						Actor.add(new Pushing(ch, ch.pos, pushPos));
+
+						ch.pos = pushPos;
+						Dungeon.level.occupyCell(ch);
+
+
+					}
+				}
+
 				digging = false;
 				((MoleSprite)sprite).setEmerge();
 				com.watabou.noosa.audio.Sample.INSTANCE.play(Assets.Sounds.DIG);
@@ -129,13 +171,9 @@ public class Mole extends Mob {
 
 				for (int i = 0; i < com.watabou.utils.PathFinder.NEIGHBOURS8.length; i++) {
 					CellEmitter.get(pos + com.watabou.utils.PathFinder.NEIGHBOURS8[i]).burst(SmokeParticle.FACTORY, 5);
-						Char ch = Actor.findChar( pos + com.watabou.utils.PathFinder.NEIGHBOURS8[i] );
-						if (ch != null && ch.isAlive()) {
-							Buff.affect(ch, Slow.class, 2f);
-						}
-					}
+					SpreadEffect(i);
 
-
+                }
 				return true;
 			}
 
@@ -143,6 +181,8 @@ public class Mole extends Mob {
 
 		}
 	}
+
+
 
 
 

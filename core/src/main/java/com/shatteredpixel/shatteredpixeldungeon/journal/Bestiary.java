@@ -24,9 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.journal;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.*;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.*;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.*;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.*;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.*;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.CorpseDust;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
@@ -38,7 +36,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.S
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.ShadowClone;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.SmokeBomb;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SentryRoom;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.*;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.AlarmTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.BlazingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.BurningTrap;
@@ -85,7 +82,9 @@ import com.shatteredpixel.shatteredpixeldungeon.plants.Starflower;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Stormvine;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Sungrass;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.NeuronSentrySprite;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -148,7 +147,11 @@ public enum Bestiary {
 				Bat.class, Brute.class, Shaman.RedShaman.class, Shaman.BlueShaman.class, Shaman.PurpleShaman.class, Spinner.class, DM200.class,
 				GraniteTroll.class, TrollBrawler.YellowBrawler.class, TrollBrawler.PurpleBrawler.class, TrollBrawler.RedBrawler.class, TrollRanger.class, Mole.class, RockGolem.class,
 				Ghoul.class, Elemental.FireElemental.class, Elemental.FrostElemental.class, Elemental.ShockElemental.class, Warlock.class, Monk.class, Golem.class,
-				RipperDemon.class, DemonSpawner.class, Succubus.class, Eye.class, Scorpio.class);
+				Cultist.class, Giant.class, Leader.class, Trapper.class, Warden.class,
+				RipperDemon.class, DemonSpawner.class, Succubus.class, Eye.class, Scorpio.class,
+				Frogeat.BleedingFrogeat.class, Frogeat.PoisonFrogeat.class, Frogeat.ConfusingFrogeat.class,Puppet.class, BedrockGolem.class, Sacrifice.class, EldritchBrain.class, NeuronSentry.class
+
+				);
 
 		BOSSES.addEntities(Goo.class,
 				Emperor.class,
@@ -157,7 +160,9 @@ public enum Bestiary {
 				Pylon.class, DM300.class,
 				Elemental.CoalElemental.class, BlastFurnace.class, FurnaceGolem.class,
 				DwarfKing.class,
-				YogDzewa.Larva.class, YogFist.BurningFist.class, YogFist.SoiledFist.class, YogFist.RottingFist.class, YogFist.RustedFist.class,YogFist.BrightFist.class, YogFist.DarkFist.class, YogDzewa.class);
+				Thymor.class, Yuria.class, Wendar.class,
+				YogDzewa.Larva.class, YogFist.BurningFist.class, YogFist.SoiledFist.class, YogFist.RottingFist.class, YogFist.RustedFist.class,YogFist.BrightFist.class, YogFist.DarkFist.class, YogDzewa.class,
+				VelEssence.Unearth.class , VelEssence.Snipe.class, VelEssence.Bombard.class, VelEssence.Ram.class, VelEssence.Restrain.class, VelTaleth.class, BlackHole.class);
 
 		UNIVERSAL.addEntities(Wraith.class, Piranha.class, Mimic.class, GoldenMimic.class, EbonyMimic.class, Statue.class, GuardianTrap.Guardian.class, SentryRoom.Sentry.class);
 
@@ -166,17 +171,19 @@ public enum Bestiary {
 				Bandit.class, SpectralNecromancer.class,
 				PrimeRib.class, Revenant.class,
 				ArmoredBrute.class, DM201.class,
-				FlamingMole.class,
+				GraniteElder.class,FlamingMole.class,
 				Elemental.ChaosElemental.class, Senior.class,
+				Conjurer.class,
 				Acidic.class,
 				TormentedSpirit.class, PhantomPiranha.class, CrystalMimic.class, ArmoredStatue.class);
 
 		QUEST.addEntities(FetidRat.class, GnollTrickster.class, GreatCrab.class,
 				HornedToad.class, EmperorButterfly.class,ElderThorn.class,
 				Elemental.NewbornFireElemental.class, RotLasher.class, RotHeart.class,
-				CrystalWisp.class, CrystalGuardian.class, CrystalSpire.class, GnollGuard.class, GnollSapper.class, GnollGeomancer.class);
+				CrystalWisp.class, CrystalGuardian.class, CrystalSpire.class, GnollGuard.class, GnollSapper.class, GnollGeomancer.class,
+				CragWolf.class, LavaPiranha.class, QuakeWolf.class, TrollSpearman.class, Pyronaut.class, TrollKnight.class);
 
-		NEUTRAL.addEntities(Ghost.class, RatKing.class, Shopkeeper.class, Wandmaker.class, SageCorpse.class, Blacksmith.class, Imp.class, Sheep.class, Bee.class);
+		NEUTRAL.addEntities(Ghost.class, RatKing.class, Shopkeeper.class, Wandmaker.class, SageCorpse.class, Blacksmith.class, BountyHunter.class, Imp.class, Sheep.class, Bee.class);
 
 		ALLY.addEntities(MirrorImage.class, PrismaticImage.class,
 				DriedRose.GhostHero.class,
@@ -223,7 +230,8 @@ public enum Bestiary {
 	public static boolean isSeen(Class<?> cls){
 		for (Bestiary cat : values()) {
 			if (cat.seen.containsKey(cls)) {
-				return cat.seen.get(cls);
+				if (DeviceCompat.isDebug() ) return true;
+				else return cat.seen.get(cls);
 			}
 		}
 		return false;

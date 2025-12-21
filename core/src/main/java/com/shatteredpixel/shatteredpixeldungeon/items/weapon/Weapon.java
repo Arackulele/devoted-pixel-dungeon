@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EquipmentDisabled;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
@@ -122,6 +123,7 @@ abstract public class Weapon extends KindOfWeapon {
 	public boolean enchantHardened = false;
 	public boolean curseInfusionBonus = false;
 	public boolean masteryPotionBonus = false;
+	public boolean GildDegrade = false;
 	
 	@Override
 	public int proc(Char attacker, Char defender, int damage ) {
@@ -219,6 +221,7 @@ abstract public class Weapon extends KindOfWeapon {
 	private static final String ENCHANT_HARDENED = "enchant_hardened";
 	private static final String CURSE_INFUSION_BONUS = "curse_infusion_bonus";
 	private static final String MASTERY_POTION_BONUS = "mastery_potion_bonus";
+	private static final String GILD_DEGRADE = "mastery_potion_bonus";
 	private static final String AUGMENT	        = "augment";
 
 	@Override
@@ -230,6 +233,7 @@ abstract public class Weapon extends KindOfWeapon {
 		bundle.put( ENCHANT_HARDENED, enchantHardened );
 		bundle.put( CURSE_INFUSION_BONUS, curseInfusionBonus );
 		bundle.put( MASTERY_POTION_BONUS, masteryPotionBonus );
+		bundle.put( GILD_DEGRADE, GildDegrade );
 		bundle.put( AUGMENT, augment );
 	}
 	
@@ -242,6 +246,7 @@ abstract public class Weapon extends KindOfWeapon {
 		enchantHardened = bundle.getBoolean( ENCHANT_HARDENED );
 		curseInfusionBonus = bundle.getBoolean( CURSE_INFUSION_BONUS );
 		masteryPotionBonus = bundle.getBoolean( MASTERY_POTION_BONUS );
+		GildDegrade = bundle.getBoolean( GILD_DEGRADE );
 
 		augment = bundle.getEnum(AUGMENT, Augment.class);
 	}

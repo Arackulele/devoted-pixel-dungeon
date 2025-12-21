@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion;
 
+import com.badlogic.gdx.utils.IntMap;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
@@ -30,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elemental;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -40,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.EmberEssence;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ForgeBossLevel;
@@ -196,7 +199,7 @@ public class FurnaceGolem extends Mob {
 			BlastFurnaceSprite.active = true;
 			HP = (HT/3)*2;
 			Buff.affect( this, Terror.class, 4f ).object = Dungeon.hero.id();
-			Buff.affect(this, Haste.class, 4f);
+			Buff.affect(this, Stamina.class, 8f);
 			yell(Messages.get(this, "scream"));
 		}
 
@@ -210,7 +213,7 @@ public class FurnaceGolem extends Mob {
 			}
 
 			Buff.affect( this, Terror.class, 4f ).object = Dungeon.hero.id();
-			Buff.affect(this, Haste.class, 4f);
+			Buff.affect(this, Stamina.class, 8f);
 			yell(Messages.get(this, "scream2"));
 		}
 
@@ -444,6 +447,15 @@ public class FurnaceGolem extends Mob {
 		}
 		Statistics.bossScores[0] += 1050;
 		Statistics.bossScores[0] = Math.min(1000, Statistics.bossScores[0]);
+
+        for (Heap heap : Dungeon.level.heaps.valueList()){
+                for (Item item : heap.items){
+                    if (!(item instanceof BombAbility.BombItem)){
+                        heap.destroy();
+                    }
+                }
+
+            }
 
 		yell(Messages.get(this, "defeated"));
 	}

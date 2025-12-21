@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.effects;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.*;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -45,11 +46,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.GuidingLight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.MirrorImage;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.PrismaticImage;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Daze;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hex;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
@@ -119,6 +115,7 @@ public class FloatingText extends RenderedTextBlock {
 	public static int HIT_SUPR  = 45;
 	public static int HIT_PRES  = 46;
 	public static int HIT_MOMEN = 47;
+	public static int HIT_INVINC = 48;
 
 	//extra row for hit icons that are armor-piercing
 
@@ -330,6 +327,10 @@ public class FloatingText extends RenderedTextBlock {
 				&& attacker.buff(Talent.LiquidAgilACCTracker.class) != null){
 			return HIT_LIQ;
 		}
+		if (attacker.buff(Invulnerability.class) != null && attacker instanceof Hero && Dungeon.hero.pointsInTalent(Talent.WRATHFUL_STRIKE) > 0){
+			return HIT_INVINC;
+		}
+
 
 		KindOfWeapon wep = null;
 		if (attacker instanceof Hero) wep = ((Hero) attacker).belongings.attackingWeapon();
@@ -392,6 +393,8 @@ public class FloatingText extends RenderedTextBlock {
 			if (defender instanceof Hero)   hitReasons.put(HIT_SUPR, 0.5f);
 			else                            return HIT_SUPR;
 		}
+
+
 
 		//sort from largest modifier to smallest one
 		ArrayList<Integer> sortedReasons = new ArrayList<>(hitReasons.keySet());

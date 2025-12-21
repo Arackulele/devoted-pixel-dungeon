@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Thorns;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -79,6 +80,7 @@ public class CloakOfThorns extends Artifact {
 			if (Dungeon.level.map[target.pos] != Terrain.SOLID && charge > 0 && Blob.volumeAt(target.pos, Thorns.class) == 0) {
 				GameScene.add(Blob.seed(target.pos, 25, Thorns.class));
 				charge-= 1f;
+				Item.updateQuickslot();
 			}
 			else if (charge < 1) QuestDone = true;
 			}

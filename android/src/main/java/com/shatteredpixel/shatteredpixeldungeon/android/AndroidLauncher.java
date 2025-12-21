@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2022 Evan Debenham
+ * Copyright (C) 2014-2025 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,16 @@ package com.shatteredpixel.shatteredpixeldungeon.android;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.ViewConfiguration;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
 import com.badlogic.gdx.Files;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.badlogic.gdx.backends.android.AndroidAudio;
@@ -42,8 +45,10 @@ import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.News;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.NewsImpl;
 import com.shatteredpixel.shatteredpixeldungeon.services.updates.UpdateImpl;
-import com.watabou.noosa.Game;
+import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
+import com.watabou.input.KeyEvent;
+import com.watabou.noosa.Game;
 import com.watabou.utils.FileUtils;
 
 public class AndroidLauncher extends AndroidApplication {
@@ -61,11 +66,12 @@ public class AndroidLauncher extends AndroidApplication {
 			GdxNativesLoader.load();
 			FreeType.initFreeType();
 		} catch (Exception e){
-			AndroidMissingNativesHandler.errorMsg = e.getMessage();
+			GdxNativesLoader.disableNativesLoading = true;
+			AndroidMissingNativesHandler.error = e;
 			Intent intent = new Intent(this, AndroidMissingNativesHandler.class);
 			startActivity(intent);
 			finish();
-			return;
+			//let initialization continue for a moment so that we can set up things libGDX expects to be set up
 		}
 
 		//there are some things we only need to set up on first launch
@@ -84,6 +90,7 @@ public class AndroidLauncher extends AndroidApplication {
 				Game.versionCode = 0;
 			}
 
+			Gdx.app = this;
 			if (UpdateImpl.supportsUpdates()) {
 				Updates.service = UpdateImpl.getUpdateService();
 			}
@@ -102,22 +109,24 @@ public class AndroidLauncher extends AndroidApplication {
 		} else {
 			instance = this;
 		}
-		
-		//set desired orientation (if it exists) before initializing the app.
-		if (SPDSettings.landscape() != null) {
-			instance.setRequestedOrientation( SPDSettings.landscape() ?
-					ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE :
-					ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT );
+
+		//Shattered still overrides the back gesture behaviour, but we need to do it in a new way
+		// (API added in Android 13, functionality enforced in Android 16)
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+			getOnBackInvokedDispatcher().registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT, new OnBackInvokedCallback() {
+				@Override
+				public void onBackInvoked() {
+					KeyEvent.addKeyEvent(new KeyEvent(Input.Keys.BACK, true));
+					KeyEvent.addKeyEvent(new KeyEvent(Input.Keys.BACK, false));
+				}
+			});
 		}
-		
+
 		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
 		config.depth = 0;
-		if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-			//use rgb565 on ICS devices for better performance
-			config.r = 5;
-			config.g = 6;
-			config.b = 5;
-		}
+
+		//we manage this ourselves
+		config.useImmersiveMode = false;
 		
 		config.useCompass = false;
 		config.useAccelerometer = false;
@@ -142,11 +151,7 @@ public class AndroidLauncher extends AndroidApplication {
 	protected void onResume() {
 		//prevents weird rare cases where the app is running twice
 		if (instance != this){
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				finishAndRemoveTask();
-			} else {
-				finish();
-			}
+			finishAndRemoveTask();
 		}
 		super.onResume();
 	}

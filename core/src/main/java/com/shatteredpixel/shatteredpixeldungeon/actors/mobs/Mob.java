@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CitadelBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
@@ -467,7 +468,11 @@ public abstract class Mob extends Char {
 
 	private boolean cellIsPathable( int cell ){
 		if (!Dungeon.level.passable[cell]){
-			if (flying || buff(Amok.class) != null){
+
+			boolean isReallyflying = true;
+			if (Dungeon.level instanceof CitadelBossLevel && HT > 300) isReallyflying = false;
+
+			if ( (flying || buff(Amok.class) != null) && isReallyflying){
 				if (!Dungeon.level.avoid[cell]){
 					return false;
 				}
@@ -868,8 +873,6 @@ public abstract class Mob extends Char {
 
 			rollToDropLoot();
 
-			if (cause == Dungeon.hero && Dungeon.hero.InfusedItem != null && Dungeon.hero.InfusedItem.cooldown > 0)  Dungeon.hero.InfusedItem.cooldown--;
-
 			if (cause == Dungeon.hero || cause instanceof Weapon || cause instanceof Weapon.Enchantment){
 				if (Dungeon.hero.hasTalent(Talent.LETHAL_MOMENTUM)
 						&& Random.Float() < 0.34f + 0.33f* Dungeon.hero.pointsInTalent(Talent.LETHAL_MOMENTUM)){
@@ -982,7 +985,7 @@ public abstract class Mob extends Char {
 	}
 	
 	protected Object loot = null;
-	protected float lootChance = 0;
+	public float lootChance = 0;
 	
 	@SuppressWarnings("unchecked")
 	public Item createLoot() {

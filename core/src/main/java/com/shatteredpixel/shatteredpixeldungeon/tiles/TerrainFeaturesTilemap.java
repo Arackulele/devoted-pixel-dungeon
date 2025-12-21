@@ -68,7 +68,7 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 
 		int stage = (Dungeon.depth-1)/5;
 		if (Dungeon.depth == 21 && Dungeon.level instanceof LastShopLevel) stage--;
-		if (Dungeon.level instanceof ColdhouseLevel) {
+		if (Dungeon.level instanceof ColdhouseLevel || Dungeon.level instanceof ColdhouseBossLevel) {
 			if (tile == Terrain.HIGH_GRASS) {
 				return 9 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 			} else if (tile == Terrain.FURROWED_GRASS) {
@@ -102,6 +102,15 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 				return 11 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 			} else if (tile == Terrain.GRASS) {
 				return 13 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			}
+		}
+		else if (Dungeon.level instanceof VoidLevel || Dungeon.level instanceof VoidBossLevel) {
+			if (tile == Terrain.HIGH_GRASS) {
+				return 9 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.FURROWED_GRASS) {
+				return 11 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			} else if (tile == Terrain.GRASS) {
+				return 13 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 			}
 		}
 		else {

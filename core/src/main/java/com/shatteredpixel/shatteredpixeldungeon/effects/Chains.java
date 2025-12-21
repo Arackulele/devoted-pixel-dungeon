@@ -66,6 +66,8 @@ public class Chains extends Group {
 		//base of 200ms, plus 50ms per tile travelled
 		duration = distance/320f + 0.2f;
 
+        if (type == Effects.Type.VOID_DOTS) duration /= 2;
+
 		rotation = (float)(Math.atan2( dy, dx ) * A) + 90f;
 
 		numChains = Math.round(distance/6f)+1;

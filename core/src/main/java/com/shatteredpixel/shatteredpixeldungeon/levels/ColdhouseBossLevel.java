@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.ColdhousePainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ChillingTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GeyserTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -124,16 +125,6 @@ public class ColdhouseBossLevel extends Level {
 		Painter.fillDiamond(this, mainArena, Terrain.EMPTY);
 
 
-
-		boolean[] patch = Patch.generate( width, height-14, 0.3f, 5, true );
-		for (int i= 14*width(); i < length(); i++) {
-			if (map[i] == Terrain.EMPTY) {
-				if (patch[i - 14 * width()]) {
-					map[i] = Terrain.WATER;
-				}
-			}
-		}
-
 		buildEntrance();
 		//buildCorners();
 
@@ -185,6 +176,21 @@ public class ColdhouseBossLevel extends Level {
 					setTrap(t, i);
 				}
 			}
+		}
+
+		int counter = 10;
+		//Except the useful ones, but we do want those to be evenly distributed
+		for (int i = 0;i < length();i++)
+		{
+			if (map[i] == Terrain.EMPTY && counter < 1  && mainArena.inside(cellToPoint(i)))
+			{
+
+				map[i] = Terrain.SECRET_TRAP;
+				Trap t = new GeyserTrap();
+				setTrap(t, i);
+				counter = Random.Int(16, 31);
+			}
+			else if (map[i] == Terrain.EMPTY) counter--;
 		}
 
 		return true;
@@ -396,7 +402,6 @@ public class ColdhouseBossLevel extends Level {
 			Camera.main.shake(3, 0.7f);
 			Sample.INSTANCE.play(Assets.Sounds.ROCKS);
 
-			///ToDo: Replace with beast
 			boss = new RatBeast();
 			boss.state = boss.WANDERING;
 			do {
@@ -408,7 +413,7 @@ public class ColdhouseBossLevel extends Level {
 			Game.runOnRenderThread(new Callback() {
 				@Override
 				public void call() {
-					Music.INSTANCE.play(Assets.Music.PRISON_BOSS, true);
+					Music.INSTANCE.play(Assets.Music.COLDHOUSE_BOSS, true);
 				}
 			});
 		}

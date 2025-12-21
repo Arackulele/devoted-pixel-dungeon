@@ -122,7 +122,10 @@ public class RoyalGrub extends Grub {
 
 			default: case "bomb":
 				Bomb b = new Bomb();
-				b.explode(pos);
+				b.finaldelay = Random.Int(2) + 1;
+				b.subBomb = true;
+				Dungeon.level.drop( b , pos ).sprite.drop();
+				b.onThrow(pos);
 				break;
 			case "gas":
 				GameScene.add(Blob.seed(this.pos , 20, ConfusionGas.class));

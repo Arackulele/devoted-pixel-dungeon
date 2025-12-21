@@ -54,7 +54,7 @@ public class BlueImp extends NPC {
 	
 	@Override
 	public int damageRoll() {
-		return Random.NormalIntRange( 1 + (Dungeon.hero.lvl / 5 ), 4 + (Dungeon.hero.lvl / 2 ));
+		return Random.NormalIntRange( 1 + (Wisp.GetHeroLevel() / 5 ), 4 + (Wisp.GetHeroLevel() / 2 ));
 	}
 	
 	@Override

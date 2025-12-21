@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SacrificialParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.WindParticle;
@@ -496,7 +497,7 @@ public abstract class Level implements Bundlable {
 	
 	abstract protected boolean build();
 	
-	private ArrayList<Class<?extends Mob>> mobsToSpawn = new ArrayList<>();
+	protected ArrayList<Class<?extends Mob>> mobsToSpawn = new ArrayList<>();
 	
 	public Mob createMob() {
 		if (mobsToSpawn == null || mobsToSpawn.isEmpty()) {
@@ -1121,6 +1122,16 @@ public abstract class Level implements Bundlable {
 				|| findMob(result) != null);
 		return result;
 	}
+
+	public int TrapCell() {
+		int result;
+		do {
+			result = randomRespawnCell( null );
+		} while (traps.get(result) != null
+				|| findMob(result) != null
+		|| result == -1);
+		return result;
+	}
 	
 	public void occupyCell( Char ch ){
 		if (!ch.isImmune(Web.class) && Blob.volumeAt(ch.pos, Web.class) > 0){
@@ -1204,45 +1215,58 @@ public abstract class Level implements Bundlable {
 
 			//Only do a larger search if initial search fails to save on processing
 
-			if (dest == -1)
+			if (dest == -1 || dest == ch.pos)
 			{
 				ArrayList<Integer> validtiles = new ArrayList<Integer>();
-				PathFinder.buildDistanceMap( ch.pos, com.watabou.utils.BArray.and(Dungeon.level.dry, Dungeon.level.passable, null), 6 );
+				PathFinder.buildDistanceMap( ch.pos, com.watabou.utils.BArray.and(Dungeon.level.passable, Dungeon.level.passable, null), 3 );
 				for (int i = 0; i < PathFinder.distance.length; i++) {
 					if (PathFinder.distance[i] < Integer.MAX_VALUE) {
-						validtiles.add(i);
+						if (Dungeon.level.passable[i] && Dungeon.level.map[i] != Terrain.WATER)validtiles.add(i);
 					}
 				}
-				int amount = Random.Int(2) + 2;
 				Random.shuffle(validtiles);
 
-				dest = validtiles.get(0);
+                if (validtiles.isEmpty()) dest = -1;
+				else dest = validtiles.get(0);
 
 			}
-
-			if (dest != -1)
+			if (dest != -1 && ch.isAlive() && dest != ch.pos)
 			{
 				final int destin = dest;
+				if (ch instanceof Hero) {
+					Dungeon.hero.interrupt();
+                    Dungeon.hero.busy();
+                    Dungeon.hero.spend(1f);
+                }
 
 				ch.sprite.jump(ch.pos, ch.pos, new com.watabou.utils.Callback() {
 					@Override
 					public void call() {
-				ch.sprite.jump(ch.pos, destin, new com.watabou.utils.Callback() {
-					@Override
-					public void call() {
-						ch.move(destin);
-						Dungeon.level.occupyCell(ch);
-						Dungeon.observe();
-						GameScene.updateFog();
+                        ch.sprite.jump(ch.pos, destin, new com.watabou.utils.Callback() {
+							@Override
+							public void call() {
+								ch.move(destin);
+								Dungeon.level.occupyCell(ch);
+								Dungeon.observe();
+								GameScene.updateFog();
 
-						Invisibility.dispel();
+								Invisibility.dispel();
 
-						Buff.affect(ch, Burning.class).reignite(ch, 5f);
-					}
-				});
-				}});
+								Buff.affect(ch, Burning.class).reignite(ch, 3f);
+                                ch.next();
+							}
+						});
+					}});
 
-				}
+			}
+			else if (ch.isAlive())
+			{
+				//this will look a bit weird in game but its better than crashing the game or being stuck in a death loop
+				Level.set(ch.pos, Terrain.EMPTY);
+				CellEmitter.get(ch.pos).start(Speck.factory(Speck.ROCK), 0.07f, 1);
+				GameScene.updateMap(ch.pos);
+
+			}
 
 
 
@@ -1563,7 +1587,7 @@ public abstract class Level implements Bundlable {
 
 			//set mind vision chars
 			for (Mob mob : mobs) {
-				if (heroMindFov[mob.pos] && !fieldOfView[mob.pos]){
+				if (mob.pos != -1 && heroMindFov[mob.pos] && !fieldOfView[mob.pos]){
 					Dungeon.hero.mindVisionEnemies.add(mob);
 				}
 			}

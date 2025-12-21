@@ -27,10 +27,10 @@ import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.watabou.noosa.audio.Music;
 
 public class DesktopWindowListener implements Lwjgl3WindowListener {
-
+	
 	@Override
 	public void created ( Lwjgl3Window lwjgl3Window ) { }
-
+	
 	@Override
 	public void maximized ( boolean b ) {
 		SPDSettings.windowMaximized( b );
@@ -38,7 +38,7 @@ public class DesktopWindowListener implements Lwjgl3WindowListener {
 			SPDSettings.windowResolution(DesktopPlatformSupport.previousSizes[1]);
 		}
 	}
-
+	
 	@Override
 	public void iconified ( boolean b ) { }
 	public void focusLost () {

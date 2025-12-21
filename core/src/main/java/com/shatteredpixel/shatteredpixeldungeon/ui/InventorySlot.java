@@ -86,7 +86,12 @@ public class InventorySlot extends ItemSlot {
 
 			bg.texture( TextureCache.createSolid( equipped ? EQUIPPED : NORMAL ) );
 			bg.resetColor();
-			if (item.cursed && item.cursedKnown) {
+            if (item.isInfused) {
+                //bg.color(0x87763A);
+                bg.ra = 0.2f;
+                bg.ga = 0.2f;
+                bg.ba = -0.1f;
+            } else if (item.cursed && item.cursedKnown) {
 				bg.ra = +0.3f;
 				bg.ga = -0.15f;
 				bg.ba = -0.15f;

@@ -23,6 +23,9 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.RockBlock;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.MetalShard;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Glaive;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -35,6 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.TrollSpearmanSprite;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 public class TrollSpearman extends Mob {
@@ -47,9 +51,6 @@ public class TrollSpearman extends Mob {
 
 		EXP = 7;
 		maxLvl = -2;
-
-		loot = Glaive.class;
-		lootChance = 0.02f;
 
 		WANDERING = new TrollSpearman.Wandering();
 
@@ -93,7 +94,6 @@ public class TrollSpearman extends Mob {
 		spearPos = bundle.getInt(SPEARPOS);
 	}
 
-	//TODo: charge spear attack for one turn and then throw on that tile. without doing anything else in the meantime
 	@Override
 	protected boolean  doAttack( Char enemy ) {
 
@@ -133,18 +133,9 @@ public class TrollSpearman extends Mob {
 	}
 
 	public void lavaspear(int cell, boolean destroy) {
-		if (Dungeon.level.dry[cell] && Dungeon.level.map[cell] != Terrain.EMPTY_SP) {
-			if (destroy) {
-				Splash.at(cell, 0xed980e, 15);
-				Level.set(cell, Terrain.WATER);
-				GameScene.updateMap(cell);
-				if (Actor.findChar(cell) != null) Dungeon.level.occupyCell(Actor.findChar(cell));
-			}
-			else sprite.parent.add(new TargetedCell(cell, 0xFF0000));
-		}
 
-		for (int i : com.watabou.utils.PathFinder.NEIGHBOURS4){
-			if (Dungeon.level.dry[cell + i] && Dungeon.level.map[cell] != Terrain.EMPTY_SP) {
+		for (int i : PathFinder.NEIGHBOURS5){
+			if (Dungeon.level.dry[cell + i] && Dungeon.level.map[cell + i] != Terrain.EMPTY_SP) {
 				if (destroy) {
 					Splash.at(cell + i, 0xed980e, 15);
 					Level.set(cell + i, Terrain.WATER);
@@ -232,5 +223,16 @@ public class TrollSpearman extends Mob {
 			}
 		}
 	}
+
+    @Override
+    public void rollToDropLoot() {
+        super.rollToDropLoot();
+
+        int ofs;
+        do {
+            ofs = PathFinder.NEIGHBOURS9[Random.Int(9)];
+        } while (Dungeon.level.solid[pos + ofs] && !Dungeon.level.passable[pos + ofs] && !Dungeon.level.dry[pos + ofs]);
+        Dungeon.level.drop( new RockBlock(), pos + ofs ).sprite.drop( pos );
+    }
 
 }

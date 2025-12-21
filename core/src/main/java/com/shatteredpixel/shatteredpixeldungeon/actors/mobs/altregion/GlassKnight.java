@@ -27,9 +27,11 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Freezing;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFrost;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ConeAOE;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -66,6 +68,8 @@ public class GlassKnight extends Mob {
 		return Random.NormalIntRange(5, 11);
 	}
 
+	public static class IceSlash{}
+
 	private void performSpin(){
 
 		chainsUsed = true;
@@ -84,7 +88,7 @@ public class GlassKnight extends Mob {
 
 		for (int cell : cone.cells) {
 			GameScene.add(Blob.seed(cell, 5, Freezing.class));
-			if (Actor.findChar(cell) != null) Actor.findChar(cell).damage(Random.NormalIntRange(6, 8), this);
+			if (Actor.findChar(cell) != null) Actor.findChar(cell).damage(Random.NormalIntRange(6, 8), new IceSlash());
 		}
 
 	}

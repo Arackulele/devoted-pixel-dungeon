@@ -21,17 +21,14 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion;
 
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Slow;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.ChargrilledMeat;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.FlameMoleSprite;
@@ -44,8 +41,6 @@ public class FlamingMole extends Mole {
 		loot = ChargrilledMeat.class;
 		lootChance = 1f;
 
-		HUNTING = new FlamingMole.Hunting();
-
 		immunities.add(Burning.class);
 	}
 
@@ -56,44 +51,12 @@ public class FlamingMole extends Mole {
 		super.move( step, travelling);
 	}
 
-	private class Hunting extends Mob.Hunting {
 
-		@Override
-		public boolean act(boolean enemyInFOV, boolean justAlerted) {
+	@Override
+	public void SpreadEffect(int p)
+	{
+		GameScene.add(Blob.seed(pos + com.watabou.utils.PathFinder.NEIGHBOURS8[p], 4, Fire.class));
 
-			if (!digging && enemyInFOV && Dungeon.level.distance(enemy.pos, pos) > 1 && Actor.findChar(pos) == null) {
-
-				digging = true;
-				((FlameMoleSprite)sprite).setSubmerge();
-				com.watabou.noosa.audio.Sample.INSTANCE.play(Assets.Sounds.DIG);
-				spend(1f);
-
-				return true;
-			}
-			else if (digging && enemyInFOV && Dungeon.level.distance(enemy.pos, pos) < 2)
-			{
-				digging = false;
-				((FlameMoleSprite)sprite).setEmerge();
-				com.watabou.noosa.audio.Sample.INSTANCE.play(Assets.Sounds.DIG);
-				spend(1f);
-
-				for (int i = 0; i < com.watabou.utils.PathFinder.NEIGHBOURS8.length; i++) {
-					CellEmitter.get(pos + com.watabou.utils.PathFinder.NEIGHBOURS8[i]).burst(FlameParticle.FACTORY, 5);
-						Char ch = Actor.findChar( pos + com.watabou.utils.PathFinder.NEIGHBOURS8[i] );
-						if (ch != null && ch.isAlive()) {
-							Buff.affect(ch, Burning.class).reignite(ch, 2);
-						}
-					}
-
-
-				return true;
-			}
-
-			return super.act(enemyInFOV, justAlerted);
-
-		}
 	}
-
-
 
 }

@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HornedToadSprite;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 public class HornedToad extends Toad {
@@ -39,6 +40,9 @@ public class HornedToad extends Toad {
 		
 		HP = HT = 22;
 		defenseSkill = 5;
+
+        WANDERING = new Wandering();
+        state = WANDERING;
 
 		properties.add(Char.Property.MINIBOSS);
 	}
@@ -65,20 +69,21 @@ public class HornedToad extends Toad {
 		Ghost.Quest.process();
 	}
 
-	protected class Wandering extends Mob.Wandering {
-		@Override
-		protected int randomDestination() {
-			//of two potential wander positions, picks the one closest to the hero
-			int pos1 = super.randomDestination();
-			int pos2 = super.randomDestination();
-			com.watabou.utils.PathFinder.buildDistanceMap(Dungeon.hero.pos, Dungeon.level.passable);
-			if (com.watabou.utils.PathFinder.distance[pos2] < com.watabou.utils.PathFinder.distance[pos1]){
-				return pos2;
-			} else {
-				return pos1;
-			}
-		}
-	}
+
+    protected class Wandering extends Mob.Wandering{
+        @Override
+        protected int randomDestination() {
+            //of two potential wander positions, picks the one closest to the hero
+            int pos1 = super.randomDestination();
+            int pos2 = super.randomDestination();
+            PathFinder.buildDistanceMap(Dungeon.hero.pos, Dungeon.level.passable);
+            if (PathFinder.distance[pos2] < PathFinder.distance[pos1]){
+                return pos2;
+            } else {
+                return pos1;
+            }
+        }
+    }
 
 	@Override
 	public int attackSkill( Char target ) {

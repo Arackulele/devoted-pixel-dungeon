@@ -109,7 +109,7 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 		//720 is default
 
 		ANGULAR_SPEEDS.put(GnollGeomancer.Boulder.class,   90);
-		
+
 		ANGULAR_SPEEDS.put(HeavyBoomerang.class,1440);
 		ANGULAR_SPEEDS.put(Bolas.class,         1440);
 		

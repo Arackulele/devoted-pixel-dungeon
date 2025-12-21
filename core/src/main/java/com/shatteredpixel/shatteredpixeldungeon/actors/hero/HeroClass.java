@@ -48,8 +48,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.Wea
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Infernobomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.RockBlock;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfAntiMagic;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfBlink;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HolyTome;
@@ -165,14 +169,11 @@ public enum HeroClass {
 		}
 
 		if (DeviceCompat.isDebug()) {
-			RockBlock splinter = new RockBlock();
-			splinter.quantity(50).collect();
-
-			hero.earnExp( 900, null );
+			hero.earnExp( 2000, null );
 			Dungeon.energy += 100;
 
-			hero.belongings.weapon.level(9);
-			hero.belongings.armor.level(9);
+			hero.belongings.weapon.level(100);
+			hero.belongings.armor.level(20);
 			hero.belongings.weapon.upgrade();
 
 			PotionOfHealing he = new PotionOfHealing();
@@ -183,14 +184,22 @@ public enum HeroClass {
 			f.quantity(99).collect();
 			f.identify();
 
-			TengusMask res = new TengusMask();
+			PotionOfMindVision b = new PotionOfMindVision();
+			b.quantity(99).collect();
+			b.identify();
+
+			Meal res = new Meal();
 			res.quantity(1).collect();
 
-			KingsCrown crw = new KingsCrown();
+			RoyalSeal crw = new RoyalSeal();
 			crw.quantity(1).collect();
 
-			Dungeon.depth = 16;
-			//Dungeon.branch = 1;
+            Item test = new Infernobomb();
+            test.isInfused = true;
+            test.quantity(1).collect();
+
+            Dungeon.depth = 26;
+			Dungeon.branch = 0;
 
 		}
 
@@ -210,6 +219,8 @@ public enum HeroClass {
 				return Badges.Badge.MASTERY_DUELIST;
 			case CLERIC:
 				return Badges.Badge.MASTERY_CLERIC;
+			case ZEALOT:
+				return Badges.Badge.MASTERY_ZEALOT;
 		}
 		return null;
 	}
@@ -412,6 +423,8 @@ public enum HeroClass {
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_DUELIST);
 			case CLERIC:
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_CLERIC);
+			case ZEALOT:
+				return Badges.isUnlocked(Badges.Badge.UNLOCK_ZEALOT);
 		}
 	}
 	

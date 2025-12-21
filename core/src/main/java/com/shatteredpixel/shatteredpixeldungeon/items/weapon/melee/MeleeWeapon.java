@@ -261,6 +261,10 @@ public class MeleeWeapon extends Weapon {
 
 	public int STRReq(int lvl){
 		int req = STRReq(tier, lvl);
+		if (GildDegrade){
+			req = STRReq(tier, 0);
+			req++;
+		}
 		if (masteryPotionBonus){
 			req -= 2;
 		}

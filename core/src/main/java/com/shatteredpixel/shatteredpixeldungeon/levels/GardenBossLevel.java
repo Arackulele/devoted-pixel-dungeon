@@ -187,7 +187,7 @@ public class GardenBossLevel extends GardenLevel {
 			Game.runOnRenderThread(new Callback() {
 				@Override
 				public void call() {
-					Music.INSTANCE.play(Assets.Music.SEWERS_BOSS, true);
+					Music.INSTANCE.play(Assets.Music.GARDENS_BOSS, true);
 				}
 			});
 		}

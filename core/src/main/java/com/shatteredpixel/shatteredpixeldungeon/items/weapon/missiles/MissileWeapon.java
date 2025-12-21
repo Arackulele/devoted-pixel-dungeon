@@ -128,6 +128,9 @@ abstract public class MissileWeapon extends Weapon {
 	
 	public int STRReq(int lvl){
 		int req = STRReq(tier, lvl) - 1; //1 less str than normal for their tier
+		if (GildDegrade){
+			req = STRReq(tier, 0);
+		}
 		if (masteryPotionBonus){
 			req -= 2;
 		}

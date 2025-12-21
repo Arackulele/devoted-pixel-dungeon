@@ -70,8 +70,9 @@ public class AmuletScene extends PixelScene {
 			text = renderTextBlock( Messages.get(this, "text"), 8 );
 			text.maxWidth( landscape() ? 2*WIDTH-4 : WIDTH);
 		}
-		
-		amulet = new Image( Assets.Sprites.AMULET );
+
+		if (Dungeon.hallsalt) amulet = new Image( Assets.Sprites.BRACELET );
+		else amulet = new Image( Assets.Sprites.AMULET );
 		add( amulet );
 
 		btnExit = new StyledButton(Chrome.Type.GREY_BUTTON_TR, Messages.get(this, "exit") ) {
@@ -104,7 +105,8 @@ public class AmuletScene extends PixelScene {
 						false);
 			}
 		};
-		btnExit.icon(new ItemSprite(ItemSpriteSheet.AMULET));
+		if (Dungeon.hallsalt) btnExit.icon(new ItemSprite(ItemSpriteSheet.BRACELET));
+		else btnExit.icon(new ItemSprite(ItemSpriteSheet.AMULET));
 		btnExit.setSize( WIDTH, BTN_HEIGHT );
 		add( btnExit );
 		

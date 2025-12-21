@@ -41,11 +41,11 @@ public class EndothermicRing extends Ring {
 		unique = true;
 		bones = false;
 	}
-	public int totalLeft = 40;
+	public int totalLeft = 60;
 
 	public String TOTALLEFT = "totalleft";
 
-	public int timer = 20;
+	public int timer = 16;
 
 	public String TIMER = "timer";
 
@@ -111,8 +111,9 @@ public class EndothermicRing extends Ring {
 					Splash.at(DungeonTilemap.tileCenterToWorld(Dungeon.hero.pos), -com.watabou.utils.PointF.PI / 2, com.watabou.utils.PointF.PI / 2, 0x5bc1e3, 3, 0.02f);
 					Dungeon.level.set(target.pos, Terrain.EMPTY);
 					GameScene.updateMap(target.pos);
+					Dungeon.level.discover(target.pos);
 					totalLeft--;
-					timer = 21;
+					timer = 14;
 				}
 
 			if (timer < 1) {

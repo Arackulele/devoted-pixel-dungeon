@@ -32,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfFrost;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.EmberEssence;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.GooBlob;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.MetalShard;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMirrorImage;
@@ -46,6 +47,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
+import com.shatteredpixel.shatteredpixeldungeon.levels.VoidTrapLevel;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
@@ -120,16 +122,25 @@ public class Bomb extends Item {
 		return new Fuse();
 	}
 
+	//ToDo: Save this
+	public int finaldelay = 2;
+
 	@Override
-	protected void onThrow( int cell ) {
-		if (!Dungeon.level.pit[ cell ] && lightingFuse) {
-			Actor.addDelayed(fuse = createFuse().ignite(this), 2);
+	public void onThrow(int cell) {
+		if (subBomb) Actor.addDelayed(fuse = createFuse().ignite(this), finaldelay);
+		else if (!Dungeon.level.pit[ cell ] && lightingFuse) {
+			Actor.addDelayed(fuse = createFuse().ignite(this), finaldelay);
 		}
 		super.onThrow( cell );
 	}
 
+	public boolean subBomb = false;
+
 	@Override
 	public boolean doPickUp(Hero hero, int pos) {
+		if (subBomb) return false;
+        //We dont want the player duplicating infused bombs
+        if (isInfused && fuse != null) return false;
 		if (fuse != null) {
 			GLog.w( Messages.get(this, "snuff_fuse") );
 			fuse = null;
@@ -181,7 +192,7 @@ public class Bomb extends Item {
 
 				//destroys items / triggers bombs caught in the blast.
 				Heap heap = Dungeon.level.heaps.get(i);
-				if (heap != null) {
+				if (heap != null && !subBomb) {
 					heap.explode();
 				}
 			}
@@ -196,8 +207,12 @@ public class Bomb extends Item {
 				int dmg = Random.NormalIntRange(4 + Dungeon.scalingDepth(), 12 + 3*Dungeon.scalingDepth());
 				dmg -= ch.drRoll();
 
+				if (subBomb) dmg = (int)(dmg * 0.33f);
+
 				if (dmg > 0) {
-					ch.damage(dmg, this);
+					//its a bit scuffed but prevents the void trap bombs from killing the wraiths
+					if (image == ItemSpriteSheet.OBLIVION_SHARD && ch.alignment != Dungeon.hero.alignment) {}
+					else ch.damage(dmg, this);
 
 					if (Dungeon.hero.hasTalent(Talent.DEMOLITIONIST))
 					{
@@ -390,6 +405,7 @@ public class Bomb extends Item {
 			
 			validIngredients.put(GooBlob.class,                 ArcaneBomb.class);
 			validIngredients.put(MetalShard.class,              ShrapnelBomb.class);
+			validIngredients.put(EmberEssence.class,            Infernobomb.class);
 		}
 		
 		private static final HashMap<Class<?extends Bomb>, Integer> bombCosts = new HashMap<>();
@@ -408,6 +424,7 @@ public class Bomb extends Item {
 			
 			bombCosts.put(ArcaneBomb.class,     6);
 			bombCosts.put(ShrapnelBomb.class,   6);
+			bombCosts.put(Infernobomb.class,   6);
 		}
 		
 		@Override
@@ -452,6 +469,8 @@ public class Bomb extends Item {
 				Catalog.countUse(GooBlob.class);
 			} else if (result instanceof ShrapnelBomb){
 				Catalog.countUse(MetalShard.class);
+			} else if (result instanceof Infernobomb){
+				Catalog.countUse(EmberEssence.class);
 			}
 
 			return result;

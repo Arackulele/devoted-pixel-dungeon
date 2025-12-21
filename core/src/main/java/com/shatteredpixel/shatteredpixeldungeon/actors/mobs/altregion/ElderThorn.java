@@ -23,11 +23,15 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.StenchGas;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Sungrass;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ElderThornSprite;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 public class ElderThorn extends ThornLasher {
@@ -39,6 +43,9 @@ public class ElderThorn extends ThornLasher {
 		defenseSkill = 5;
 
 		properties.add(Char.Property.MINIBOSS);
+
+        WANDERING = new Wandering();
+        state = WANDERING;
 
 		loot = new Sungrass.Seed();
 		lootChance = 1f;
@@ -57,7 +64,16 @@ public class ElderThorn extends ThornLasher {
 			if (Dungeon.level.map[pos] == Terrain.FURROWED_GRASS
 					|| Dungeon.level.map[pos] == Terrain.HIGH_GRASS
 					||Dungeon.level.map[pos] == Terrain.WATER
-					) dmg = 0;
+					) grassCells++;
+
+        for (int i : PathFinder.NEIGHBOURS8) {
+            if (Dungeon.level.map[pos + i] == Terrain.FURROWED_GRASS
+                    || Dungeon.level.map[pos + i] == Terrain.HIGH_GRASS
+                    ||Dungeon.level.map[pos + i] == Terrain.WATER
+            ) grassCells++;
+        }
+
+        if (grassCells > 0) dmg = 0;
 
 		super.damage(dmg, src);
 	}

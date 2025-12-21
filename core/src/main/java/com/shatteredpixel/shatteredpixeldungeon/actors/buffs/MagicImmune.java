@@ -42,7 +42,11 @@ public class MagicImmune extends FlavourBuff {
 
 	@Override
 	public boolean attachTo(Char target) {
-		if (super.attachTo(target)){
+		if (this instanceof EquipmentDisabled)
+		{
+			return super.attachTo(target);
+		}
+		else if (super.attachTo(target)){
 			for (Buff b : target.buffs()){
 				for (Class immunity : immunities){
 					if (b.getClass().isAssignableFrom(immunity)){

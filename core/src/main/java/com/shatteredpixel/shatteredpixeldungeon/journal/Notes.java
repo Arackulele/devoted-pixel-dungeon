@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WaterOfAwareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WaterOfHealth;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DemonSpawner;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.EldritchBrain;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.*;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
@@ -129,7 +130,8 @@ public class Notes {
 		BOUNTYHUNTER,
 		IMP,
 
-		DEMON_SPAWNER;
+		DEMON_SPAWNER,
+        ELDRITCH_BRAIN;
 	}
 	
 	public static class LandmarkRecord extends Record {
@@ -203,6 +205,8 @@ public class Notes {
 
 				case DEMON_SPAWNER:
 					return new Image(new SpawnerSprite());
+                case ELDRITCH_BRAIN:
+                    return new Image(new BrainSprite());
 			}
 		}
 
@@ -259,7 +263,8 @@ public class Notes {
 				case IMP:           return Messages.get(Imp.class, "desc");
 
 				case DEMON_SPAWNER: return Messages.get(DemonSpawner.class, "desc");
-			}
+                case ELDRITCH_BRAIN: return Messages.get(EldritchBrain.class, "desc");
+            }
 		}
 
 		@Override

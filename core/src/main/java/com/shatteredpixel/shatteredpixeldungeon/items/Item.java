@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.InfusionCD;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
@@ -78,7 +79,6 @@ public class Item implements Bundlable {
 	
 	public boolean stackable = false;
 	public boolean isInfused = false;
-	public int cooldown = 0;
 	protected int quantity = 1;
 	public boolean dropsDownHeap = false;
 	
@@ -157,12 +157,6 @@ public class Item implements Bundlable {
 	
 	public void execute( Hero hero, String action ) {
 
-		if (isInfused && cooldown > 0)
-		{
-
-			//ToDo: Send message about cooldown and glow
-			return;
-		}
 
 		GameScene.cancel();
 		curUser = hero;
@@ -324,22 +318,17 @@ public class Item implements Bundlable {
 		return dupe;
 	}
 
-	private boolean forcenextdetach;
-	
 	public final Item detach( Bag container ) {
 
-		if (isInfused && !forcenextdetach)
+		if (isInfused)
 		{
 
-			if (energyVal() > 0) cooldown = energyVal() * 2;
-			else cooldown = 5;
+            int cooldown = 50;
+            //ToDo: Maybe there should be some special cases
+			if (energyVal() > 0) cooldown = energyVal() * 30;
 
-			if (forcenextdetach) forcenextdetach = false;
-
-			return null;
-		}
-
-		else {
+			Buff.affect(Dungeon.hero, InfusionCD.class, cooldown).ToGiveBack = this;
+        }
 
 			if (quantity <= 0) {
 
@@ -362,17 +351,12 @@ public class Item implements Bundlable {
 				return detached;
 
 			}
-		}
 	}
 
 	public final Item detach( Bag container, boolean forced ) {
 
 
-		if (!forced) return detach(container);
-		else {
-			forcenextdetach = true;
-			return detach(container);
-		}
+		return detach(container);
 	}
 
 	
@@ -541,9 +525,6 @@ public class Item implements Bundlable {
 	}
 
 	public ItemSprite.Glowing glowing() {
-		if (isInfused && cooldown > 0){
-			return new ItemSprite.Glowing( 0xff59a4 );
-		}
 		return null;
 	}
 
@@ -569,6 +550,7 @@ public class Item implements Bundlable {
 	}
 	
 	public String desc() {
+        if (isInfused) return Messages.get(this, "desc") + Messages.get(this, "infusion_info", energyVal() * 30);
 		return Messages.get(this, "desc");
 	}
 	
@@ -631,7 +613,6 @@ public class Item implements Bundlable {
 		bundle.put( LEVEL_KNOWN, levelKnown );
 		bundle.put( CURSED, cursed );
 		bundle.put( INFUSED, isInfused );
-		bundle.put( COOLDOWN, cooldown );
 		bundle.put( CURSED_KNOWN, cursedKnown );
 		if (Dungeon.quickslot.contains(this)) {
 			bundle.put( QUICKSLOT, Dungeon.quickslot.getSlot(this) );
@@ -646,8 +627,7 @@ public class Item implements Bundlable {
 		levelKnown	= bundle.getBoolean( LEVEL_KNOWN );
 		cursedKnown	= bundle.getBoolean( CURSED_KNOWN );
 		isInfused = bundle.getBoolean(INFUSED);
-		cooldown = bundle.getInt(COOLDOWN);
-		
+
 		int level = bundle.getInt( LEVEL );
 		if (level > 0) {
 			upgrade( level );

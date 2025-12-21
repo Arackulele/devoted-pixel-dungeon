@@ -58,6 +58,8 @@ public enum Icons {
 	CHALLENGE_GREY,
 	SCROLL_GREY,
 	SEED,
+	REGION,
+	REGION_ACTIVE,
 	LEFTARROW,
 	RIGHTARROW,
 	CALENDAR,
@@ -132,7 +134,8 @@ public enum Icons {
 	KRISTJAN,
 	CUBE_CODE,
 	PURIGRO,
-	ARCNOR;
+	ARCNOR,
+	DEVO;
 
 	public Image get() {
 		return get( this );
@@ -168,6 +171,9 @@ public enum Icons {
 				break;
 			case JOURNAL:
 				icon.frame( icon.texture.uvRectBySize( 136, 0, 17, 15 ) );
+				break;
+			case DEVO:
+				icon.frame( icon.texture.uvRectBySize( 154, 0, 16, 15 ) );
 				break;
 
 			case EXIT:
@@ -223,6 +229,12 @@ public enum Icons {
 				break;
 			case CHEVRON:
 				icon.frame( icon.texture.uvRectBySize( 240, 16, 13, 10 ) );
+				break;
+			case REGION:
+				icon.frame( icon.texture.uvRectBySize( 255, 16, 15, 12 ) );
+				break;
+			case REGION_ACTIVE:
+				icon.frame( icon.texture.uvRectBySize( 269, 16, 15, 12 ) );
 				break;
 
 			case TARGET:

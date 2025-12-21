@@ -35,8 +35,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Wyvernfruit;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ColdhouseBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Door;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GeyserTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ConeAOE;
@@ -70,16 +72,17 @@ public class RatBeast extends Mob {
 
 	@Override
 	public int damageRoll() {
-		int min = 4;
-		int max = (HP * 2 <= HT) ? 19 : 14;
+		int min = 3;
+		int max = (HP * 2 <= HT) ? 16 : 11;
 
 		return Random.NormalIntRange(min, max);
 	}
 
 	@Override
 	public int attackSkill(Char target) {
-		int attack = 20;
-		if (HP * 2 <= HT) attack = 30;
+		int attack = 17;
+		if (HP * 2 <= HT) attack = 26;
+		if (HP * 2 <= HT && combochain > 3) attack = Integer.MAX_VALUE;
 		return attack;
 	}
 
@@ -90,7 +93,8 @@ public class RatBeast extends Mob {
 
 	@Override
 	public int drRoll() {
-		return Random.NormalIntRange(1, 9);
+		if (HP * 2 <= HT) return Random.NormalIntRange(3, 11);
+		return Random.NormalIntRange(2, 8);
 	}
 
 	@Override
@@ -158,7 +162,7 @@ public class RatBeast extends Mob {
 			yell(Messages.get(this, "scream"));
 		}
 
-		if (dmg > 14) super.damage((int) (10 + (dmg * 0.2)), src);
+		if (dmg > 14) super.damage((int) (10 + (dmg * 0.1)), src);
 		else super.damage(dmg, src);
 	}
 
@@ -230,12 +234,12 @@ public class RatBeast extends Mob {
 				spend(Actor.TICK * 2);
 				Ballistica bolt = new Ballistica(pos, enemy.pos, Ballistica.STOP_SOLID | Ballistica.IGNORE_SOFT_SOLID);
 
-				int dist = 4;
-				if (HP <= HT*0.5f) dist += 3;
+				int dist = Random.Int(2, 4);
+				if (HP <= HT*0.5f) dist += 2;
 
 				ConeAOE cone = new ConeAOE(bolt,
 						dist,
-						90,
+						80,
 						Ballistica.STOP_TARGET | Ballistica.STOP_SOLID | Ballistica.IGNORE_SOFT_SOLID);
 
 				PixelScene.shake( 3, 0.2f );
@@ -246,7 +250,13 @@ public class RatBeast extends Mob {
 					Char ch = Actor.findChar( cell );
 					if (ch != null && ch.alignment != alignment)
 					{
-						ch.damage(Random.NormalIntRange(3, 14), new BarfAcid());
+						ch.damage(Random.NormalIntRange(3, 12), new BarfAcid());
+					}
+
+
+					if (Dungeon.level.map[cell] == Terrain.WATER) {
+						Level.set(cell, Terrain.EMPTY);
+						GameScene.updateMap(cell);
 					}
 
 					if (Random.Int(10) == 1 && max > 0) {
@@ -272,9 +282,15 @@ public class RatBeast extends Mob {
 
 		for (int offset : PathFinder.NEIGHBOURS9) {
 			Trap T = Dungeon.level.traps.get(pos + offset);
-			if (T != null && Random.Int(3) == 1 && T.active) {
+			if (T != null &&  Random.Int(3) == 1 && T.active) {
+				if (T instanceof GeyserTrap) {
+					T.reveal();
+					CellEmitter.get(pos + offset).burst(Speck.factory(Speck.LIGHT), 2);
+				}
+				else {
 					T.activate();
 					T.disarm();
+				}
 			}
 		}
 

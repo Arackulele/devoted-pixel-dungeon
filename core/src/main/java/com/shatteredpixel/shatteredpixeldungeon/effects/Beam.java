@@ -84,6 +84,12 @@ public class Beam extends Image {
 			super(s, e, Effects.Type.HEALTH_RAY, 0.75f);
 		}
 	}
+
+    public static class VoidDots extends Beam{
+        public VoidDots(PointF s, PointF e){
+            super(s, e, Effects.Type.VOID_DOTS, 0.5f);
+        }
+    }
 	
 	@Override
 	public void update() {

@@ -33,7 +33,7 @@ public class CultistSprite extends MobSprite {
 
 		texture( Assets.Sprites.CULTIST );
 		
-		TextureFilm frames = new TextureFilm( texture, 12, 14 );
+		TextureFilm frames = new TextureFilm( texture, 12, 16 );
 
 		idle = new Animation( 2, true );
 		idle.frames( frames, 0, 0, 0, 1 );

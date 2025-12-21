@@ -91,13 +91,14 @@ public class ItemSpriteSheet {
 	public static final int SANDBAG         = UNCOLLECTIBLE+5;
 	public static final int SPIRIT_ARROW    = UNCOLLECTIBLE+6;
 	public static final int ARROW    		= UNCOLLECTIBLE+7;
-	public static final int THROWSPEAR   		= UNCOLLECTIBLE+12;
+	public static final int THROWSPEAR   	= UNCOLLECTIBLE+12;
 	
 	public static final int TENGU_BOMB      = UNCOLLECTIBLE+8;
 	public static final int TENGU_SHOCKER   = UNCOLLECTIBLE+9;
 	public static final int GEO_BOULDER     = UNCOLLECTIBLE+10;
-
 	public static final int MARKING_ROCK     = UNCOLLECTIBLE+11;
+	public static final int PEARL    		 = UNCOLLECTIBLE+13;
+
 	static{
 		assignItemRect(GOLD,        15, 13);
 		assignItemRect(ENERGY,      16, 16);
@@ -111,8 +112,9 @@ public class ItemSpriteSheet {
 		assignItemRect(TENGU_BOMB,      10, 10);
 		assignItemRect(TENGU_SHOCKER,   10, 10);
 		assignItemRect(GEO_BOULDER,     16, 14);
-		assignItemRect(MARKING_ROCK,     14, 12);
-		assignItemRect(THROWSPEAR		,11, 11);
+		assignItemRect(MARKING_ROCK,    14, 12);
+		assignItemRect(THROWSPEAR,		11, 11);
+		assignItemRect(PEARL,			6, 6);
 	}
 
 	private static final int CONTAINERS     =                               xy(1, 3);   //16 slots
@@ -160,6 +162,7 @@ public class ItemSpriteSheet {
 	public static final int TORN_PAGE       = MISC_CONSUMABLE +21;
 	public static final int TRINKET_CATA    = MISC_CONSUMABLE +22;
 	public static final int VIAL_SHARD      = MISC_CONSUMABLE +23;
+	public static final int ROYAL_SEAL      = MISC_CONSUMABLE +24;
 
 	static{
 		assignItemRect(ANKH,            10, 16);
@@ -183,13 +186,14 @@ public class ItemSpriteSheet {
 
 		assignItemRect(SEAL_SHARD,      12, 12);
 		assignItemRect(BROKEN_STAFF,    14, 10);
-		assignItemRect(CLOAK_SCRAP,      9,  9);
+		assignItemRect(CLOAK_SCRAP,     9,  9);
 		assignItemRect(BOW_FRAGMENT,    12,  9);
-		assignItemRect(BROKEN_HILT,      9,  9);
+		assignItemRect(BROKEN_HILT,     9,  9);
 		assignItemRect(TORN_PAGE,       11, 13);
-		assignItemRect(VIAL_SHARD,    9, 12);
+		assignItemRect(VIAL_SHARD,    	9, 12);
 
 		assignItemRect(TRINKET_CATA,    12, 11);
+		assignItemRect(ROYAL_SEAL,    	13, 13);
 	}
 	
 	private static final int BOMBS          =                               xy(1, 6);   //16 slots
@@ -205,6 +209,8 @@ public class ItemSpriteSheet {
 	public static final int NOISEMAKER      = BOMBS+9;
 	public static final int ARCANE_BOMB     = BOMBS+10;
 	public static final int SHRAPNEL_BOMB   = BOMBS+11;
+
+	public static final int INFERNO_BOMB   	= BOMBS+12;
 	
 	static{
 		assignItemRect(BOMB,            10, 13);
@@ -219,6 +225,7 @@ public class ItemSpriteSheet {
 		assignItemRect(NOISEMAKER,      10, 13);
 		assignItemRect(ARCANE_BOMB,     10, 13);
 		assignItemRect(SHRAPNEL_BOMB,   10, 13);
+		assignItemRect(INFERNO_BOMB,   10, 13);
 	}
 
 	private static final int WEP_TIER1      =                               xy(1, 7);   //8 slots
@@ -673,6 +680,8 @@ public class ItemSpriteSheet {
 	public static final int BREW_UNSTABLE   = BREWS+5;
 	
 	private static final int ELIXIRS        =                               xy(9, 26);  //8 slots
+
+	public static final int ELIXIR_WILD  	= ELIXIRS-1;
 	public static final int ELIXIR_HONEY    = ELIXIRS+0;
 	public static final int ELIXIR_AQUA     = ELIXIRS+1;
 	public static final int ELIXIR_MIGHT    = ELIXIRS+2;
@@ -696,10 +705,13 @@ public class ItemSpriteSheet {
 	public static final int TELE_GRAB       = SPELLS+2;
 	public static final int UNSTABLE_SPELL  = SPELLS+3;
 
+	public static final int GILD		    = SPELLS+4;
 	public static final int CURSE_INFUSE    = SPELLS+5;
 	public static final int MAGIC_INFUSE    = SPELLS+6;
 	public static final int ALCHEMIZE       = SPELLS+7;
 	public static final int RECYCLE         = SPELLS+8;
+
+	public static final int HARDEN      	= SPELLS+9;
 
 	public static final int RECLAIM_TRAP    = SPELLS+10;
 	public static final int RETURN_BEACON   = SPELLS+11;
@@ -711,10 +723,12 @@ public class ItemSpriteSheet {
 		assignItemRect(TELE_GRAB,       12, 11);
 		assignItemRect(UNSTABLE_SPELL,  12, 13);
 
+		assignItemRect(GILD,  			10, 15);
 		assignItemRect(CURSE_INFUSE,    10, 15);
 		assignItemRect(MAGIC_INFUSE,    10, 15);
 		assignItemRect(ALCHEMIZE,       10, 15);
 		assignItemRect(RECYCLE,         10, 15);
+		assignItemRect(HARDEN,       	10, 15);
 
 		assignItemRect(RECLAIM_TRAP,     8, 16);
 		assignItemRect(RETURN_BEACON,    8, 16);
@@ -792,7 +806,9 @@ public class ItemSpriteSheet {
 	public static final int SPLINTER   = QUEST+9;
 	public static final int ESSENCE   = QUEST+10;
 	public static final int RUBY   = QUEST+11;
-	static{
+    public static final int BRACELET   = QUEST+12;
+
+    static{
 		assignItemRect(BLOCK,   11, 12);
 		assignItemRect(DUST,    12, 11);
 		assignItemRect(CANDLE,  12, 12);
@@ -805,7 +821,9 @@ public class ItemSpriteSheet {
 		assignItemRect(SPLINTER,6, 12);
 		assignItemRect(ESSENCE, 10, 13);
 		assignItemRect(RUBY,    11, 10);
-	}
+        assignItemRect(BRACELET,16, 17);
+
+    }
 
 	private static final int BAGS       =                                   xy(1, 32);  //16 slots
 	public static final int WATERSKIN   = BAGS+0;
@@ -836,7 +854,12 @@ public class ItemSpriteSheet {
 	public static final int HALLS_PAGE  = DOCUMENTS+6;
 
 	public static final int GARDENS_PAGE = DOCUMENTS+7;
-	static{
+    public static final int COLDHOUSE_PAGE = DOCUMENTS+8;
+    public static final int FORGE_PAGE = DOCUMENTS+9;
+    public static final int CITADEL_PAGE = DOCUMENTS+10;
+    public static final int VOID_PAGE = DOCUMENTS+11;
+
+    static{
 		assignItemRect(GUIDE_PAGE,  10, 11);
 		assignItemRect(ALCH_PAGE,   10, 11);
 		assignItemRect(SEWER_PAGE,  10, 11);
@@ -845,6 +868,10 @@ public class ItemSpriteSheet {
 		assignItemRect(CITY_PAGE,   10, 11);
 		assignItemRect(HALLS_PAGE,  10, 11);
 		assignItemRect(GARDENS_PAGE,  10, 11);
+        assignItemRect(COLDHOUSE_PAGE,  10, 11);
+        assignItemRect(FORGE_PAGE,  10, 11);
+        assignItemRect(CITADEL_PAGE,  10, 11);
+        assignItemRect(VOID_PAGE,  10, 11);
 	}
 
 	//for smaller 8x8 icons that often accompany an item sprite

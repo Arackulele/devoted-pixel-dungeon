@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ColdCorpseSprite;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 public class ColdCorpse extends Mob {
@@ -65,8 +66,18 @@ public class ColdCorpse extends Mob {
 		
 		if (cause == Chasm.class) return;
 
-		if (Dungeon.hero.isStarving()) GameScene.add(Blob.seed(this.pos , 30, StenchGas.class));
-		else if (Dungeon.hero.isHungry()) GameScene.add(Blob.seed(this.pos , 30, ToxicGas.class));
+		if (Dungeon.hero.isStarving()) {
+			GameScene.add(Blob.seed(this.pos , 30, StenchGas.class));
+			for (int i : PathFinder.NEIGHBOURS8) {
+				GameScene.add(Blob.seed(i+pos , 2, StenchGas.class));
+			}
+		}
+		else if (Dungeon.hero.isHungry()) {
+			GameScene.add(Blob.seed(this.pos , 30, ToxicGas.class));
+			for (int i : PathFinder.NEIGHBOURS8) {
+				GameScene.add(Blob.seed(i+pos , 2, ToxicGas.class));
+			}
+		}
 		
 		if (Dungeon.level.heroFOV[pos]) {
 			Sample.INSTANCE.play( Assets.Sounds.BONES );

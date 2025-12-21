@@ -28,7 +28,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Leader;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Viscosity;
+import com.shatteredpixel.shatteredpixeldungeon.levels.*;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
@@ -44,9 +46,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.DarkGold;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Ruby;
-import com.shatteredpixel.shatteredpixeldungeon.levels.LavaLakeLevel;
-import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.WeakFloorRoom;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ShadowCaster;
@@ -64,7 +63,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ThirteenLeafClover;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.Trinket;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -206,11 +204,6 @@ public class Hero extends Char {
 	// for enemies we know we aren't seeing normally, resulting in better performance
 	public ArrayList<Mob> mindVisionEnemies = new ArrayList<>();
 
-	//This is here mainly for performance reasons:
-	//The player can only ever carry one infused item so we dont have to check every item each turn
-
-	public Item InfusedItem;
-
 	public Hero() {
 		super();
 
@@ -308,12 +301,6 @@ public class Hero extends Char {
 		defenseSkill = bundle.getInt( DEFENSE );
 		
 		STR = bundle.getInt( STRENGTH );
-
-		for (Item item : belongings) {
-			if (item.isInfused) {
-				InfusedItem = item;
-			}
-		}
 
 		belongings.restoreFromBundle( bundle );
 	}
@@ -691,6 +678,8 @@ public class Hero extends Char {
 		if (belongings.armor() != null) {
 			speed = belongings.armor().speedFactor(this, speed);
 		}
+
+		if (buff(Leader.LeaderArena.class) != null) speed /= 2f;
 		
 		Momentum momentum = buff(Momentum.class);
 		if (momentum != null){
@@ -806,7 +795,7 @@ public class Hero extends Char {
 	
 	@Override
 	public boolean act() {
-		
+
 		//calls to dungeon.observe will also update hero's local FOV.
 		fieldOfView = Dungeon.level.heroFOV;
 
@@ -823,7 +812,8 @@ public class Hero extends Char {
 				Dungeon.level.updateFieldOfView(this, fieldOfView);
 			}
 		}
-		
+
+
 		checkVisibleMobs();
 		BuffIndicator.refreshHero();
 		BuffIndicator.refreshBoss();
@@ -953,7 +943,10 @@ public class Hero extends Char {
 	
 	private boolean actMove( HeroAction.Move action ) {
 
-		if (getCloser( action.dst )) {
+        if (Dungeon.level instanceof LavaLakeLevel && Dungeon.level.map[pos] == Terrain.WATER) return false;
+
+
+        if (getCloser( action.dst )) {
 			canSelfTrample = false;
 			return true;
 
@@ -1592,6 +1585,9 @@ public class Hero extends Char {
 			//the same also applies to challenge scroll damage reduction
 			if (buff(ScrollOfChallenge.ChallengeArena.class) != null){
 				damage *= 0.67f;
+			}
+			if (buff(Leader.LeaderArena.class) != null){
+				dmg *= 1.66f;
 			}
 			//and to monk meditate damage reduction
 			if (buff(MonkEnergy.MonkAbility.Meditate.MeditateResistance.class) != null){
@@ -2265,6 +2261,7 @@ public class Hero extends Char {
 
 	@Override
 	public void move(int step, boolean travelling) {
+
 		boolean wasHighGrass = Dungeon.level.map[step] == Terrain.HIGH_GRASS;
 
 		super.move( step, travelling);

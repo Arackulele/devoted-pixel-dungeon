@@ -36,6 +36,9 @@ public class EmperorButterfly extends Butterfly {
 		HP = HT = 30;
 		defenseSkill = 6;
 
+        WANDERING = new Wandering();
+        state = WANDERING;
+
 		properties.add(Char.Property.MINIBOSS);
 	}
 

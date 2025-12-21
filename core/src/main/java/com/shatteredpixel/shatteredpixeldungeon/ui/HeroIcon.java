@@ -75,13 +75,13 @@ public class HeroIcon extends Image {
 	public static final int POWER_OF_MANY   = 33;
 	public static final int RATMOGRIFY      = 34;
 
-	public static final int WEAL_OR_WOE      = 35;
+	public static final int WEAL_AND_WOE 	= 35;
 
 	public static final int CALLING_BEYOND      = 36;
 
 	public static final int ETERNAL_BALANCE      = 37;
 
-	public static final int WEAL_AND_WOE = 38;
+
 
 	//cleric spells
 	public static final int GUIDING_LIGHT   = 40;

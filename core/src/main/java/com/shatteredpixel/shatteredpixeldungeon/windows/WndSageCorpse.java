@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfThorns;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.EndothermicRing;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMalaise;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
@@ -84,6 +85,7 @@ public class WndSageCorpse extends Window {
 				}
 			}
 		};
+		if (SageCorpse.Quest.item1 instanceof Ring) ((Ring)SageCorpse.Quest.item1).setKnown();
 		btnWand1.item(SageCorpse.Quest.item1);
 		btnWand1.setRect( (WIDTH - BTN_GAP) / 2 - BTN_SIZE, message.top() + message.height() + BTN_GAP, BTN_SIZE, BTN_SIZE );
 		add( btnWand1 );
@@ -98,6 +100,7 @@ public class WndSageCorpse extends Window {
 				}
 			}
 		};
+		if (SageCorpse.Quest.item2 instanceof Ring) ((Ring)SageCorpse.Quest.item2).setKnown();
 		btnWand2.item(SageCorpse.Quest.item2);
 		btnWand2.setRect( btnWand1.right() + BTN_GAP, btnWand1.top(), BTN_SIZE, BTN_SIZE );
 		add(btnWand2);

@@ -47,7 +47,7 @@ public class MeatRack extends Mob {
 	{
 		spriteClass = MeatRackSprite.class;
 		
-		HP = HT = 28;
+		HP = HT = 34;
 		defenseSkill = 12;
 		
 		EXP = 5;
@@ -103,8 +103,7 @@ public class MeatRack extends Mob {
 	public void rollToDropLoot() {
 		for(Item F : StolenFood)
 		{
-
-				int ofs = com.watabou.utils.PathFinder.NEIGHBOURS8[Random.Int(8)];
+			int ofs = com.watabou.utils.PathFinder.NEIGHBOURS8[Random.Int(8)];
 			if (F.quantity() != 0) {
 				if (!Dungeon.level.solid[pos + ofs] && Dungeon.level.passable[pos + ofs]) {
 					Dungeon.level.drop(F,
@@ -128,7 +127,7 @@ public class MeatRack extends Mob {
 
 	@Override
 	public int attackSkill( Char target ) {
-		return 12;
+		return 14;
 	}
 
 	@Override
@@ -140,7 +139,7 @@ public class MeatRack extends Mob {
 	public int attackProc( Char enemy, int damage ) {
 		damage = super.attackProc( enemy, damage );
 		
-		if (Random.Int(1) == 1 && enemy == Dungeon.hero) steal((Hero)enemy);
+		if (Random.Int(20) >= 9 && enemy == Dungeon.hero) steal((Hero)enemy);
 
 		return damage;
 	}

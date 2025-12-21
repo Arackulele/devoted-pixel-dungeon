@@ -25,6 +25,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CrystalSpire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FungalCore;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollGeomancer;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.TrollKnight;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.BountyHunter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.LavaLakeLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -151,10 +153,18 @@ public class MineGiantRoom extends CaveRoom {
 			Painter.fillEllipse(level, this, 5, Terrain.GRASS);
 
 			Point p = center();
-			QuakeWolf m = new QuakeWolf();
-			m.pos = level.pointToCell(p);
-			m.instance = m;
-			level.mobs.add(m);
+            if (BountyHunter.Quest.Type() == BountyHunter.Quest.CRYSTAL) {
+                QuakeWolf m = new QuakeWolf();
+                m.pos = level.pointToCell(p);
+                m.instance = m;
+                level.mobs.add(m);
+            }
+            else {
+                TrollKnight m = new TrollKnight();
+                m.pos = level.pointToCell(p);
+                m.instance = m;
+                level.mobs.add(m);
+            }
 
 			int realcenter =  level.pointToCell(p);
 

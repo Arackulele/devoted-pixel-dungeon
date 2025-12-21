@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.EnergyCrystal;
@@ -34,8 +35,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.RegrowthBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfOvergrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.remains.RemainsItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
@@ -126,15 +129,15 @@ public class WndBountyHunter extends Window {
 		buttons.add(rockblock);
 
 		int lootbagcost = 500 + 1000*BountyHunter.Quest.reforges;
-		RedButton lootbag = new RedButton(Messages.get(this, "reforge", 2000), 6){
+		RedButton lootbag = new RedButton(Messages.get(this, "reforge", lootbagcost), 6){
 			@Override
 			protected void onClick() {
 				GameScene.show(new WndOptions(
 						new BountyHunterSprite(),
 						Messages.titleCase( troll.name() ),
-						Messages.get(WndBlacksmith.class, "smith_verify"),
-						Messages.get(WndBlacksmith.class, "smith_yes"),
-						Messages.get(WndBlacksmith.class, "smith_no")
+						Messages.get(WndBountyHunter.class, "smith_verify"),
+						Messages.get(WndBountyHunter.class, "smith_yes"),
+						Messages.get(WndBountyHunter.class, "smith_no")
 				){
 					@Override
 					protected void onSelect(int index) {
@@ -148,8 +151,11 @@ public class WndBountyHunter extends Window {
 				});
 			}
 		};
+        lootbag.enable(BountyHunter.Quest.favor >= lootbagcost);
+        buttons.add(lootbag);
 
-		int hardenCost = 500 + 1000*BountyHunter.Quest.hardens;
+
+        int hardenCost = 500 + 1000*BountyHunter.Quest.hardens;
 		RedButton harden = new RedButton(Messages.get(this, "harden", hardenCost), 6){
 			@Override
 			protected void onClick() {
@@ -165,7 +171,7 @@ public class WndBountyHunter extends Window {
 			protected void onClick() {
 				GameScene.show(new WndOptions(
 						new BountyHunterSprite(),
-						Messages.titleCase(Messages.get(this, "title")),
+						Messages.titleCase(Messages.get(WndBountyHunter.class, "inspiration")),
 						Messages.get(PotionOfDivineInspiration.class, "select_tier"),
 						Messages.titleCase(Messages.get(TalentsPane.class, "tier", 1)),
 						Messages.titleCase(Messages.get(TalentsPane.class, "tier", 2)),
@@ -182,7 +188,9 @@ public class WndBountyHunter extends Window {
 						super.onSelect(index);
 
 						if (index != -1){
-							boolean unspentTalents = false;
+                            Buff.affect(Dungeon.hero, PotionOfDivineInspiration.DivineInspirationTracker.class).setBoosted(index+1);
+
+                            boolean unspentTalents = false;
 							for (int i = 1; i <= Dungeon.hero.talents.size(); i++){
 								if (Dungeon.hero.talentPointsAvailable(i) > 0){
 									unspentTalents = true;
@@ -197,6 +205,8 @@ public class WndBountyHunter extends Window {
 							int upgradeCost = 1000 + 1000*BountyHunter.Quest.upgrades;
 							BountyHunter.Quest.favor -= upgradeCost;
 							BountyHunter.Quest.upgrades++;
+
+                            WndBountyHunter.this.hide();
 
 							GameScene.showlevelUpStars();
 
@@ -279,7 +289,7 @@ public class WndBountyHunter extends Window {
 			titlebar.icon(troll.sprite());
 			titlebar.label(Messages.titleCase(troll.name()));
 
-			RenderedTextBlock message = PixelScene.renderTextBlock( Messages.get(this, "prompt"), 6 );
+			RenderedTextBlock message = PixelScene.renderTextBlock( Messages.get(WndBountyHunter.class, "lootprompt"), 6 );
 
 			titlebar.setRect( 0, 0, WIDTH, 0 );
 			add( titlebar );
@@ -371,7 +381,7 @@ public class WndBountyHunter extends Window {
 
 		@Override
 		public String textPrompt() {
-			return Messages.get(this, "prompt");
+			return Messages.get(WndBountyHunter.class, "reinforceprompt");
 		}
 
 		@Override
@@ -415,7 +425,7 @@ public class WndBountyHunter extends Window {
 
 		@Override
 		public String textPrompt() {
-			return Messages.get(this, "prompt");
+			return Messages.get(WndBountyHunter.class, "infuseprompt");
 		}
 
 		@Override
@@ -425,12 +435,14 @@ public class WndBountyHunter extends Window {
 
 		@Override
 		public boolean itemSelectable(Item item) {
+            //There is just soooo many exceptions to this, maybe they should instead be limited by something else or be weaker if infused
 			return !item.isUpgradable()
 					&& item.isIdentified() && !item.cursed
 					&& (
 					(item instanceof Potion &&
-							!(item instanceof PotionOfHealing) && !(item instanceof PotionOfShielding) && !(item instanceof ElixirOfAquaticRejuvenation) && !(item instanceof ElixirOfHoneyedHealing) &&
-							!(item instanceof PotionOfStrength) && !(item instanceof PotionOfMastery) && !(item instanceof ElixirOfMight))
+					!(item instanceof PotionOfHealing) && !(item instanceof PotionOfShielding) && !(item instanceof ElixirOfAquaticRejuvenation) && !(item instanceof ElixirOfHoneyedHealing) && !(item instanceof ElixirOfOvergrowth) &&
+					!(item instanceof PotionOfStrength) && !(item instanceof PotionOfMastery) && !(item instanceof ElixirOfMight) &&
+                    !(item instanceof PotionOfExperience) && !(item instanceof PotionOfDivineInspiration))
 					|| (item instanceof Scroll && !(item instanceof ScrollOfUpgrade))
 					|| (item instanceof Plant.Seed && !(item instanceof Sungrass.Seed))
 					|| item instanceof Runestone
@@ -455,9 +467,6 @@ public class WndBountyHunter extends Window {
 				newitem.isInfused = true;
 				newitem.stackable = false;
 				Dungeon.level.drop( newitem, Dungeon.hero.pos ).sprite.drop();
-
-				Dungeon.hero.InfusedItem = newitem;
-
 				BountyHunter.Quest.favor -= 2000;
 				BountyHunter.Quest.smiths++;
 

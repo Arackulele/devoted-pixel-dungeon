@@ -32,6 +32,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Door;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.WereratSprite;
 import com.watabou.utils.Random;
 
@@ -88,8 +90,8 @@ public class Wererat extends Mob {
 
 		Ballistica route = new Ballistica(this.pos, enemy.pos, Ballistica.STOP_TARGET | Ballistica.STOP_SOLID);
 		int cell = route.path.get(route.dist-1 );
-		com.watabou.noosa.audio.Sample.INSTANCE.play(Assets.Sounds.MISS);
-		if (cell != pos && Dungeon.level.passable[pos] && Actor.findChar(cell) == null) {
+		if (cell != pos && Dungeon.level.passable[cell] && Actor.findChar(cell) == null && Dungeon.hero.pos != cell) {
+			com.watabou.noosa.audio.Sample.INSTANCE.play(Assets.Sounds.MISS);
 			sprite.emitter().start(Speck.factory(Speck.DUST), 0.01f, Math.round(4 + 2 * Dungeon.level.trueDistance(pos, cell)));
 			sprite.jump(pos, cell, 0.5f, 0.25f, new com.watabou.utils.Callback() {
 				@Override
@@ -102,7 +104,8 @@ public class Wererat extends Mob {
 				}
 			});
 		}
-			spend(1f);
+		else sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "prepare"));
+		spend(1f);
 
 	}
 

@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.features;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CitadelBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MobSprite;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
@@ -103,6 +104,8 @@ public class Chasm implements Hero.Doom {
 		jumpConfirmed = false;
 				
 		Sample.INSTANCE.play( Assets.Sounds.FALLING );
+
+		if (Dungeon.level instanceof CitadelBossLevel) Dungeon.hero.die( Chasm.class );
 
 		Buff a;
 		if (Dungeon.hero.buff(Invulnerability.class) != null)

@@ -27,9 +27,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.RockBlock;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Ruby;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -60,7 +63,10 @@ public class QuakeWolf extends CragWolf {
 		SLEEPING = new Sleeping();
 		state = SLEEPING;
 
-	}
+        loot = new RockBlock().quantity(Random.Int(3) + 1);
+        lootChance = 0.51f;
+
+    }
 
 	public int totalrubies = 40;
 	public String TOTALRUBIES = "totalrubies";
@@ -179,14 +185,13 @@ public class QuakeWolf extends CragWolf {
 			announced = true;
 		}
 
-		private int scale = 1;
+		private float scale = 1;
 		public String SCALE = "scale";
 
 		@Override
 		public void restoreFromBundle(com.watabou.utils.Bundle bundle) {
 			super.restoreFromBundle(bundle);
-			scale = bundle.getInt(SCALE);
-
+			scale = bundle.getFloat(SCALE);
 		}
 
 		@Override
@@ -211,11 +216,11 @@ public class QuakeWolf extends CragWolf {
 			else {
 
 				//shoot beams
-				if (ref.sprite.visible || t.sprite.visible )ref.sprite.parent.add(new Beam.InfernoRay(ref.sprite.center(), t.sprite.center()));
-				t.damage(scale, new Fire());
+                if (ref.sprite != null && t.sprite != null) if (ref.sprite.visible || t.sprite.visible )ref.sprite.parent.add(new Beam.InfernoRay(ref.sprite.center(), t.sprite.center()));
+				t.damage((int)scale, new Burning());
 
 
-				scale++;
+				if(scale < 20)scale+= 0.5f;
 
 			}
 

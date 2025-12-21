@@ -28,7 +28,7 @@ import java.util.Date;
 
 public class Updates {
 
-	public static com.shatteredpixel.shatteredpixeldungeon.services.updates.UpdateService service;
+	public static UpdateService service;
 
 	public static boolean supportsUpdates(){
 		return service != null;
@@ -54,9 +54,9 @@ public class Updates {
 			SPDSettings.betas(true);
 		}
 
-		service.checkForUpdate(!SPDSettings.WiFi(), SPDSettings.betas(), new com.shatteredpixel.shatteredpixeldungeon.services.updates.UpdateService.UpdateResultCallback() {
+		service.checkForUpdate(!SPDSettings.WiFi(), SPDSettings.betas(), new UpdateService.UpdateResultCallback() {
 			@Override
-			public void onUpdateAvailable(com.shatteredpixel.shatteredpixeldungeon.services.updates.AvailableUpdateData update) {
+			public void onUpdateAvailable(AvailableUpdateData update) {
 				lastCheck = new Date();
 				updateData = update;
 			}
@@ -73,11 +73,11 @@ public class Updates {
 		});
 	}
 
-	public static void launchUpdate( com.shatteredpixel.shatteredpixeldungeon.services.updates.AvailableUpdateData data ){
+	public static void launchUpdate( AvailableUpdateData data ){
 		service.initializeUpdate( data );
 	}
 
-	private static com.shatteredpixel.shatteredpixeldungeon.services.updates.AvailableUpdateData updateData = null;
+	private static AvailableUpdateData updateData = null;
 
 	public static boolean updateAvailable(){
 		return updateData != null;

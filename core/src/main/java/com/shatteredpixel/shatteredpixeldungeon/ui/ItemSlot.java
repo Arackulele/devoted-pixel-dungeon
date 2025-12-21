@@ -47,7 +47,7 @@ public class ItemSlot extends Button {
 	public static final int ENHANCED	= 0x3399FF;
 	public static final int MASTERED	= 0xFFFF44;
 	public static final int CURSE_INFUSED	= 0x8800FF;
-	
+
 	private static final float ENABLED	= 1.0f;
 	private static final float DISABLED	= 0.3f;
 
@@ -275,6 +275,7 @@ public class ItemSlot extends Button {
 			extra.text( null );
 
 		}
+
 
 		int trueLvl = item.visiblyUpgraded();
 		int buffedLvl = item.buffedVisiblyUpgraded();

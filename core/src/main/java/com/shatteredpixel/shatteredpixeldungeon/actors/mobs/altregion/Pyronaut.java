@@ -21,8 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SacrificialFire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Smog;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
@@ -73,6 +75,12 @@ public class Pyronaut extends Piranha {
 
 		}
 		else return super.act();
+	}
+
+	@Override
+	public void damage(int dmg, Object src) {
+		if (Blob.volumeAt(pos, Smog.class) > 0) dmg /= 3;
+		super.damage(dmg, src);
 	}
 	
 	@Override

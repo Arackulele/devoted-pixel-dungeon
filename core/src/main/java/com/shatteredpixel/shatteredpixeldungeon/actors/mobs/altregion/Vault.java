@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.BountyHunter;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Ruby;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.VaultSprite;
 import com.watabou.utils.Bundle;
@@ -63,7 +64,7 @@ public class Vault extends Mob {
 			}
 		}
 
-		sprite.idle();
+		if (sprite != null ) sprite.idle();
 
 		spend(Actor.TICK);
 
@@ -89,27 +90,19 @@ public class Vault extends Mob {
 		if (gemstotal > 0) {
 			int ofs;
 			do {
-				ofs = PathFinder.NEIGHBOURS8[Random.Int(8)];
-			} while (Dungeon.level.solid[pos + ofs] && !Dungeon.level.passable[pos + ofs]);
+				ofs = PathFinder.NEIGHBOURS9[Random.Int(9)];
+			} while (Dungeon.level.solid[pos + ofs] && !Dungeon.level.passable[pos + ofs] && !Dungeon.level.dry[pos + ofs]);
 			Dungeon.level.drop(new Ruby(), pos + ofs).sprite.drop(pos);
 			gemstotal--;
-			QuakeWolf.instance.totalrubies--;
+			if (BountyHunter.Quest.Type() == BountyHunter.Quest.CRYSTAL) QuakeWolf.instance.totalrubies--;
+			else TrollKnight.instance.totalrubies--;
 		}
 
 	}
 
 	@Override
 	public void rollToDropLoot() {
-		DropGem();
-		DropGem();
-		DropGem();
-		DropGem();
-		DropGem();
-		DropGem();
-		DropGem();
-		DropGem();
-		DropGem();
-		DropGem();
+        for (int i = 0; i < 10; i++) DropGem();
 
 		super.rollToDropLoot();
 

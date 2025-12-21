@@ -43,11 +43,15 @@ public enum Document {
 	SEWERS_GUARD(ItemSpriteSheet.SEWER_PAGE, true),
 	GARDENS_BOTANIST(ItemSpriteSheet.GARDENS_PAGE, true),
 	PRISON_WARDEN(ItemSpriteSheet.PRISON_PAGE, true),
-	CAVES_EXPLORER(ItemSpriteSheet.CAVES_PAGE, true),
-	CITY_WARLOCK(ItemSpriteSheet.CITY_PAGE, true),
-	HALLS_KING(ItemSpriteSheet.HALLS_PAGE, true);
-	
-	Document( int sprite, boolean lore ){
+    COLDHOUSE_CHEF(ItemSpriteSheet.COLDHOUSE_PAGE, true),
+    CAVES_EXPLORER(ItemSpriteSheet.CAVES_PAGE, true),
+    FORGE_CAPTAIN(ItemSpriteSheet.FORGE_PAGE, true),
+    CITY_WARLOCK(ItemSpriteSheet.CITY_PAGE, true),
+    CITADEL_COURT(ItemSpriteSheet.CITADEL_PAGE, true),
+    HALLS_KING(ItemSpriteSheet.HALLS_PAGE, true),
+    VOID_SACRIFICE(ItemSpriteSheet.VOID_PAGE, true);
+
+    Document( int sprite, boolean lore ){
 		pageIcon = null;
 		pageSprite = sprite;
 		loreDocument = lore;
@@ -316,28 +320,56 @@ public enum Document {
 		PRISON_WARDEN.pagesStates.put("no_support",             debug ? READ : NOT_FOUND);
 		PRISON_WARDEN.pagesStates.put("letter",                 debug ? READ : NOT_FOUND);
 
-		CAVES_EXPLORER.pagesStates.put("expedition",            debug ? READ : NOT_FOUND);
+        COLDHOUSE_CHEF.pagesStates.put("coldhouse1",            debug ? READ : NOT_FOUND);
+        COLDHOUSE_CHEF.pagesStates.put("coldhouse2",            debug ? READ : NOT_FOUND);
+        COLDHOUSE_CHEF.pagesStates.put("coldhouse3",            debug ? READ : NOT_FOUND);
+        COLDHOUSE_CHEF.pagesStates.put("coldhouse4",            debug ? READ : NOT_FOUND);
+        COLDHOUSE_CHEF.pagesStates.put("coldhouse5",            debug ? READ : NOT_FOUND);
+        COLDHOUSE_CHEF.pagesStates.put("coldhouse6",            debug ? READ : NOT_FOUND);
+
+        CAVES_EXPLORER.pagesStates.put("expedition",            debug ? READ : NOT_FOUND);
 		CAVES_EXPLORER.pagesStates.put("gold",                  debug ? READ : NOT_FOUND);
 		CAVES_EXPLORER.pagesStates.put("troll",                 debug ? READ : NOT_FOUND);
 		CAVES_EXPLORER.pagesStates.put("city",                  debug ? READ : NOT_FOUND);
 		CAVES_EXPLORER.pagesStates.put("alive",                 debug ? READ : NOT_FOUND);
 		CAVES_EXPLORER.pagesStates.put("report",                debug ? READ : NOT_FOUND);
 
-		CITY_WARLOCK.pagesStates.put("old_king",                debug ? READ : NOT_FOUND);
+        FORGE_CAPTAIN.pagesStates.put("forge1",            debug ? READ : NOT_FOUND);
+        FORGE_CAPTAIN.pagesStates.put("forge2",            debug ? READ : NOT_FOUND);
+        FORGE_CAPTAIN.pagesStates.put("forge3",            debug ? READ : NOT_FOUND);
+        FORGE_CAPTAIN.pagesStates.put("forge4",            debug ? READ : NOT_FOUND);
+        FORGE_CAPTAIN.pagesStates.put("forge5",            debug ? READ : NOT_FOUND);
+        FORGE_CAPTAIN.pagesStates.put("forge6",            debug ? READ : NOT_FOUND);
+
+        CITY_WARLOCK.pagesStates.put("old_king",                debug ? READ : NOT_FOUND);
 		CITY_WARLOCK.pagesStates.put("resistance",              debug ? READ : NOT_FOUND);
 		CITY_WARLOCK.pagesStates.put("failure",                 debug ? READ : NOT_FOUND);
 		CITY_WARLOCK.pagesStates.put("more_powerful",           debug ? READ : NOT_FOUND);
 		CITY_WARLOCK.pagesStates.put("new_power",               debug ? READ : NOT_FOUND);
 		CITY_WARLOCK.pagesStates.put("seen_it",                 debug ? READ : NOT_FOUND);
 
-		HALLS_KING.pagesStates.put("Rejection",                 debug ? READ : NOT_FOUND);
+        CITADEL_COURT.pagesStates.put("citadel1",            debug ? READ : NOT_FOUND);
+        CITADEL_COURT.pagesStates.put("citadel2",            debug ? READ : NOT_FOUND);
+        CITADEL_COURT.pagesStates.put("citadel3",            debug ? READ : NOT_FOUND);
+        CITADEL_COURT.pagesStates.put("citadel4",            debug ? READ : NOT_FOUND);
+        CITADEL_COURT.pagesStates.put("citadel5",            debug ? READ : NOT_FOUND);
+        CITADEL_COURT.pagesStates.put("citadel6",            debug ? READ : NOT_FOUND);
+
+        HALLS_KING.pagesStates.put("Rejection",                 debug ? READ : NOT_FOUND);
 		HALLS_KING.pagesStates.put("amulet",                    debug ? READ : NOT_FOUND);
 		HALLS_KING.pagesStates.put("ritual",                    debug ? READ : NOT_FOUND);
 		HALLS_KING.pagesStates.put("new_king",                  debug ? READ : NOT_FOUND);
 		HALLS_KING.pagesStates.put("thing",                     debug ? READ : NOT_FOUND);
 		HALLS_KING.pagesStates.put(KING_ATTRITION,              debug ? NOT_FOUND : NOT_FOUND);
 
-	}
+        VOID_SACRIFICE.pagesStates.put("void1",            debug ? READ : NOT_FOUND);
+        VOID_SACRIFICE.pagesStates.put("void2",            debug ? READ : NOT_FOUND);
+        VOID_SACRIFICE.pagesStates.put("void3",            debug ? READ : NOT_FOUND);
+        VOID_SACRIFICE.pagesStates.put("void4",            debug ? READ : NOT_FOUND);
+        VOID_SACRIFICE.pagesStates.put("void5",            debug ? READ : NOT_FOUND);
+        VOID_SACRIFICE.pagesStates.put("void6",            debug ? READ : NOT_FOUND);
+
+    }
 	
 	private static final String DOCUMENTS = "documents";
 	

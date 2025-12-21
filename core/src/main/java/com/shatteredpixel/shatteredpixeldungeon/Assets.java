@@ -46,8 +46,10 @@ public class Assets {
 		public static final String TILES_CITY   = "environment/tiles_city.png";
         public static final String TILES_CITADEL= "environment/tiles_citadel.png";
 		public static final String TILES_HALLS  = "environment/tiles_halls.png";
+		public static final String TILES_VOID = "environment/tiles_void.png";
+        public static final String TILES_TRUE_VOID = "environment/tiles_truevoid.png";
 
-		public static final String TILES_CAVES_CRYSTAL  = "environment/tiles_caves_crystal.png";
+        public static final String TILES_CAVES_CRYSTAL  = "environment/tiles_caves_crystal.png";
 		public static final String TILES_CAVES_GNOLL    = "environment/tiles_caves_gnoll.png";
 
 		public static final String WATER_SEWERS = "environment/water0.png";
@@ -59,6 +61,7 @@ public class Assets {
 		public static final String WATER_CITY   = "environment/water3.png";
         public static final String WATER_CITADEL= "environment/water8.png";
         public static final String WATER_HALLS  = "environment/water4.png";
+		public static final String WATER_VOID 	= "environment/water9.png";
 
 		public static final String WATER_LAVALAKE  = "environment/waterdanger.png";
 
@@ -73,7 +76,13 @@ public class Assets {
         public static final Object GARDENS_BOSS     = "environment/custom_tiles/gardens_boss.png";
 		public static final Object COLDHOUSE_BOSS 	= "environment/custom_tiles/coldhouse_boss.png";
 		public static final Object FORGE_BOSS 		= "environment/custom_tiles/forge_boss.png";
-    }
+		public static final Object CITADEL_BOSS     = "environment/custom_tiles/citadel_boss.png";
+        public static final Object VOID_SP          = "environment/custom_tiles/void_special.png";
+
+		public static final Object VOID_SP_END          = "environment/custom_tiles/void_special_end.png";
+
+
+	}
 	
 	//TODO include other font assets here? Some are platform specific though...
 	public static class Fonts {
@@ -172,8 +181,10 @@ public class Assets {
 		public static final String CITADEL_BOSS         = "music/08-TheInfernalTribunal-DwarvenCourt.ogg";
 		public static final String VOID		            = "music/09-VeilOfDarkness-AshenVoid.ogg";
 		public static final String VOID_BOSS            = "music/10-InNomineNihilo-Vel'Taleth.ogg";
+        public static final String SHADOW_REALM            = "music/10.1-LiturgiaEclipsis-Vel'Taleth.ogg";
 
-	}
+
+    }
 
 	public static class Sounds {
 		public static final String CLICK    = "sounds/click.mp3";
@@ -249,8 +260,9 @@ public class Assets {
 		public static final String DIG   = "sounds/digging.mp3";
 		public static final String WHAIL   = "sounds/whail.mp3";
 		public static final String EXPLOSION   = "sounds/giant_explosion.mp3";
-
 		public static final String HOWL   = "sounds/howl.mp3";
+		public static final String BLACKHOLE   = "sounds/black-hole.mp3";
+
 
 		public static final String[] all = new String[]{
 				CLICK, BADGE, GOLD,
@@ -264,7 +276,7 @@ public class Assets {
 				CHALLENGE, CURSED, TRAP, EVOKE, TOMB, ALERT, MELD, BOSS, BLAST, PLANT, RAY, BEACON,
 				TELEPORT, CHARMS, MASTERY, PUFF, ROCKS, BURNING, FALLING, GHOST, SECRET, BONES,
 				BEE, DEGRADE, MIMIC, DEBUFF, CHARGEUP, GAS, CHAINS, SCAN, SHEEP, MINE, DIG, WHAIL, EXPLOSION,
-				HOWL
+				HOWL, BLACKHOLE
 		};
 	}
 
@@ -305,6 +317,7 @@ public class Assets {
 		public static final String AVATARS  = "sprites/avatars.png";
 		public static final String PET      = "sprites/pet.png";
 		public static final String AMULET   = "sprites/amulet.png";
+		public static final String BRACELET   = "sprites/bracelet.png";
 
 		public static final String RAT      = "sprites/rat.png";
 		public static final String BRUTE    = "sprites/brute.png";
@@ -372,8 +385,8 @@ public class Assets {
 		public static final String FUNGAL_SPINNER   = "sprites/fungal_spinner.png";
 		public static final String FUNGAL_SENTRY    = "sprites/fungal_sentry.png";
 		public static final String FUNGAL_CORE      = "sprites/fungal_core.png";
-        public static final Object WISP 			= "sprites/Wisp.png";
-		public static final Object BLUEIMP 			= "sprites/Imp.png";
+        public static final Object WISP 			= "sprites/Wsisp.png";
+		public static final Object BLUEIMP 			= "sprites/imp.png";
 		public static final Object WASP 			= "sprites/Wasp.png";
         public static final Object WRETCH			= "sprites/wretch.png";
 		public static final Object HOMONCULUS		=  "sprites/homonculus.png";
@@ -399,7 +412,7 @@ public class Assets {
 		public static final String BLASTFURNACE    	= "sprites/furnace.png";
 		public static final Object COALELEMENTAL    = "sprites/coal_elemental.png";
         public static final Object BOUNTYHUNTER 	= "sprites/BountyHunter.png";
-        public static final Object VAULT 			= "sprites/Vault.png";
+        public static final Object VAULT 			= "sprites/vault.png";
         public static final Object CRAG_WOLF 		= "sprites/CragWolf.png";
 
 		public static final Object QUAKE_WOLF 		= "sprites/QuakeWolf.png";
@@ -407,5 +420,22 @@ public class Assets {
         public static final Object PYRONAUT 		= "sprites/pyronaut.png";
 
 		public static final String CULTIST 		   	= "sprites/cultist.png";
+        public static final Object LEADER  		   	= "sprites/leader.png";
+		public static final Object TRAPPER  	   	= "sprites/trapper.png";
+
+        public static final Object WARDEN 			= "sprites/alchemist.png";
+        public static final Object GIANT  			= "sprites/giant.png";
+        public static final Object COURT  			= "sprites/council.png";
+        public static final Object TROLL_KNIGHT    	= "sprites/troll_knight.png";
+		public static final Object PUPPET     		= "sprites/puppet.png";
+        public static final Object NEURON 			= "sprites/Neuron.png";
+        public static final Object BEDROCKGOLEM 	= "sprites/bedrock_golem.png";
+        public static final Object SACRIFICE 		= "sprites/sacrifice.png";
+        public static final Object BRAIN            = "sprites/eldritchbrain.png";
+        public static final Object NEURON_SENTRY    = "sprites/neuron_sentry.png";
+		public static final Object VELTALETH        = "sprites/Vel-Taleth.png";
+        public static final Object ESSENCE          = "sprites/Vel-Essence.png";
+        public static final Object FROGEAT          = "sprites/Frogeat.png";
+        public static final Object BLACKHOLE        = "sprites/BlackHole.png";
     }
 }

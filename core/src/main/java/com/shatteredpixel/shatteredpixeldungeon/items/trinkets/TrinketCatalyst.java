@@ -52,6 +52,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Badges.validateZealotUnlock;
+
 public class TrinketCatalyst extends Item {
 
 	{
@@ -183,6 +185,7 @@ public class TrinketCatalyst extends Item {
 					@Override
 					protected void onClick() {
 						ShatteredPixelDungeon.scene().addToFront(new RewardWindow(item()));
+						validateZealotUnlock();
 					}
 				};
 				if (i == NUM_TRINKETS-1){

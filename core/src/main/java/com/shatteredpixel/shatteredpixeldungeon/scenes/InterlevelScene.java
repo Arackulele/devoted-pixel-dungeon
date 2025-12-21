@@ -24,10 +24,13 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Toad;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.levels.VoidLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.VoidTrapLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -75,7 +78,7 @@ public class InterlevelScene extends PixelScene {
 	private static float fadeTime;
 	
 	public enum Mode {
-		DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, RESET, NONE
+		DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, RESET, TRAP, NONE
 	}
 	public static Mode mode;
 
@@ -151,6 +154,10 @@ public class InterlevelScene extends PixelScene {
 				if (curTransition != null)  loadingDepth = curTransition.destDepth;
 				else                        loadingDepth = Dungeon.depth-1;
 				break;
+            case TRAP:
+                fadeTime = FAST_FADE;
+                loadingDepth = Dungeon.depth;
+                break;
 			case RETURN:
 				loadingDepth = returnDepth;
 				break;
@@ -425,6 +432,9 @@ public class InterlevelScene extends PixelScene {
 							case FALL:
 								fall();
 								break;
+                            case TRAP:
+                                trap();
+                                break;
 							case RESET:
 								reset();
 								break;
@@ -667,6 +677,22 @@ public class InterlevelScene extends PixelScene {
 		}
 		Dungeon.switchLevel( level, level.fallCell( fallIntoPit ));
 	}
+
+    private void trap() throws IOException {
+
+        Mob.holdAllies( Dungeon.level );
+        Dungeon.saveAll();
+
+        Level level;
+        if (Dungeon.branch == 0) Dungeon.branch = 1;
+		else Dungeon.branch = 0;
+        if (Dungeon.levelHasBeenGenerated(Dungeon.depth, Dungeon.branch)) {
+            level = Dungeon.loadLevel( GamesInProgress.curSlot );
+        } else {
+            level = Dungeon.newLevel();
+        }
+        Dungeon.switchLevel( level, level.TrapCell(  ));
+    }
 
 	private void ascend() throws IOException {
 		Mob.holdAllies( Dungeon.level );

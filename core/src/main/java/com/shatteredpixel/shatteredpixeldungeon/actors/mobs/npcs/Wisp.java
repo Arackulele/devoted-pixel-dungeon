@@ -57,15 +57,23 @@ public class Wisp extends NPC implements Callback {
 		flying = true;
 		properties.add(Char.Property.INORGANIC);
 	}
+
+	public static int GetHeroLevel()
+	{
+
+		if (Dungeon.hero != null) return Dungeon.hero.lvl;
+		else return 1;
+
+	}
 	
 	@Override
 	public int damageRoll() {
-		return Random.NormalIntRange( 1 + (Dungeon.hero.lvl / 5 ), 4 + (Dungeon.hero.lvl / 2 ));
+		return Random.NormalIntRange( 1 + (GetHeroLevel() / 5 ), 4 + (GetHeroLevel() / 2 ));
 	}
 	
 	@Override
 	public int attackSkill( Char target ) {
-		return 14  + Dungeon.hero.lvl;
+		return 14  + GetHeroLevel();
 	}
 	
 	@Override

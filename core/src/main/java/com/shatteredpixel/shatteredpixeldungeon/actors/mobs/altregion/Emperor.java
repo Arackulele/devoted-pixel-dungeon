@@ -54,9 +54,9 @@ import java.util.ArrayList;
 public class Emperor extends Mob {
 
 	{
-		HP = HT = Dungeon.isChallenged(Challenges.STRONGER_BOSSES) ? 120 : 90;
+		HP = HT = Dungeon.isChallenged(Challenges.STRONGER_BOSSES) ? 110 : 90;
 		EXP = 10;
-		defenseSkill = 7;
+		defenseSkill = 9;
 		spriteClass = EmperorSprite.class;
 
 		properties.add(Char.Property.BOSS);
@@ -69,7 +69,7 @@ public class Emperor extends Mob {
 
 	public int explodeturn = 0;
 
-	public int explodetimer = 10;
+	public int explodetimer = 3;
 
 	@Override
 	public int damageRoll() {
@@ -94,7 +94,7 @@ public class Emperor extends Mob {
 
 	@Override
 	public int drRoll() {
-		return super.drRoll() + Random.NormalIntRange(0, 2);
+		return super.drRoll() + Random.NormalIntRange(0, 3);
 	}
 
 	public int Tile;
@@ -178,8 +178,8 @@ public class Emperor extends Mob {
 			ExplodeOuterTiles();
 				InitializeParticles(false);
 				InitializeParticles(false);
-			explodetimer = 10;
-			if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) explodetimer -= com.watabou.utils.Random.NormalIntRange(0, 5);
+			explodetimer = 8 - com.watabou.utils.Random.NormalIntRange(0, 2);
+			if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) explodetimer -= com.watabou.utils.Random.NormalIntRange(0, 4);
 			explodeattack = false;
 			OuterTiles = new ArrayList<>();
 			}
@@ -230,8 +230,6 @@ public class Emperor extends Mob {
 	//type: 0=dormant, 1=active, 2=explodeandclear
 	public void ActivateParticleArea(ArrayList<Integer> input, int type)
 	{
-
-		//ToDo: Fix this
 		for(int i : input) {
 			com.watabou.noosa.particles.Emitter e = CellEmitter.get(i);;
 			if (type == 1) sprite.parent.add(new TargetedCell(i, 0xFF0000));
@@ -265,8 +263,8 @@ public class Emperor extends Mob {
 			if (HP*2 <= HT) {
 
 				this.HP += damage;
-				this.sprite.emitter().burst(Speck.factory(Speck.HEALING), damage);
-				this.sprite.showStatus(CharSprite.POSITIVE, Integer.toString(damage));
+				this.sprite.emitter().burst(Speck.factory(Speck.HEALING), 4);
+				this.sprite.showStatus(CharSprite.POSITIVE, "+" + damage);
 				enemy.sprite.burst( 0x00CC6666, 5 );
 			}
 
@@ -313,7 +311,7 @@ public class Emperor extends Mob {
 		if ((HP*2 <= HT) && !bleeding){
 			BossHealthBar.bleed(true);
 			sprite.showStatus(CharSprite.WARNING, Messages.get(this, "enraged"));
-			yell(Messages.get(this, "gluuurp"));
+			//yell(Messages.get(this, "gluuurp"));
 		}
 		LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
 		if (lock != null && !isImmune(src.getClass()) && !isInvulnerable(src.getClass())){

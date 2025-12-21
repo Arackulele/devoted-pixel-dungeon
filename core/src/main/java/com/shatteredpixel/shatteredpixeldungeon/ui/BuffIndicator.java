@@ -135,23 +135,19 @@ public class BuffIndicator extends Component {
 	public static final int TRINITY_FORM= 82;
 	public static final int MANY_POWER  = 83;
 	public static final int SEAL_SHIELD = 90;
+	public static final int THROWN_WEP  = 92;
 
 	public static final int BROKEN = 	91;
-
 	public static final int Conjurer_ENERGY  = 84;
-
 	public static final int WRATH_BLOOD  = 85;
 	public static final int WRATH  = 86;
-
 	public static final int WEAL = 87;
-
 	public static final int WOE = 88;
-
 	public static final int FLIGHTY = 89;
-	public static final int THROWN_WEP  = 85;
+	public static final int DISABLED = 93;
+
 	public static final int SIZE_SMALL  = 7;
 	public static final int SIZE_LARGE  = 16;
-
 	private static BuffIndicator heroInstance;
 	private static BuffIndicator bossInstance;
 

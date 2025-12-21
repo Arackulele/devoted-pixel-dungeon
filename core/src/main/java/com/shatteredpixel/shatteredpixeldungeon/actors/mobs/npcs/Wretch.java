@@ -65,12 +65,12 @@ public class Wretch extends NPC {
 
 	@Override
 	public int damageRoll() {
-		return com.watabou.utils.Random.NormalIntRange( 4 + (Dungeon.hero.lvl / 2 ), 5 + Dungeon.hero.lvl);
+		return com.watabou.utils.Random.NormalIntRange( 4 + (Wisp.GetHeroLevel() / 2 ), 5 + Wisp.GetHeroLevel());
 	}
 
 	@Override
 	public int attackSkill( Char target ) {
-		return 13 + Dungeon.hero.lvl;
+		return 13 + Wisp.GetHeroLevel();
 	}
 
 	@Override

@@ -46,7 +46,7 @@ public class Grub extends Mob {
 		maxLvl = 7;
 
 		loot = new MysteryMeat();
-		lootChance = 0.167f;
+		lootChance = 0.1f;
 
 	}
 	

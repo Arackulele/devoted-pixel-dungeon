@@ -67,7 +67,9 @@ public class MagicMissile extends Emitter {
 	public static final int LIGHT_MISSILE   = 16;
 	public static final int BANSHEE         = 17;
 	public static final int SMOG      		= 18;
-
+	public static final int SACRIFICE       = 19;
+    public static final int VOID_SNIPE      = 20;
+    public static final int VOID_BLUE       = 21;
 	public static final int MAGIC_MISS_CONE = 100;
 	public static final int FROST_CONE      = 101;
 	public static final int FIRE_CONE       = 102;
@@ -184,6 +186,16 @@ public class MagicMissile extends Emitter {
 				size( 2 );
 				pour( ShamanParticle.PURPLE, 0.01f );
 				break;
+            case VOID_SNIPE:
+                size( 2 );
+                setSpeed( 300f );
+                pour( VoidSnipeParticle.SMALL, 0.0005f );
+                break;
+            case VOID_BLUE:
+                //size( 2 );
+                setSpeed( 200f );
+                pour( VoidSnipeParticle.BLUE, 0.01f );
+                break;
 			case ELMO:
 				size( 5 );
 				pour( ElmoParticle.FACTORY, 0.01f );
@@ -257,6 +269,10 @@ public class MagicMissile extends Emitter {
 				size( 1 );
 				pour( ScreamParticle.MISSILE, 0.02f );
 				break;
+			case SACRIFICE:
+				size( 1 );
+				pour( SacrificeParticle.FALLING, 0.01f );
+				break;
 		}
 
 		revive();
@@ -286,6 +302,12 @@ public class MagicMissile extends Emitter {
 		}
 		return missile;
 	}
+
+    public static MagicMissile boltFromPos(Group group, int type, int from, int to, Callback callback){
+        MagicMissile missile = ((MagicMissile)group.recycle( MagicMissile.class ));
+        missile.reset(type, from, to, callback);
+        return missile;
+    }
 
 	@Override
 	protected boolean isFrozen() {
@@ -459,8 +481,9 @@ public class MagicMissile extends Emitter {
 						.reset( x, y, ColorMath.random(0xBB33FF, 0x5E1A80) );
 			}
 		};
-		
-		int startColor;
+
+
+        int startColor;
 		int endColor;
 		
 		public ShamanParticle() {
