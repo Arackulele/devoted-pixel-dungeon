@@ -62,7 +62,7 @@ import java.util.ArrayList;
 
 public class MagesStaff extends MeleeWeapon {
 
-	private Wand wand;
+	public Wand wand;
 
 	public static final String AC_IMBUE = "IMBUE";
 	public static final String AC_ZAP	= "ZAP";

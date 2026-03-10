@@ -114,7 +114,9 @@ public class Chasm implements Hero.Doom {
 			a.detach();
 		}
 
-		Level.beforeTransition();
+        Buff.detach(Dungeon.hero, Hero.ForgeLevelCounter.class);
+
+        Level.beforeTransition();
 
 		if (Dungeon.hero.isAlive()) {
 			Dungeon.hero.interrupt();

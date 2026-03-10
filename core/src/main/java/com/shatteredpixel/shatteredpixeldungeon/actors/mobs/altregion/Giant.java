@@ -28,7 +28,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Freezing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Healing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hex;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.InfusionCD;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollExile;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
@@ -58,8 +61,8 @@ public class Giant extends Mob {
 	{
 		spriteClass = GiantSprite.class;
 		
-		HP = HT = 95;
-		defenseSkill = 8;
+		HP = HT = 100;
+		defenseSkill = 9;
 		
 		EXP = 12;
 		maxLvl = 22;
@@ -68,7 +71,7 @@ public class Giant extends Mob {
 
 		state = PASSIVE;
 
-		loot = Random.oneOf(Generator.Category.STONE, Generator.Category.SEED);
+		loot = Random.oneOf(Generator.Category.STONE, Generator.Category.GOLD);
 		lootChance = 0.33f;
 		//properties.add(Property.LARGE);
 
@@ -90,7 +93,7 @@ public class Giant extends Mob {
 	
 	@Override
 	public int drRoll() {
-		return Random.NormalIntRange(0, 12);
+		return Random.NormalIntRange(1, 12);
 	}
 
 	public void damage(int dmg, Object src) {
@@ -139,7 +142,11 @@ public class Giant extends Mob {
 				if (f != null && f.alignment != alignment) {
 
 					for (Buff b : f.buffs()){
-						if (b.type == Buff.buffType.POSITIVE){
+						if (b.type == Buff.buffType.POSITIVE
+                                && (b instanceof FlavourBuff  || b instanceof Healing)
+                                && !(b instanceof InfusionCD)
+
+                        ){
 							f.remove(b);
 							return true;
 						}

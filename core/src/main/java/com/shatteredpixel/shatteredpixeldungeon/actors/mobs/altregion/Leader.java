@@ -103,7 +103,9 @@ public class Leader extends Mob {
 
 		if (cooldown > 0) cooldown--;
 
-		if (Dungeon.level.distance(Dungeon.hero.pos, pos) < 4 && cooldown < 1 && this.state != SLEEPING) {
+        //ToDo: This should probably work with mobs that arent the hero
+		if (enemy != null && Dungeon.hero != null &&
+                Dungeon.level.distance(Dungeon.hero.pos, pos) < 4 && cooldown < 1 && this.state != SLEEPING && (fieldOfView != null && fieldOfView[enemy.pos])) {
 			cooldown = 40;
 
 			sprite.centerEmitter().start( Speck.factory( Speck.SCREAM ), 0.3f, 3 );

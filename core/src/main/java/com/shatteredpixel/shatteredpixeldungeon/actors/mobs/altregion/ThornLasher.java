@@ -36,7 +36,8 @@ public class ThornLasher extends Mob {
 		defenseSkill = 4;
 		//baseSpeed = 0.5f;
 
-		maxLvl = 7;
+        EXP = 4;
+        maxLvl = 7;
 
 		loot = Generator.randomUsingDefaults(Generator.Category.SEED);
 		lootChance = 0.167f;

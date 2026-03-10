@@ -196,7 +196,7 @@ public class CallingBeyond extends ArmorAbility {
 								if (Dungeon.hero.pointsInTalent(Talent.FORTIFIED_CONCIOUSNESS) < 4)ch.damage(dmg, m);
 								else {
 
-									Dungeon.hero.HP = Math.min(Dungeon.hero.HT, (int)(Dungeon.hero.HP + dmg * 0.25f));
+									Dungeon.hero.SetHealth((int)(Dungeon.hero.HP + dmg * 0.25f));
 									Dungeon.hero.sprite.showStatusWithIcon(CharSprite.POSITIVE, Integer.toString((int)(dmg * 0.25f)), FloatingText.HEALING);
 
 								}

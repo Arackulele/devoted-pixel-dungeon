@@ -40,13 +40,8 @@ public class RockBlock extends Brew {
 	@Override
 	public void shatter(int cell) {
 		com.watabou.noosa.audio.Sample.INSTANCE.play(Assets.Sounds.DIG);
-		if (Dungeon.level.map[cell] == Terrain.WATER && Actor.findChar(cell) == null) {
-			Level.set(cell, Terrain.EMPTY);
-			CellEmitter.get(cell).start(Speck.factory(Speck.ROCK), 0.07f, 1);
-			GameScene.updateMap(cell);
-		}
 
-		for (int i : com.watabou.utils.PathFinder.NEIGHBOURS4){
+		for (int i : com.watabou.utils.PathFinder.NEIGHBOURS5){
 			if (Dungeon.level.map[cell + i] == Terrain.WATER && Actor.findChar(cell + i) == null) {
 				Level.set(cell + i, Terrain.EMPTY);
 				CellEmitter.get(cell + i).start(Speck.factory(Speck.ROCK), 0.07f, 1);

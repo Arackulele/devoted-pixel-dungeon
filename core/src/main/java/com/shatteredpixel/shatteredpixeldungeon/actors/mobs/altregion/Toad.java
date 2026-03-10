@@ -31,39 +31,52 @@ public class Toad extends Mob {
 	{
 		spriteClass = ToadSprite.class;
 		
-		HP = HT = 10;
-		defenseSkill = 1;
-		baseSpeed = 2f;
+		HP = HT = 7;
+		defenseSkill = 2;
+		baseSpeed = 1f;
 
 		maxLvl = 5;
 	}
 
-	private int moving;
+	private int moving = 2;
 
 	@Override
 	protected boolean getCloser( int target ) {
-		if (moving > 1) {
-			moving-=2;
-			return super.getCloser( target );
-		} else if (moving==1) {
-			moving+=3;
-			return true;
-		}
-		else {
-			moving++;
-			return true;
-		}
-
+		if (moving > 0)
+        {
+            baseSpeed = Float.POSITIVE_INFINITY;
+            moving--;
+            return super.getCloser(target);
+        }
+        else
+        {
+            baseSpeed = 1f;
+            spend(speed());
+            moving = 2;
+            return true;
+        }
 	}
 
-	@Override
+    @Override
+    public boolean attack(Char enemy, float dmgMulti, float dmgBonus, float accMulti) {
+        //People were complaining about the Toad sometimes moving once instead of twice
+        //This happened because it could store a single movement charge when it spent the turn attacking
+        //Here we remove any stored charges when it enteres an attacking state, but give it a small
+        //damage bonus for them, so they are not wasted, logically idk how this makes sense maybe if it hits you in the middle
+        //of the jump its like a strong headbutt
+        if (moving > 0) dmgBonus = moving;
+        moving = 0;
+    return super.attack(enemy, dmgMulti, dmgBonus, accMulti);
+    }
+
+        @Override
 	public int damageRoll() {
 		return Random.NormalIntRange( 1, 5 );
 	}
 	
 	@Override
 	public int attackSkill( Char target ) {
-		return 6;
+		return 7;
 	}
 	
 	@Override

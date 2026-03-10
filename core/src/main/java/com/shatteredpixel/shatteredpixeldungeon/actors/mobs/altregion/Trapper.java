@@ -29,6 +29,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -39,7 +40,8 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
-public class Trapper extends Mob {
+public class
+Trapper extends Mob {
 	
 	{
 		spriteClass = TrapperSprite.class;
@@ -50,7 +52,7 @@ public class Trapper extends Mob {
 		EXP = 11;
 		maxLvl = 21;
 
-		loot = Food.class;
+		loot = Generator.Category.FOOD;
 		lootChance = 0.083f;
 		
 		properties.add(Property.UNDEAD);
@@ -142,36 +144,24 @@ public class Trapper extends Mob {
 
 			if (Dungeon.level.passable[leftPos] && Dungeon.level.map[leftPos] != Terrain.EXIT&& Dungeon.level.map[leftPos] != Terrain.ENTRANCE) {
 				Level.set(leftPos, Terrain.SECRET_TRAP);
-
-
 				Trap t = trapClasses[Random.Int(trapClasses.length)];
-
 				Dungeon.level.setTrap(t, leftPos);
-
 				Dungeon.level.discover(leftPos);
 				CellEmitter.get(leftPos).burst(Speck.factory(Speck.LIGHT), 2);
 
 			}
 			if (Dungeon.level.passable[trapPos] && Dungeon.level.map[trapPos] != Terrain.EXIT&& Dungeon.level.map[trapPos] != Terrain.ENTRANCE) {
 				Level.set(trapPos, Terrain.SECRET_TRAP);
-
-
 				Trap t1 = trapClasses[Random.Int(trapClasses.length)];
-
 				Dungeon.level.setTrap(t1, trapPos);
-
 				Dungeon.level.discover(trapPos);
 				CellEmitter.get(trapPos).burst(Speck.factory(Speck.LIGHT), 2);
 			}
 
 			if (Dungeon.level.passable[rightPos] && Dungeon.level.map[rightPos] != Terrain.EXIT&& Dungeon.level.map[rightPos] != Terrain.ENTRANCE) {
 				Level.set(rightPos, Terrain.SECRET_TRAP);
-
-
 				Trap t3 = trapClasses[Random.Int(trapClasses.length)];
-
 				Dungeon.level.setTrap(t3, rightPos);
-
 				Dungeon.level.discover(rightPos);
 				CellEmitter.get(rightPos).burst(Speck.factory(Speck.LIGHT), 2);
 			}

@@ -83,6 +83,19 @@ import java.util.TimeZone;
 
 public class Dungeon {
 
+    public static enum Region {
+        SEWERS,
+        GARDENS,
+        PRISON,
+        COLDHOUSE,
+        CAVES,
+        FORGE,
+        METROPOLIS,
+        CITADEL,
+        HALLS,
+        VOID
+    }
+
 	//enum of items which have limited spawns, records how many have spawned
 	//could all be their own separate numbers, but this allows iterating, much nicer for bundling/initializing.
 	public static enum LimitedDrops {
@@ -291,6 +304,14 @@ public class Dungeon {
 	public static boolean levelHasBeenGenerated(int depth, int branch){
 		return generatedLevels.contains(depth + 1000*branch);
 	}
+
+    public static Region currentRegion() {
+        if (depth <= 5)       return !seweralt ? Region.SEWERS : Region.GARDENS;
+        else if (depth <= 10) return !prisonalt ? Region.PRISON : Region.COLDHOUSE;
+        else if (depth <= 15) return !cavealt ? Region.CAVES : Region.FORGE;
+        else if (depth <= 20) return !cityalt ? Region.METROPOLIS : Region.CITADEL;
+        else                  return !hallsalt ? Region.HALLS : Region.VOID;
+    }
 	
 	public static Level newLevel() {
 		

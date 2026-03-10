@@ -145,6 +145,10 @@ public class BuffIndicator extends Component {
 	public static final int WOE = 88;
 	public static final int FLIGHTY = 89;
 	public static final int DISABLED = 93;
+    public static final int THIRSTY = 94;
+    public static final int PARCHED = 95;
+    public static final int PARANOID = 96;
+    public static final int INSANE = 97;
 
 	public static final int SIZE_SMALL  = 7;
 	public static final int SIZE_LARGE  = 16;

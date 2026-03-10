@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Bones;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
@@ -35,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.ColdhousePainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ChillingTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FrostTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GeyserTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
@@ -169,8 +171,12 @@ public class ColdhouseBossLevel extends Level {
 		for (int i= 14*width(); i < length(); i++) {
 			if (map[i] == Terrain.EMPTY) {
 				if (trapclusters[i - 14 * width()]) {
-					Trap t = new ChillingTrap().reveal();
+					Trap t;
+                    if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) t = new FrostTrap().reveal();
+                    else t = new ChillingTrap().reveal();
+
 					if (Random.Int(3) == 1) t = new SummoningTrap().reveal();
+                    //else if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES && Random.Int(3) == 1)
 
 					t.active = false;
 					setTrap(t, i);
@@ -280,14 +286,18 @@ public class ColdhouseBossLevel extends Level {
 		super.storeInBundle( bundle );
 
 		bundle.put( BOSS, boss );
+        bundle.put(KILLED, killed);
 
 	}
+
+    public String KILLED = "killed";
 
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 
 		boss = (Mob)bundle.get( BOSS );
+        killed = bundle.getBoolean( KILLED );
 
 		//pre-1.3.0 saves, modifies exit transition with custom size
 		if (bundle.contains("exit")){
@@ -349,7 +359,6 @@ public class ColdhouseBossLevel extends Level {
 
 	@Override
 	public boolean setCellToWater(boolean includeTraps, int cell) {
-
 		return super.setCellToWater(includeTraps, cell);
 	}
 
@@ -365,7 +374,7 @@ public class ColdhouseBossLevel extends Level {
 	}
 
 	private Mob boss;
-	private static boolean killed = false;
+	private boolean killed = false;
 
 	@Override
 	public void seal() {

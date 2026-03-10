@@ -30,6 +30,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.*;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BarfParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PoisonParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Meal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Wyvernfruit;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
@@ -73,7 +75,7 @@ public class RatBeast extends Mob {
 	@Override
 	public int damageRoll() {
 		int min = 3;
-		int max = (HP * 2 <= HT) ? 16 : 11;
+		int max = (HP * 2 <= HT) ? 15 : 10;
 
 		return Random.NormalIntRange(min, max);
 	}
@@ -105,6 +107,7 @@ public class RatBeast extends Mob {
 		if (combochain == 4) {
 				enemy.sprite.burst( 0x05e0a0a, 8 );
 				Buff.affect(enemy, Broken.class).amount+=1;
+                if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) Buff.affect(enemy, Broken.class).amount+=1;
 
 				spend(1f);
 
@@ -178,7 +181,8 @@ public class RatBeast extends Mob {
 	public static class BarfAcid{}
 
 
-	@Override
+	@SuppressWarnings("SuspiciousIndentation")
+    @Override
 	public boolean act() {
 
 		if (HP <= HT*0.15f && shoulddoTransition)
@@ -188,7 +192,7 @@ public class RatBeast extends Mob {
 			shoulddoTransition = false;
 			HP = (int)(HT*0.15f);
 
-			Buff.affect(this, Barrier.class).setShield(50);
+			Buff.affect(this, Barrier.class).setShield(40);
 
 			ScrollOfTeleportation.teleportToLocation(Dungeon.hero, Dungeon.level.randomRespawnCell(Dungeon.hero));
 			ScrollOfTeleportation.teleportToLocation(this, Dungeon.level.randomRespawnCell(Dungeon.hero));
@@ -234,8 +238,9 @@ public class RatBeast extends Mob {
 				spend(Actor.TICK * 2);
 				Ballistica bolt = new Ballistica(pos, enemy.pos, Ballistica.STOP_SOLID | Ballistica.IGNORE_SOFT_SOLID);
 
-				int dist = Random.Int(2, 4);
-				if (HP <= HT*0.5f) dist += 2;
+				int dist = Random.Int(2, 3);
+				if (HP <= HT*0.5f) dist += 1;
+                if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) dist += 1;
 
 				ConeAOE cone = new ConeAOE(bolt,
 						dist,
@@ -247,24 +252,30 @@ public class RatBeast extends Mob {
 				int max = 2;
 
 				for (int cell : cone.cells) {
-					Char ch = Actor.findChar( cell );
-					if (ch != null && ch.alignment != alignment)
-					{
-						ch.damage(Random.NormalIntRange(3, 12), new BarfAcid());
-					}
+
 
 
 					if (Dungeon.level.map[cell] == Terrain.WATER) {
 						Level.set(cell, Terrain.EMPTY);
 						GameScene.updateMap(cell);
 					}
+                    else {
+                        Char ch = Actor.findChar( cell );
+                        if (ch != null && ch.alignment != alignment) {
+                            if (enemy == Dungeon.hero) {
+                                Statistics.bossScores[0] -= 50;
+                            }
 
-					if (Random.Int(10) == 1 && max > 0) {
-						Dungeon.level.drop( new Wyvernfruit(), cell ).sprite.drop();
-						max--;
-					}
+                            ch.damage(Random.NormalIntRange(2, 9), new BarfAcid());
+                        }
 
-					GameScene.add(Blob.seed(cell, 8, Barf.class));
+                        if (Random.Int(10) == 1 && max > 0) {
+                            Dungeon.level.drop(new Wyvernfruit(), cell).sprite.drop();
+                            max--;
+                        }
+
+                        GameScene.add(Blob.seed(cell, 8, Barf.class));
+                    }
 				}
 			}
 
@@ -277,8 +288,12 @@ public class RatBeast extends Mob {
 		if (enemy != null &&
 				this.distance(enemy) < 3 &&
 				Random.Int(6) == 1 &&
-				!chargingBarf
-		) chargingBarf = true;
+				!chargingBarf) {
+            spend(1f);
+            chargingBarf = true;
+            sprite.emitter().start(PoisonParticle.SPLASH, 0.1f, 10);
+            return true;
+        }
 
 		for (int offset : PathFinder.NEIGHBOURS9) {
 			Trap T = Dungeon.level.traps.get(pos + offset);
@@ -304,7 +319,11 @@ public class RatBeast extends Mob {
 
 		super.die(cause);
 
-		Buff.detach(Dungeon.hero, Broken.class);
+        //Punish not removing broken debuff before the fight ends
+        if (Dungeon.hero.buff(Broken.class) != null) Statistics.bossScores[1] -= Dungeon.hero.buff(Broken.class).amount * 10;
+
+        Buff.detach(Dungeon.hero, Broken.class);
+        Buff.detach(Dungeon.hero, Ooze.class);
 
 		ColdhouseBossLevel l = null;
 		if (Dungeon.level instanceof ColdhouseBossLevel) l = (ColdhouseBossLevel) Dungeon.level;
@@ -318,12 +337,14 @@ public class RatBeast extends Mob {
 
 		Dungeon.level.drop( new Meal(), pos ).sprite.drop();
 
+        if (TimesStolen < 3)Statistics.qualifiedForBossChallengeBadge = false;
+
 		Badges.validateBossSlain();
 		if (Statistics.qualifiedForBossChallengeBadge) {
 			Badges.validateBossChallengeCompleted();
 		}
-		Statistics.bossScores[0] += 1050;
-		Statistics.bossScores[0] = Math.min(1000, Statistics.bossScores[0]);
+        Statistics.bossScores[1] += 2000;
+
 
 		yell(Messages.get(this, "defeated"));
 	}
@@ -361,18 +382,24 @@ public class RatBeast extends Mob {
 
 	}
 
+    public int TimesStolen = 0;
+
 	private static final String CHARGINGBARF     = "chargingbarf";
 	private static final String SHOULDDOTRANSITION   = "shoulddoTransition";
 	private static final String COMBOCHAIN = "combochain";
 
-	@Override
+    private static final String TIMESSTOLEN     = "TimesStolen";
+
+
+    @Override
 	public void storeInBundle(Bundle bundle) {
 
 		bundle.put( CHARGINGBARF, chargingBarf );
 		bundle.put( SHOULDDOTRANSITION, shoulddoTransition );
 		bundle.put( COMBOCHAIN, combochain );
+        bundle.put( TIMESSTOLEN, TimesStolen );
 
-		super.storeInBundle(bundle);
+        super.storeInBundle(bundle);
 
 	}
 
@@ -384,6 +411,7 @@ public class RatBeast extends Mob {
 		chargingBarf = bundle.getBoolean( CHARGINGBARF );
 		shoulddoTransition = bundle.getBoolean( SHOULDDOTRANSITION );
 		combochain = bundle.getInt( COMBOCHAIN );
+        TimesStolen = bundle.getInt( TIMESSTOLEN );
 
 		BossHealthBar.assignBoss(this);
 		if ((HP * 2 <= HT)) BossHealthBar.bleed(true);

@@ -21,13 +21,13 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.food;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
@@ -35,7 +35,7 @@ public class SupplyRation extends Food {
 
 	{
 		image = ItemSpriteSheet.SUPPLY_RATION;
-		energy = 2* Hunger.HUNGRY/3f; //200 food value
+		energy = 2*Hunger.HUNGRY/3f; //200 food value
 
 		bones = false;
 	}
@@ -47,7 +47,8 @@ public class SupplyRation extends Food {
 				|| Dungeon.hero.hasTalent(Talent.MYSTICAL_MEAL)
 				|| Dungeon.hero.hasTalent(Talent.INVIGORATING_MEAL)
 				|| Dungeon.hero.hasTalent(Talent.FOCUSED_MEAL)
-				|| Dungeon.hero.hasTalent(Talent.ENLIGHTENING_MEAL)){
+				|| Dungeon.hero.hasTalent(Talent.ENLIGHTENING_MEAL)
+                || Dungeon.hero.hasTalent(Talent.CLEANSING_MEAL)){
 			return 0;
 		} else {
 			return 1;
@@ -58,7 +59,7 @@ public class SupplyRation extends Food {
 	protected void satisfy(Hero hero) {
 		super.satisfy(hero);
 
-		hero.HP = Math.min(hero.HP + 5, hero.HT);
+		hero.Heal(5);
 		hero.sprite.showStatusWithIcon( CharSprite.POSITIVE, "5", FloatingText.HEALING );
 
 		CloakOfShadows cloak = hero.belongings.getItem(CloakOfShadows.class);

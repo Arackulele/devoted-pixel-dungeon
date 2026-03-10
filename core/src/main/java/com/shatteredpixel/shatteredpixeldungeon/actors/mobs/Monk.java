@@ -22,13 +22,13 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.MonkSprite;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.MonkSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
@@ -48,7 +48,7 @@ public class Monk extends Mob {
 		loot = Food.class;
 		lootChance = 0.083f;
 
-		properties.add(Char.Property.UNDEAD);
+		properties.add(Property.UNDEAD);
 	}
 	
 	@Override
@@ -106,7 +106,7 @@ public class Monk extends Mob {
 	@Override
 	public int defenseSkill( Char enemy ) {
 		if (buff(Focus.class) != null && paralysed == 0 && state != SLEEPING){
-			return Char.INFINITE_EVASION;
+			return INFINITE_EVASION;
 		}
 		return super.defenseSkill( enemy );
 	}

@@ -229,6 +229,8 @@ public class ItemSprite extends MovieClip {
 				return view( ItemSpriteSheet.BONES, null );
 			case REMAINS:
 				return view( ItemSpriteSheet.REMAINS, null );
+            case ICE:
+                return view( ItemSpriteSheet.ICE, null );
 			default:
 				return view( 0, null );
 		}

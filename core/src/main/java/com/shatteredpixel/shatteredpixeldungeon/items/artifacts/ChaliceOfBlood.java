@@ -171,7 +171,7 @@ public class ChaliceOfBlood extends Artifact {
 			heal++;
 		}
 		if (heal >= 1f && target.HP < target.HT) {
-			target.HP = Math.min(target.HT, target.HP + (int)heal);
+			target.Heal((int)heal);
 			target.sprite.showStatusWithIcon(CharSprite.POSITIVE, Integer.toString((int)heal), FloatingText.HEALING);
 
 			if (target.HP == target.HT && target instanceof Hero) {

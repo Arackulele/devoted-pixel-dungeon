@@ -22,6 +22,8 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Broken;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
 import com.shatteredpixel.shatteredpixeldungeon.items.*;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.AscendedForm;
@@ -47,13 +49,22 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.Ete
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.WealAndWoe;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Infernobomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLevitation;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.RockBlock;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfMastery;
+import com.shatteredpixel.shatteredpixeldungeon.items.remains.VialShard;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfAntiMagic;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.CurseInfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfBlink;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfPrismaticLight;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HolyTome;
@@ -169,10 +180,14 @@ public enum HeroClass {
 		}
 
 		if (DeviceCompat.isDebug()) {
-			hero.earnExp( 2000, null );
+            MasterThievesArmband test2 = new MasterThievesArmband();
+            test2.quantity(1).collect();
+            test2.charge(hero, 1000);
+
+			hero.earnExp( 1400, null );
 			Dungeon.energy += 100;
 
-			hero.belongings.weapon.level(100);
+			hero.belongings.weapon.level(20);
 			hero.belongings.armor.level(20);
 			hero.belongings.weapon.upgrade();
 
@@ -194,12 +209,11 @@ public enum HeroClass {
 			RoyalSeal crw = new RoyalSeal();
 			crw.quantity(1).collect();
 
-            Item test = new Infernobomb();
-            test.isInfused = true;
-            test.quantity(1).collect();
 
-            Dungeon.depth = 26;
-			Dungeon.branch = 0;
+
+
+            Dungeon.depth = 21;
+			//Dungeon.branch = 1;
 
 		}
 

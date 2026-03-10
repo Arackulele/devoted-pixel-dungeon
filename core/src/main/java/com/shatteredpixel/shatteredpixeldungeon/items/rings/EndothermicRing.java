@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.rings;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
@@ -31,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Splash;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.watabou.utils.PathFinder;
 
 public class EndothermicRing extends Ring {
 
@@ -41,7 +44,7 @@ public class EndothermicRing extends Ring {
 		unique = true;
 		bones = false;
 	}
-	public int totalLeft = 60;
+	public int totalLeft = 40;
 
 	public String TOTALLEFT = "totalleft";
 
@@ -109,14 +112,30 @@ public class EndothermicRing extends Ring {
 			{
 				if (Dungeon.level.map[target.pos] == Terrain.WATER) {
 					Splash.at(DungeonTilemap.tileCenterToWorld(Dungeon.hero.pos), -com.watabou.utils.PointF.PI / 2, com.watabou.utils.PointF.PI / 2, 0x5bc1e3, 3, 0.02f);
-					Dungeon.level.set(target.pos, Terrain.EMPTY);
-					GameScene.updateMap(target.pos);
-					Dungeon.level.discover(target.pos);
+					for (int i: PathFinder.NEIGHBOURS5)
+                    {
+                        if (Dungeon.level.map[target.pos + i] == Terrain.WATER)
+                        {
+                            Dungeon.level.set(target.pos + i, Terrain.EMPTY);
+                            GameScene.updateMap(target.pos + i);
+                            Dungeon.level.discover(target.pos + i);
+                        }
+                    }
+
 					totalLeft--;
 					timer = 14;
 				}
 
-			if (timer < 1) {
+                if (Dungeon.level.map[target.pos] == Terrain.EMBERS)
+                {
+
+                    for (int i: PathFinder.NEIGHBOURS5)
+                    {
+                        GameScene.add( Blob.seed( target.pos+i, 4, Fire.class ) );
+                    }
+
+                }
+			else if (timer < 1) {
 
 				Buff.affect(Dungeon.hero, Burning.class).reignite(Dungeon.hero, 2f);
 

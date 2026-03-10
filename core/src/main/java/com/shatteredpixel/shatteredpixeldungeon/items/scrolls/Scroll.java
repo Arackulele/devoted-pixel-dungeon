@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EquipmentDisabled;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
@@ -35,6 +36,30 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.ItemStatusHandler;
 import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfFrost;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHaste;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibility;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLevitation;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfParalyticGas;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfPurity;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfToxicGas;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfCleansing;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfCorrosiveGas;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfDivineInspiration;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfDragonsBreath;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfEarthenArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfMagicalSight;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfMastery;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfShielding;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfShroudingFog;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfSnapFreeze;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfStamina;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfStormClouds;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfAntiMagic;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
@@ -185,9 +210,43 @@ public abstract class Scroll extends Item {
 					&& hero.buff(UnstableSpellbook.bookRecharge.class).isCursed()
 					&& !(this instanceof ScrollOfRemoveCurse || this instanceof ScrollOfAntiMagic)){
 				GLog.n( Messages.get(this, "cursed") );
-			} else {
-				doRead();
-			}
+			} else if ( Dungeon.isChallenged(Challenges.REGION_DIFFS) && Dungeon.currentRegion() == Dungeon.Region.METROPOLIS && !(this instanceof ScrollOfUpgrade) && Dungeon.hero.GetRegionArenaTiles(false)){
+
+
+                    HashMap<Class<? extends Potion>, Float> potionChances = new HashMap<>();
+                    //<editor-fold desc="Potion Weights">
+                    //We are not being particularly nice here with the weights, because it is a challenge after all
+                    potionChances.put(PotionOfHealing.class, 1f);
+                    potionChances.put(PotionOfMindVision.class, 1f);
+                    potionChances.put(PotionOfFrost.class, 1f);
+                    potionChances.put(PotionOfLiquidFlame.class, 1f);
+                    potionChances.put(PotionOfToxicGas.class, 1f);
+                    potionChances.put(PotionOfHaste.class, 1f);
+                    potionChances.put(PotionOfInvisibility.class, 1f);
+                    potionChances.put(PotionOfLevitation.class, 1f);
+                    potionChances.put(PotionOfParalyticGas.class, 0.6f);
+                    potionChances.put(PotionOfPurity.class, 1f);
+                    potionChances.put(PotionOfExperience.class, 0.5f);
+                    //Exotic variants included, but not weighted higher if the user read an exotic scroll, andd the actually good ones are weighted down
+                    potionChances.put(PotionOfCleansing.class, 0.1f);
+                    potionChances.put(PotionOfCorrosiveGas.class, 0.2f);
+                    potionChances.put(PotionOfDivineInspiration.class, 0.05f);
+                    potionChances.put(PotionOfDragonsBreath.class, 0.2f);
+                    potionChances.put(PotionOfEarthenArmor.class, 0.3f);
+                    potionChances.put(PotionOfMagicalSight.class, 0.4f);
+                    potionChances.put(PotionOfShielding.class, 0.3f);
+                    potionChances.put(PotionOfShroudingFog.class, 0.3f);
+                    potionChances.put(PotionOfSnapFreeze.class, 0.4f);
+                    potionChances.put(PotionOfStamina.class, 0.3f);
+                    potionChances.put(PotionOfStormClouds.class, 0.5f);
+                    //</editor-fold>
+                    Potion p = Reflection.newInstance(Random.chances(potionChances));
+
+                    p.anonymize();
+                    p.apply(hero);
+
+                }
+				else doRead();
 			
 		}
 	}

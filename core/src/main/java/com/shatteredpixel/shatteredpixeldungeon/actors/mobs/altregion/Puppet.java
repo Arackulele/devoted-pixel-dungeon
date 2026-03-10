@@ -41,6 +41,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -74,8 +75,9 @@ public class Puppet extends Mob {
 
 		flying = true;
 
-		loot = new Dewdrop();
-		lootChance = 1f;
+        //The missiles wont be useful, but they will be plentiful
+		loot = Random.oneOf(Bomb.class, Generator.Category.MIS_T3);
+		lootChance = 0.3f;
 
 		properties.add(Property.INORGANIC);
 	}

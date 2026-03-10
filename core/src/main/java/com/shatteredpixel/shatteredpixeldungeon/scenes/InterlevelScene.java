@@ -251,7 +251,7 @@ public class InterlevelScene extends PixelScene {
 				if (lastRegion == 6)                aa = 1;
 				else if (phase == Phase.FADE_IN)    aa = Math.max( 0, 2*(timeLeft - (fadeTime - 0.333f)));
 				else if (phase == Phase.FADE_OUT)   aa = Math.max( 0, 2*(0.333f - timeLeft));
-				//else                                aa = 0;
+				else                                aa = 0;
 			}
 		};
 		im.angle = 90;
@@ -757,6 +757,7 @@ public class InterlevelScene extends PixelScene {
 			level = Dungeon.newLevel();
 			Dungeon.hero.pos = level.randomRespawnCell(Dungeon.hero);
 			if (Dungeon.hero.pos == -1) Dungeon.hero.pos = level.entrance();
+            if (Dungeon.hero.pos == -1) Dungeon.hero.pos = level.length()/2;
 
 			for (Item i : preservedItems){
 				int pos = level.randomRespawnCell(null);

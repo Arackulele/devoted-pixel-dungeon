@@ -22,7 +22,10 @@
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
@@ -38,6 +41,20 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.AlarmTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.BurningTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ChillingTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ConfusionTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.FlockTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GeyserTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.OozeTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.PoisonDartTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ShockingTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.ToxicTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -51,6 +68,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Tipp
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,7 +85,8 @@ public class Heap implements Bundlable {
 		CRYSTAL_CHEST,
 		TOMB,
 		SKELETON,
-		REMAINS
+		REMAINS,
+        ICE
 	}
 	public Type type = Type.HEAP;
 	
@@ -89,6 +108,27 @@ public class Heap implements Bundlable {
 		case SKELETON:
 			CellEmitter.center( pos ).start(Speck.factory(Speck.RATTLE), 0.1f, 3);
 			break;
+        case CHEST:
+            if (Dungeon.isChallenged(Challenges.REGION_DIFFS) &&
+                    Dungeon.currentRegion() == Dungeon.Region.PRISON &&
+                    Random.Int(20) > 9 ) {
+                //No traps that apply directly to a target on their tile, since that would do nothing
+                //Theres gotta be a better way to do this but i have not figured it out
+                Trap[] ops = new Trap[]{
+                        new ChillingTrap(), new ShockingTrap(), new ToxicTrap(), new BurningTrap(), new PoisonDartTrap(),
+                        new AlarmTrap(), new OozeTrap(),
+                        new ConfusionTrap(), new FlockTrap(), new SummoningTrap(), new GeyserTrap() };
+                Random.shuffle(ops);
+                Level.set(pos, Terrain.SECRET_TRAP);
+                Trap t = ops[0];
+                Dungeon.level.setTrap(t, pos);
+                t.activate();
+                t.disarm();
+            }
+            break;
+        case ICE:
+            Buff.affect(hero, Frost.class, 4);
+            break;
 		default:
 		}
 		
@@ -259,7 +299,7 @@ public class Heap implements Bundlable {
 	public void explode() {
 
 		//breaks open most standard containers, mimics die.
-		if (type == Type.CHEST || type == Type.SKELETON) {
+		if (type == Type.CHEST || type == Type.SKELETON || type == Type.ICE) {
 			type = Type.HEAP;
 			sprite.link();
 			sprite.drop();
@@ -380,6 +420,8 @@ public class Heap implements Bundlable {
 				return Messages.get(this, "skeleton");
 			case REMAINS:
 				return Messages.get(this, "remains");
+            case ICE:
+                return Messages.get(this, "ice");
 			default:
 				return peek().title();
 		}
@@ -404,6 +446,8 @@ public class Heap implements Bundlable {
 				return Messages.get(this, "skeleton_desc");
 			case REMAINS:
 				return Messages.get(this, "remains_desc");
+            case ICE:
+                return Messages.get(this, "ice_desc");
 			default:
 				return peek().info();
 		}

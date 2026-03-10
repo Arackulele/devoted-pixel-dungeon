@@ -21,14 +21,24 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Thorns;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.TormentedSpirit;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.ThornLasher;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ChallengeParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.watabou.noosa.tweeners.AlphaTweener;
+import com.watabou.utils.PathFinder;
+import com.watabou.utils.Random;
 
 public class CloakOfThorns extends Artifact {
 
@@ -81,7 +91,38 @@ public class CloakOfThorns extends Artifact {
 				GameScene.add(Blob.seed(target.pos, 25, Thorns.class));
 				charge-= 1f;
 				Item.updateQuickslot();
-			}
+
+                boolean visible = false;
+
+                for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])) {
+                    if (Dungeon.level.heroFOV[mob.pos]) {
+                        visible = true;
+                    }
+                }
+
+                if (!visible && Random.IntRange(0, 10) == 7) {
+                    ThornLasher w = new ThornLasher();
+
+                    int p = -1;
+                    for (int i : PathFinder.NEIGHBOURS8)
+                    {
+                        if (p == -1 && Actor.findChar(i + target.pos) == null && Dungeon.level.passable[i + target.pos] ) p = i + target.pos;
+
+                    }
+                    if (p != -1) {
+                        w.pos = p;
+                        w.state = w.HUNTING;
+                        GameScene.add(w, 3f);
+                        Dungeon.level.occupyCell(w);
+
+                        w.sprite.alpha(0);
+                        w.sprite.parent.add(new AlphaTweener(w.sprite, 1, 0.5f));
+
+                        w.sprite.emitter().burst(LeafParticle.GENERAL, 5);
+                    }
+                }
+
+            }
 			else if (charge < 1) QuestDone = true;
 			}
 

@@ -52,7 +52,7 @@ public class Banshee extends Mob implements Callback {
 		maxLvl = 13;
 
 		loot = Generator.Category.SCROLL;
-		lootChance = 0.25f;
+		lootChance = 0.1f;
 
 		flying = true;
 

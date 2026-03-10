@@ -22,8 +22,10 @@
 package com.shatteredpixel.shatteredpixeldungeon;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AscensionChallenge;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.PotionBandolier;
@@ -31,7 +33,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
+import com.shatteredpixel.shatteredpixeldungeon.items.remains.BowFragment;
+import com.shatteredpixel.shatteredpixeldungeon.items.remains.BrokenHilt;
+import com.shatteredpixel.shatteredpixeldungeon.items.remains.BrokenStaff;
+import com.shatteredpixel.shatteredpixeldungeon.items.remains.CloakScrap;
 import com.shatteredpixel.shatteredpixeldungeon.items.remains.RemainsItem;
+import com.shatteredpixel.shatteredpixeldungeon.items.remains.SealShard;
+import com.shatteredpixel.shatteredpixeldungeon.items.remains.TornPage;
+import com.shatteredpixel.shatteredpixeldungeon.items.remains.VialShard;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.Trinket;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
@@ -100,8 +109,10 @@ public class Badges {
 		RESEARCHER_1                ( 22, BadgeType.JOURNAL ),
 		GAMES_PLAYED_1              ( 23, BadgeType.GLOBAL ),
 		HIGH_SCORE_1                ( 24 ),
+        BOSS_SLAIN_ALT_1            ( 26 ),
 
-		//silver
+
+        //silver
 		NO_MONSTERS_SLAIN           ( 32 ),
 		BOSS_SLAIN_REMAINS          ( 33 ),
 		MONSTERS_SLAIN_3            ( 34 ),
@@ -137,8 +148,11 @@ public class Badges {
 		RESEARCHER_2                ( 55, BadgeType.JOURNAL ),
 		GAMES_PLAYED_2              ( 56, BadgeType.GLOBAL ),
 		HIGH_SCORE_2                ( 57 ),
+        BOSS_SLAIN_ALT_2            ( 58 ),
+        BOSS_SLAIN_ALT_3            ( 59 ),
 
-		//gold
+
+        //gold
 		ENEMY_HAZARDS               ( 64 ),
 		PIRANHAS                    ( 65 ),
 		GRIM_WEAPON                 ( 66 ),
@@ -169,8 +183,17 @@ public class Badges {
 		RESEARCHER_3                ( 85, BadgeType.JOURNAL ),
 		GAMES_PLAYED_3              ( 86, BadgeType.GLOBAL ),
 		HIGH_SCORE_3                ( 87 ),
+        BOSS_SLAIN_ALT_4            ( 88 ),
+        VICTORY_ALT                 ( 89 ),
+        BOSS_CHALLENGE_ALT_1        ( 90 ),
+        BOSS_CHALLENGE_ALT_2        ( 91 ),
+        REGIONS_VICTORY_REG         ( 92 ),
+        REGIONS_VICTORY_ALT         ( 93 ),
+        REMAINS_INFUSE              ( 94 ),
 
-		//platinum
+
+
+        //platinum
 		MANY_BUFFS                  ( 96 ),
 		ITEM_LEVEL_5                ( 97 ),
 		LEVEL_REACHED_5             ( 98 ),
@@ -211,6 +234,8 @@ public class Badges {
 		GAMES_PLAYED_4              ( 108, BadgeType.GLOBAL ),
 		HIGH_SCORE_4                ( 109 ),
 		CHAMPION_1                  ( 110 ),
+        BOSS_CHALLENGE_ALT_3        ( 111 ),
+        BOSS_CHALLENGE_ALT_4        ( 112 ),
 
 		//diamond
 		PACIFIST_ASCENT             ( 120 ),
@@ -220,9 +245,11 @@ public class Badges {
 		GAMES_PLAYED_5              ( 124, BadgeType.GLOBAL ),
 		HIGH_SCORE_5                ( 125 ),
 		CHAMPION_2                  ( 126 ),
-		CHAMPION_3                  ( 127 );
+		CHAMPION_3                  ( 127 ),
+        BOSS_CHALLENGE_ALT_5        ( 128 );
 
-		public boolean meta;
+
+        public boolean meta;
 
 		public int image;
 		public BadgeType type;
@@ -848,16 +875,20 @@ public class Badges {
 		Badge badge = null;
 		switch (Dungeon.depth) {
 		case 5:
-			badge = Badge.BOSS_SLAIN_1;
+			if (Dungeon.seweralt) badge = Badge.BOSS_SLAIN_ALT_1;
+            else badge = Badge.BOSS_SLAIN_1;
 			break;
 		case 10:
-			badge = Badge.BOSS_SLAIN_2;
+            if (Dungeon.prisonalt) badge = Badge.BOSS_SLAIN_ALT_2;
+            else badge = Badge.BOSS_SLAIN_2;
 			break;
 		case 15:
-			badge = Badge.BOSS_SLAIN_3;
+            if (Dungeon.cavealt) badge = Badge.BOSS_SLAIN_ALT_3;
+            else badge = Badge.BOSS_SLAIN_3;
 			break;
 		case 20:
-			badge = Badge.BOSS_SLAIN_4;
+            if (Dungeon.cityalt) badge = Badge.BOSS_SLAIN_ALT_4;
+            else badge = Badge.BOSS_SLAIN_4;
 			break;
 		}
 		
@@ -865,7 +896,7 @@ public class Badges {
 			local.add( badge );
 			displayBadge( badge );
 			
-			if (badge == Badge.BOSS_SLAIN_1) {
+			if (badge == Badge.BOSS_SLAIN_1 || badge == Badge.BOSS_SLAIN_ALT_1) {
 				badge = firstBossClassBadges.get(Dungeon.hero.heroClass);
 				if (badge == null) return;
 				local.add( badge );
@@ -885,7 +916,7 @@ public class Badges {
 						displayBadge( badge );
 					}
 				}
-			} else if (badge == Badge.BOSS_SLAIN_3) {
+			} else if (badge == Badge.BOSS_SLAIN_3 || badge == Badge.BOSS_SLAIN_ALT_3) {
 
 				badge = thirdBossSubclassBadges.get(Dungeon.hero.subClass);
 				if (badge == null) return;
@@ -920,19 +951,24 @@ public class Badges {
 		Badge badge = null;
 		switch (Dungeon.depth) {
 			case 5:
-				badge = Badge.BOSS_CHALLENGE_1;
+                if (!Dungeon.seweralt) badge = Badge.BOSS_CHALLENGE_1;
+                else badge = Badge.BOSS_CHALLENGE_ALT_1;
 				break;
 			case 10:
-				badge = Badge.BOSS_CHALLENGE_2;
+                if (!Dungeon.prisonalt) badge = Badge.BOSS_CHALLENGE_2;
+                else badge = Badge.BOSS_CHALLENGE_ALT_2;
 				break;
 			case 15:
-				badge = Badge.BOSS_CHALLENGE_3;
+                if (!Dungeon.cavealt) badge = Badge.BOSS_CHALLENGE_3;
+                else badge = Badge.BOSS_CHALLENGE_ALT_3;
 				break;
 			case 20:
-				badge = Badge.BOSS_CHALLENGE_4;
+                if (!Dungeon.cityalt) badge = Badge.BOSS_CHALLENGE_4;
+                else badge = Badge.BOSS_CHALLENGE_ALT_4;
 				break;
 			case 25:
-				badge = Badge.BOSS_CHALLENGE_5;
+                if (!Dungeon.hallsalt) badge = Badge.BOSS_CHALLENGE_5;
+                else badge = Badge.BOSS_CHALLENGE_ALT_5;
 				break;
 		}
 
@@ -1034,6 +1070,7 @@ public class Badges {
 	public static void validateVictory() {
 
 		Badge badge = Badge.VICTORY;
+        if (Dungeon.hallsalt) badge = Badge.VICTORY_ALT;
 		local.add( badge );
 		displayBadge( badge );
 
@@ -1055,14 +1092,26 @@ public class Badges {
 		}
 	}
 
-	public static void validateTakingTheMick(Object cause){
-		if (cause == Dungeon.hero &&
-				Dungeon.hero.belongings.attackingWeapon() instanceof Pickaxe
-				&& Dungeon.hero.belongings.attackingWeapon().level() >= 20){
-			local.add( Badge.TAKING_THE_MICK );
-			displayBadge(Badge.TAKING_THE_MICK);
+	public static void validateRegionVictories(){
+		if (Dungeon.seweralt && Dungeon.prisonalt && Dungeon.cavealt && Dungeon.cityalt && Dungeon.hallsalt){
+			local.add( Badge.REGIONS_VICTORY_ALT );
+			displayBadge(Badge.REGIONS_VICTORY_ALT);
 		}
+
+        if (!Dungeon.seweralt && !Dungeon.prisonalt && !Dungeon.cavealt && !Dungeon.cityalt && !Dungeon.hallsalt){
+            local.add( Badge.REGIONS_VICTORY_REG );
+            displayBadge(Badge.REGIONS_VICTORY_REG);
+        }
 	}
+
+    public static void validateTakingTheMick(Object cause){
+        if (cause == Dungeon.hero &&
+                Dungeon.hero.belongings.attackingWeapon() instanceof Pickaxe
+                && Dungeon.hero.belongings.attackingWeapon().level() >= 20){
+            local.add( Badge.TAKING_THE_MICK );
+            displayBadge(Badge.TAKING_THE_MICK);
+        }
+    }
 
 	public static void validateNoKilling() {
 		if (!local.contains( Badge.NO_MONSTERS_SLAIN ) && Statistics.completedWithNoKilling) {
@@ -1072,6 +1121,22 @@ public class Badges {
 			Statistics.completedWithNoKilling = false;
 		}
 	}
+
+    public static void validateRemainsInfuse(Item item) {
+        if (item instanceof RemainsItem) {
+            if (!(item instanceof SealShard  && Dungeon.hero.heroClass == HeroClass.WARRIOR) &&
+                !(item instanceof BrokenStaff&& Dungeon.hero.heroClass == HeroClass.MAGE) &&
+                !(item instanceof CloakScrap && Dungeon.hero.heroClass == HeroClass.ROGUE) &&
+                !(item instanceof BowFragment&& Dungeon.hero.heroClass == HeroClass.HUNTRESS) &&
+                !(item instanceof BrokenHilt && Dungeon.hero.heroClass == HeroClass.DUELIST) &&
+                !(item instanceof TornPage   && Dungeon.hero.heroClass == HeroClass.CLERIC) &&
+                !(item instanceof VialShard  && Dungeon.hero.heroClass == HeroClass.ZEALOT)) {
+                Badge badge = Badge.REMAINS_INFUSE;
+                local.add(badge);
+                displayBadge(badge);
+            }
+        }
+    }
 	
 	public static void validateGrimWeapon() {
 		if (!local.contains( Badge.GRIM_WEAPON )) {
@@ -1250,7 +1315,8 @@ public class Badges {
 			{Badge.FOOD_EATEN_1, Badge.FOOD_EATEN_2, Badge.FOOD_EATEN_3, Badge.FOOD_EATEN_4, Badge.FOOD_EATEN_5},
 			{Badge.ITEMS_CRAFTED_1, Badge.ITEMS_CRAFTED_2, Badge.ITEMS_CRAFTED_3, Badge.ITEMS_CRAFTED_4, Badge.ITEMS_CRAFTED_5},
 			{Badge.BOSS_SLAIN_1, Badge.BOSS_SLAIN_2, Badge.BOSS_SLAIN_3, Badge.BOSS_SLAIN_4},
-			{Badge.RESEARCHER_1, Badge.RESEARCHER_2, Badge.RESEARCHER_3, Badge.RESEARCHER_4, Badge.RESEARCHER_5},
+            {Badge.BOSS_SLAIN_ALT_1, Badge.BOSS_SLAIN_ALT_2, Badge.BOSS_SLAIN_ALT_3, Badge.BOSS_SLAIN_ALT_4},
+            {Badge.RESEARCHER_1, Badge.RESEARCHER_2, Badge.RESEARCHER_3, Badge.RESEARCHER_4, Badge.RESEARCHER_5},
 			{Badge.HIGH_SCORE_1, Badge.HIGH_SCORE_2, Badge.HIGH_SCORE_3, Badge.HIGH_SCORE_4, Badge.HIGH_SCORE_5},
 			{Badge.GAMES_PLAYED_1, Badge.GAMES_PLAYED_2, Badge.GAMES_PLAYED_3, Badge.GAMES_PLAYED_4, Badge.GAMES_PLAYED_5},
 			{Badge.CHAMPION_1, Badge.CHAMPION_2, Badge.CHAMPION_3}
@@ -1266,7 +1332,13 @@ public class Badges {
 			{Badge.BOSS_SLAIN_4, Badge.BOSS_CHALLENGE_4},
 			{Badge.VICTORY,      Badge.BOSS_CHALLENGE_5},
 			{Badge.HAPPY_END,    Badge.PACIFIST_ASCENT},
-			{Badge.VICTORY,      Badge.TAKING_THE_MICK}
+			{Badge.VICTORY,      Badge.TAKING_THE_MICK},
+
+            {Badge.BOSS_SLAIN_ALT_1, Badge.BOSS_CHALLENGE_ALT_1},
+            {Badge.BOSS_SLAIN_ALT_2, Badge.BOSS_CHALLENGE_ALT_2},
+            {Badge.BOSS_SLAIN_ALT_3, Badge.BOSS_CHALLENGE_ALT_3},
+            {Badge.BOSS_SLAIN_ALT_4, Badge.BOSS_CHALLENGE_ALT_4},
+            {Badge.VICTORY_ALT,      Badge.BOSS_CHALLENGE_ALT_5}
 	};
 
 	//If the summary badge is unlocked, don't show the component badges

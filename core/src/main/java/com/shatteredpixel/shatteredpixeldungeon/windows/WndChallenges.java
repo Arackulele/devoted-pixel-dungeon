@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class WndChallenges extends Window {
 
@@ -82,9 +83,57 @@ public class WndChallenges extends Window {
 				@Override
 				protected void onClick() {
 					super.onClick();
-					ShatteredPixelDungeon.scene().add(
-							new WndMessage(Messages.get(Challenges.class, challenge+"_desc"))
-					);
+                    if (Objects.equals(challenge, "stronger_bosses"))
+                    {
+                        String compound = Messages.get(Challenges.class, challenge + "_desc");
+
+                        if (SPDSettings.regiontamper()) {
+
+                            if (!SPDSettings.gardens())compound += Messages.get(Challenges.class, challenge + "_goo");
+                            else compound += Messages.get(Challenges.class, challenge + "_gnollemperor");
+
+                            if (!SPDSettings.coldhouse())compound += Messages.get(Challenges.class, challenge + "_tengu");
+                            else compound += Messages.get(Challenges.class, challenge + "_ratbeast");
+
+                            if (!SPDSettings.forge()) compound += Messages.get(Challenges.class, challenge + "_dm300");
+                            else compound += Messages.get(Challenges.class, challenge + "_furnacegolem");
+
+                            if (!SPDSettings.citadel()) compound += Messages.get(Challenges.class, challenge + "_dwarfking");
+                            else compound += Messages.get(Challenges.class, challenge + "_dwarvencourt");
+
+                            if (!SPDSettings.ashen()) compound += Messages.get(Challenges.class, challenge + "_yogdzewa");
+                            else compound += Messages.get(Challenges.class, challenge + "_veltaleth");
+
+
+                        }
+                        else {
+                            compound += Messages.get(Challenges.class, challenge + "_goo");
+                            compound += Messages.get(Challenges.class, challenge + "_gnollemperor");
+
+                            compound += Messages.get(Challenges.class, challenge + "_tengu");
+                            compound += Messages.get(Challenges.class, challenge + "_ratbeast");
+
+                            compound += Messages.get(Challenges.class, challenge + "_dm300");
+                            compound += Messages.get(Challenges.class, challenge + "_furnacegolem");
+
+                            compound += Messages.get(Challenges.class, challenge + "_dwarfking");
+                            compound += Messages.get(Challenges.class, challenge + "_dwarvencourt");
+
+                            compound += Messages.get(Challenges.class, challenge + "_yogdzewa");
+                            compound += Messages.get(Challenges.class, challenge + "_veltaleth");
+
+                        }
+
+                        ShatteredPixelDungeon.scene().add(
+                                new WndMessage(compound)
+                        );
+
+                    }
+                    else {
+                        ShatteredPixelDungeon.scene().add(
+                                new WndMessage(Messages.get(Challenges.class, challenge + "_desc"))
+                        );
+                    }
 				}
 			};
 			info.setRect(cb.right(), pos, 16, BTN_HEIGHT);

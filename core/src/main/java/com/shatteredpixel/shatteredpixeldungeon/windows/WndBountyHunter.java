@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -401,9 +402,10 @@ public class WndBountyHunter extends Window {
 		public void onSelect(Item item) {
 			if (item != null) {
 
-				Dungeon.hero.HT += item.level();
+				Dungeon.hero.bountyhunterbuff += 1;
 				Dungeon.hero.attackSkill += item.level();
 				Dungeon.hero.defenseSkill += item.level();
+                Dungeon.hero.updateHT(false);
 
 				BountyHunter.Quest.favor -= 500 + 1000*BountyHunter.Quest.hardens;
 				BountyHunter.Quest.hardens++;
@@ -469,6 +471,8 @@ public class WndBountyHunter extends Window {
 				Dungeon.level.drop( newitem, Dungeon.hero.pos ).sprite.drop();
 				BountyHunter.Quest.favor -= 2000;
 				BountyHunter.Quest.smiths++;
+
+                Badges.validateRemainsInfuse(newitem);
 
 				WndBountyHunter.this.hide();
 

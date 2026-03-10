@@ -100,21 +100,28 @@ public class SageCorpse extends NPC {
 			return true;
 		}
 
-		if (Quest.given) {
+		if (Quest.given ) {
 			
 			boolean Done;
-			switch (Quest.type) {
-				case 1:
-				default:
-					Done = Dungeon.hero.belongings.getItem(WandOfMalaise.class).QuestDone;
-					break;
-				case 2:
-					Done = Dungeon.hero.belongings.getItem(EndothermicRing.class).QuestDone;
-					break;
-				case 3:
-					Done = Dungeon.hero.belongings.getItem(CloakOfThorns.class).QuestDone;
-					break;
-			}
+
+            if (
+                    ( Quest.type == 1 && Dungeon.hero.belongings.getItem(WandOfMalaise.class) != null)
+                    || ( Quest.type == 2 && Dungeon.hero.belongings.getItem(EndothermicRing.class) != null)
+                    || ( Quest.type == 3 && Dungeon.hero.belongings.getItem(CloakOfThorns.class) != null)
+            ) {
+                switch (Quest.type) {
+                    case 1:
+                    default:
+                        Done = Dungeon.hero.belongings.getItem(WandOfMalaise.class).QuestDone;
+                        break;
+                    case 2:
+                        Done = Dungeon.hero.belongings.getItem(EndothermicRing.class).QuestDone;
+                        break;
+                    case 3:
+                        Done = Dungeon.hero.belongings.getItem(CloakOfThorns.class).QuestDone;
+                        break;
+                }
+            } else Done = false;
 
 			if (Done) {
 
@@ -221,30 +228,32 @@ public class SageCorpse extends NPC {
 
 							Item m;
 
-							switch (Quest.type)
-							{
-								default:
-								case 1:
-									m = new WandOfMalaise();
-									break;
+                            if (!Quest.givenitems) {
+                                switch (Quest.type) {
+                                    default:
+                                    case 1:
+                                        m = new WandOfMalaise();
+                                        break;
 
-								case 2:
-									m = new EndothermicRing();
-									break;
+                                    case 2:
+                                        m = new EndothermicRing();
+                                        break;
 
-								case 3:
-									m = new CloakOfThorns();
-									break;
+                                    case 3:
+                                        m = new CloakOfThorns();
+                                        break;
 
-							}
+                                }
 
-							m.identify();
+                                m.identify();
 
-							if (m.doPickUp( Dungeon.hero )) {
-								GLog.i( Messages.capitalize(Messages.get(Dungeon.hero, "you_now_have", m.name())) );
-							} else {
-								Dungeon.level.drop( m, Dungeon.hero.pos ).sprite.drop();
-							}
+                                if (m.doPickUp(Dungeon.hero)) {
+                                    GLog.i(Messages.capitalize(Messages.get(Dungeon.hero, "you_now_have", m.name())));
+                                } else {
+                                    Dungeon.level.drop(m, Dungeon.hero.pos).sprite.drop();
+                                }
+                            Quest.givenitems = true;
+                            }
 
 							Quest.given = true;
 						}
@@ -268,8 +277,11 @@ public class SageCorpse extends NPC {
 		private static boolean spawned;
 		
 		private static boolean given;
-		
-		public static Item item1;
+
+        private static boolean givenitems = false;
+
+
+        public static Item item1;
 		public static Item item2;
 		
 		public static void reset() {
@@ -285,7 +297,8 @@ public class SageCorpse extends NPC {
 		private static final String SPAWNED		= "spawned";
 		private static final String TYPE		= "type";
 		private static final String GIVEN		= "given";
-		private static final String ITEM1		= "wand1";
+        private static final String GIVENITEMS		= "givenitems";
+        private static final String ITEM1		= "wand1";
 		private static final String ITEM2		= "wand2";
 
 		private static final String RITUALPOS	= "ritualpos";
@@ -297,7 +310,8 @@ public class SageCorpse extends NPC {
 			node.put( SPAWNED, spawned );
 			
 			if (spawned) {
-				
+				node.put( GIVENITEMS, givenitems);
+
 				node.put( TYPE, type );
 				
 				node.put( GIVEN, given );
@@ -322,6 +336,7 @@ public class SageCorpse extends NPC {
 				type = node.getInt(TYPE);
 				
 				given = node.getBoolean( GIVEN );
+                givenitems = node.getBoolean( GIVENITEMS);
 
 				if (Dungeon.prisonalt) {
 					item1 = (Item) node.get(ITEM1);
@@ -343,67 +358,74 @@ public class SageCorpse extends NPC {
 
 			if (!spawned && Dungeon.depth > 6 && Random.Int(5 - (Dungeon.depth-5)) == 0) {
 
-				SageCorpse npc = new SageCorpse();
-				boolean validPos;
-				//Do not spawn wandmaker on the entrance, in front of a door, or on bad terrain.
-				do {
-					validPos = true;
-					npc.pos = level.pointToCell(room.random((room.width() > 6 && room.height() > 6) ? 2 : 1));
-					if (npc.pos == level.entrance() || level.solid[npc.pos]) {
-						validPos = false;
-					}
-					for (int i : PathFinder.NEIGHBOURS4) {
-						if (level.map[npc.pos + i] == Terrain.DOOR) {
-							validPos = false;
-						}
-					}
-					if (level.traps.get(npc.pos) != null
-							|| !level.passable[npc.pos]
-							|| level.map[npc.pos] == Terrain.EMPTY_SP) {
-						validPos = false;
-					}
-				} while (!validPos);
-				level.mobs.add(npc);
+                SageCorpse npc = new SageCorpse();
+                boolean validPos;
+                //Do not spawn wandmaker on the entrance, in front of a door, or on bad terrain.
+                do {
+                    validPos = true;
+                    npc.pos = level.pointToCell(room.random((room.width() > 6 && room.height() > 6) ? 2 : 1));
+                    if (npc.pos == level.entrance() || level.solid[npc.pos]) {
+                        validPos = false;
+                    }
+                    for (int i : PathFinder.NEIGHBOURS4) {
+                        if (level.map[npc.pos + i] == Terrain.DOOR) {
+                            validPos = false;
+                        }
+                    }
+                    if (level.traps.get(npc.pos) != null
+                            || !level.passable[npc.pos]
+                            || level.map[npc.pos] == Terrain.EMPTY_SP) {
+                        validPos = false;
+                    }
+                } while (!validPos);
+                level.mobs.add(npc);
 
-				spawned = true;
+                spawned = true;
 
-				Generator.Category gentype;
+            }
 
-				switch (Quest.type)
-				{
-					default:
-					case 1:
-						gentype = Generator.Category.WAND;
-						break;
+            GenerateItems();
 
-					case 2:
-						gentype = Generator.Category.RING;
-						break;
-
-					case 3:
-						gentype = Generator.Category.ARTIFACT;
-						break;
-
-				}
-
-				given = false;
-				item1 = (Item) Generator.random(gentype);
-				item1.cursed = false;
-				item1.upgrade();
-
-				item2 = (Item) Generator.random(gentype);
-				ArrayList<Item> toUndo = new ArrayList<>();
-				while (item2.getClass() == item1.getClass()) {
-					toUndo.add(item2);
-					item2 = (Item) Generator.random(gentype);
-				}
-				for (Item i : toUndo) {
-					Generator.undoDrop(i);
-				}
-				item2.cursed = false;
-				item2.upgrade();
-			}
 		}
+
+        public static void GenerateItems()
+        {
+            Generator.Category gentype;
+
+            switch (Quest.type)
+            {
+                default:
+                case 1:
+                    gentype = Generator.Category.WAND;
+                    break;
+
+                case 2:
+                    gentype = Generator.Category.RING;
+                    break;
+
+                case 3:
+                    gentype = Generator.Category.ARTIFACT;
+                    break;
+
+            }
+
+            given = false;
+            item1 = Generator.random(gentype);
+            item1.cursed = false;
+            item1.upgrade();
+
+            item2 = Generator.random(gentype);
+            ArrayList<Item> toUndo = new ArrayList<>();
+            while (item2.getClass() == item1.getClass()) {
+                toUndo.add(item2);
+                item2 = Generator.random(gentype);
+            }
+            for (Item i : toUndo) {
+                Generator.undoDrop(i);
+            }
+            item2.cursed = false;
+            item2.upgrade();
+        }
 
 		//quest is active if:
 		public static boolean active(){

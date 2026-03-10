@@ -79,6 +79,7 @@ public class Item implements Bundlable {
 	
 	public boolean stackable = false;
 	public boolean isInfused = false;
+
 	protected int quantity = 1;
 	public boolean dropsDownHeap = false;
 	
@@ -231,7 +232,7 @@ public class Item implements Bundlable {
 		
 		if (stackable) {
 			for (Item item:items) {
-				if (isSimilar( item )) {
+				if (isSimilar( item ) && item.stackable) {
 					item.merge( this );
 					item.updateQuickslot();
 					if (Dungeon.hero != null && Dungeon.hero.isAlive()) {
@@ -320,44 +321,43 @@ public class Item implements Bundlable {
 
 	public final Item detach( Bag container ) {
 
-		if (isInfused)
-		{
+        if (isInfused)
+        {
 
             int cooldown = 50;
             //ToDo: Maybe there should be some special cases
-			if (energyVal() > 0) cooldown = energyVal() * 30;
+            if (energyVal() > 0) cooldown = energyVal() * 30;
 
-			Buff.affect(Dungeon.hero, InfusionCD.class, cooldown).ToGiveBack = this;
+            Buff.affect(Dungeon.hero, InfusionCD.class, cooldown).ToGiveBack = this;
         }
 
-			if (quantity <= 0) {
-
-				return null;
-
-			} else if (quantity == 1) {
-
-				if (stackable) {
-					Dungeon.quickslot.convertToPlaceholder(this);
-				}
-
-				return detachAll(container);
-
-			} else {
-
-
-				Item detached = split(1);
-				updateQuickslot();
-				if (detached != null) detached.onDetach();
-				return detached;
-
-			}
+			return coredetach(container);
 	}
 
-	public final Item detach( Bag container, boolean forced ) {
+    public final Item coredetach( Bag container ) {
+
+        if (quantity <= 0) {
+
+            return null;
+
+        } else if (quantity == 1) {
+
+            if (stackable) {
+                Dungeon.quickslot.convertToPlaceholder(this);
+            }
+
+            return detachAll(container);
+
+        } else {
 
 
-		return detach(container);
-	}
+            Item detached = split(1);
+            updateQuickslot();
+            if (detached != null) detached.onDetach();
+            return detached;
+
+        }
+    }
 
 	
 	public final Item detachAll( Bag container ) {

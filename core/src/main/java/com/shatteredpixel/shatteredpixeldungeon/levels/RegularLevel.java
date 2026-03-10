@@ -198,6 +198,12 @@ public abstract class RegularLevel extends Level {
 		return new Class<?>[]{WornDartTrap.class};
 	}
 
+    public Class<Trap> getTrapClass() {
+        Class<Trap>[] cl = (Class<Trap>[]) trapClasses();
+        Random.shuffle(cl);
+        return cl[0];
+    }
+
 	protected float[] trapChances() {
 		return new float[]{1};
 	}
@@ -410,18 +416,28 @@ public abstract class RegularLevel extends Level {
 					continue;
 				}
 
-				type = Heap.Type.CHEST;
+				if (Dungeon.isChallenged(Challenges.REGION_DIFFS) && Dungeon.currentRegion() == Dungeon.Region.COLDHOUSE)type = Heap.Type.ICE;
+                else type = Heap.Type.CHEST;
 				break;
 			case 5:
 				if (Dungeon.depth > 1 && findMob(cell) == null){
 					mobs.add(Mimic.spawnAt(cell, toDrop));
 					continue;
 				}
-				type = Heap.Type.CHEST;
+                if (Dungeon.isChallenged(Challenges.REGION_DIFFS) && Dungeon.currentRegion() == Dungeon.Region.COLDHOUSE)type = Heap.Type.ICE;
+                else type = Heap.Type.CHEST;
 				break;
 			default:
-				type = Heap.Type.HEAP;
-				break;
+                if (Dungeon.isChallenged(Challenges.REGION_DIFFS) && Dungeon.currentRegion() == Dungeon.Region.PRISON && Random.Int(20) > 3)
+                {
+                    if (Random.Int(20) > 4) type = Heap.Type.CHEST;
+                    else {
+                        type = Heap.Type.LOCKED_CHEST;
+                        addItemToSpawn(new GoldenKey(Dungeon.depth));
+                    }
+                }
+                else type = Heap.Type.HEAP;
+                break;
 			}
 
 			if ((toDrop instanceof Artifact && Random.Int(2) == 0) ||
@@ -458,7 +474,23 @@ public abstract class RegularLevel extends Level {
 					losBlocking[keyCell] = false;
 				}
 			} else {
-				drop( item, cell ).type = Heap.Type.HEAP;
+                Heap.Type ty;
+                if (Dungeon.isChallenged(Challenges.REGION_DIFFS) && Dungeon.currentRegion() == Dungeon.Region.PRISON && Random.Int(20) > 3)
+                {
+                    if (Random.Int(20) > 4) ty = Heap.Type.CHEST;
+                    else {
+                        ty = Heap.Type.LOCKED_CHEST;
+                        int keyCell = randomDropCell();
+                        drop( new GoldenKey(Dungeon.depth), keyCell ).type = Heap.Type.HEAP;
+                        if (map[keyCell] == Terrain.HIGH_GRASS || map[keyCell] == Terrain.FURROWED_GRASS) {
+                            map[keyCell] = Terrain.GRASS;
+                            losBlocking[keyCell] = false;
+                        }
+                    }
+                }
+                else ty = Heap.Type.HEAP;
+
+                drop( item, cell ).type = ty;
 			}
 			if (map[cell] == Terrain.HIGH_GRASS || map[cell] == Terrain.FURROWED_GRASS) {
 				map[cell] = Terrain.GRASS;

@@ -39,51 +39,37 @@ public class Barf extends Blob {
 		//acts before the hero, to ensure terrain is adjusted correctly
 		actPriority = Actor.HERO_PRIO+1;
 	}
-	
-	@Override
-	protected void evolve() {
 
-		int cell;
+    @Override
+    protected void evolve() {
 
-		Level l = Dungeon.level;
-		for (int i = area.left; i < area.right; i++){
-			for (int j = area.top; j < area.bottom; j++){
-				cell = i + j*l.width();
-				off[cell] = cur[cell] > 0 ? cur[cell] - 1 : 0;
-
-				volume += off[cell];
-
-				if (cur[cell] > 0) Barf.affect(cell);
-
-				if (cur[cell] == 1)
-				{
-
-					Heap heap = Dungeon.level.heaps.get(cell);
-					if (heap != null) {
-						heap.explode();
-					}
+        int cell;
 
 
-				}
+        for (int i = area.left-1; i <= area.right; i++) {
+            for (int j = area.top-1; j <= area.bottom; j++) {
+                cell = i + j* Dungeon.level.width();
+                if (cur[cell] > 0) {
 
-				l.solid[cell] = off[cell] > 0 || (Terrain.flags[l.map[cell]] & Terrain.SOLID) != 0;
-				//l.flamable[cell] = off[cell] > 0 || (Terrain.flags[l.map[cell]] & Terrain.FLAMABLE) != 0;
-			}
-		}
-	}
 
-	@Override
-	public void seed(Level level, int cell, int amount) {
-		super.seed(level, cell, amount);
-		level.solid[cell] = cur[cell] > 0 || (Terrain.flags[level.map[cell]] & Terrain.SOLID) != 0;
-		//level.flamable[cell] = cur[cell] > 0 || (Terrain.flags[level.map[cell]] & Terrain.FLAMABLE) != 0;
-	}
+                    affect(cell);
 
-	public static void affect( int cell ){
+                    off[cell] = cur[cell] - 1;
+                    volume += off[cell];
+                } else {
+                    off[cell] = 0;
+                }
+            }
+        }
+    }
+
+
+
+    public static void affect( int cell ){
 		Char ch = Actor.findChar( cell );
 		if (ch != null && !ch.isImmune(Barf.class)) {
 
-				Buff.affect(ch, Ooze.class).set( Ooze.DURATION );
+				Buff.affect(ch, Ooze.class).set( Ooze.DURATION * 0.75f );
 
 		}
 	}
@@ -95,31 +81,7 @@ public class Barf extends Blob {
 		emitter.pour( BarfParticle.FACTORY, 0.2f );
 	}
 
-	@Override
-	public void clear(int cell) {
-		super.clear(cell);
-		if (cur == null) return;
-		Level l = Dungeon.level;
-		l.solid[cell] = cur[cell] > 0 || (Terrain.flags[l.map[cell]] & Terrain.SOLID) != 0;
-		//l.flamable[cell] = cur[cell] > 0 || (Terrain.flags[l.map[cell]] & Terrain.FLAMABLE) != 0;
 
-	}
-
-	@Override
-	public void fullyClear() {
-		super.fullyClear();
-		Dungeon.level.buildFlagMaps();
-	}
-
-	@Override
-	public void onBuildFlagMaps(Level l) {
-		if (volume > 0){
-			for (int i=0; i < l.length(); i++) {
-				l.solid[i] = l.solid[i] || cur[i] > 0;
-				l.flamable[i] = l.flamable[i] || cur[i] > 0;
-			}
-		}
-	}
 
 	@Override
 	public String tileDesc() {

@@ -25,21 +25,14 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EarthParticle;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Mole;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.watabou.noosa.TextureFilm;
 
-public class FlameMoleSprite extends MobSprite {
-
-	private com.watabou.noosa.particles.Emitter particles;
-
-	public Animation submerge;
-
-	public Animation emerge;
-
-	public Animation staysubmerged;
+public class FlameMoleSprite extends MoleSprite {
 
 	protected com.watabou.noosa.particles.Emitter createEmitter() {
 		com.watabou.noosa.particles.Emitter emitter = emitter();
-		emitter.pour( EarthParticle.FACTORY, 0.06f );
+		emitter.pour( FlameParticle.FACTORY, 0.06f );
 		return emitter;
 	}
 
@@ -75,65 +68,6 @@ public class FlameMoleSprite extends MobSprite {
 		die.frames( frames, c+12, c+13, c+14 );
 
 		play( idle );
-	}
-
-	public void setSubmerge(){
-		play( submerge );
-		particles.on = true;
-	}
-
-	public void setEmerge(){
-		play( emerge );
-		particles.on = false;
-		particles.revive();
-	}
-
-	@Override
-	public void play(Animation anim) {
-		if (anim == run && ch.speed() > 1f){
-
-			anim = staysubmerged;
-
-		}
-		super.play(anim);
-	}
-
-	@Override
-	public void link( Char ch ) {
-		super.link( ch );
-
-		if (particles == null) {
-			particles = createEmitter();
-			particles.on = false;
-			particles.revive();
-		}
-
-		if (((Mole)ch).digging && curAnim == idle) setSubmerge();
-	}
-
-	@Override
-	public void update() {
-		super.update();
-
-		if (particles != null){
-			particles.visible = visible;
-		}
-	}
-
-	@Override
-	public void die() {
-		super.die();
-		if (particles != null){
-			particles.on = false;
-		}
-	}
-
-	@Override
-	public void kill() {
-		super.kill();
-		if (particles != null){
-			particles.killAndErase();
-		}
 	}
 
 

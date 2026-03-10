@@ -48,7 +48,7 @@ public class GlassKnight extends Mob {
 	{
 		spriteClass = GlassKnightSprite.class;
 
-		HP = HT = 32;
+		HP = HT = 34;
 		defenseSkill = 12;
 
 		EXP = 7;

@@ -33,7 +33,7 @@ public class ThornsParticle extends PixelParticle {
 	public static final Factory FACTORY = new Factory() {
 		@Override
 		public void emit( Emitter emitter, int index, float x, float y ) {
-			for (int i=0; i < 3; i++) {
+			for (int i=0; i < 6; i++) {
 				((ThornsParticle)emitter.recycle( ThornsParticle.class )).reset( x, y );
 			}
 		}
@@ -43,12 +43,13 @@ public class ThornsParticle extends PixelParticle {
 		super();
 
 		ArrayList<Integer> cols = new ArrayList<Integer>();
-		cols.add(0x4a2900);
-		cols.add(0x294a00);
+		cols.add(0x7C4400);
+		cols.add(0x4B8400);
+        cols.add(0x008224);
 		Random.shuffle(cols);
 
 		color( cols.get(0) );
-		lifespan = 2f;
+		lifespan = 3f;
 	}
 	
 	public void reset( float x, float y ) {

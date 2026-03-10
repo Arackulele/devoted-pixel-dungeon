@@ -31,7 +31,7 @@ public class WebParticle extends PixelParticle {
 	public static final Emitter.Factory FACTORY = new Factory() {
 		@Override
 		public void emit( Emitter emitter, int index, float x, float y ) {
-			for (int i=0; i < 3; i++) {
+			for (int i=0; i < 5; i++) {
 				((WebParticle)emitter.recycle( WebParticle.class )).reset( x, y );
 			}
 		}

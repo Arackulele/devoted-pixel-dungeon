@@ -50,6 +50,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.VelSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Music;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.*;
 
@@ -156,6 +157,7 @@ public class VelTaleth extends Mob {
         else {
             int max = 1;
             if (phase > 2) max++;
+            if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) max++;
 
 
             if (shouldTrap)
@@ -167,6 +169,10 @@ public class VelTaleth extends Mob {
             if (blackHoleCooldown < 1 && findBlackHole() == null && phase > 1 )
             {
                 Mob m = new BlackHole();
+                yell(Messages.get(this, "holespawn"));
+                Sample.INSTANCE.play(Assets.Sounds.BEACON, 1f, 1f);
+
+
 
                 m.pos = Dungeon.level.randomRespawnCell(m);
                 GameScene.add(m, 2);
@@ -193,7 +199,7 @@ public class VelTaleth extends Mob {
                     }
 
                 }
-                while ( (lastEssence == null || e.getClass().equals( lastEssence.getClass()))
+                while ((lastEssence == null || e.getClass().equals( lastEssence.getClass()))
                 && !permitted
                 );
 				addEssence(e);
@@ -246,6 +252,10 @@ public class VelTaleth extends Mob {
 
                     if (affect != null && affect.alignment != this.alignment)
                     {
+                        if (affect == Dungeon.hero) {
+                            Statistics.bossScores[4] -= 100;
+                        }
+
                         affected = true;
                         int amnt = Random.Int(11, 38);
                         Buff.affect(this, EldritchBarrier.class).incShield(amnt);
@@ -269,7 +279,7 @@ public class VelTaleth extends Mob {
 			}
 
 
-			if (abilityCooldown > 0) abilityCooldown--;
+			if (abilityCooldown > 0) abilityCooldown -= Dungeon.isChallenged(Challenges.STRONGER_BOSSES) ?  2 : 1;
             if (blackHoleCooldown > 0 && findBlackHole() == null) blackHoleCooldown--;
 
         }
@@ -356,7 +366,7 @@ public class VelTaleth extends Mob {
 		Bestiary.skipCountingEncounters = true;
 		//ToDo: Update this for Vels summons
 		for (Mob mob : (Iterable<Mob>)Dungeon.level.mobs.clone()) {
-			if (mob instanceof Grub) {
+			if (mob instanceof VelEssence) {
 				mob.die( cause );
 			}
 		}
@@ -366,12 +376,18 @@ public class VelTaleth extends Mob {
 
 		GameScene.bossSlain();
 
+        int totaltp = 0;
+        totaltp += Dungeon.hero.talentPointsAvailable(1) + Dungeon.hero.talentPointsAvailable(2) + Dungeon.hero.talentPointsAvailable(3) + Dungeon.hero.talentPointsAvailable(4);
+
+        if (totaltp > 6 && (Dungeon.hero.subClass == null || Dungeon.hero.armorAbility == null)) {}
+        else Statistics.qualifiedForBossChallengeBadge = false;
+
 		if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES) && Statistics.spawnersAlive == 4){
 			Badges.validateBossChallengeCompleted();
 		} else {
 			Statistics.qualifiedForBossChallengeBadge = false;
 		}
-		Statistics.bossScores[4] += 5000 + 1250*Statistics.spawnersAlive;
+		Statistics.bossScores[4] += 7000;
 
 		Badges.validateTakingTheMick(cause);
 
