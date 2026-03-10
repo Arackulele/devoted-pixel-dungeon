@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
@@ -56,6 +57,7 @@ import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
+import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.Random;
 
 public class Ghost extends NPC {
@@ -427,6 +429,7 @@ public class Ghost extends NPC {
 		}
 		
 		public static boolean completed(){
+            if (DeviceCompat.isDebug()) return true;
 			return processed() && weapon == null && armor == null;
 		}
 	}

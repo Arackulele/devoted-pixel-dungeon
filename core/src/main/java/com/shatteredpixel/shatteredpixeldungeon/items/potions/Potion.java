@@ -22,10 +22,12 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.potions;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Ooze;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Thirst;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
@@ -39,6 +41,37 @@ import com.shatteredpixel.shatteredpixeldungeon.items.ItemStatusHandler;
 import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.AquaBrew;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfHoneyedHealing;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfDivineInspiration;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfDragonsBreath;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfEarthenArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfMagicalSight;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfShielding;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfStamina;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMirrorImage;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRetribution;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTerror;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfAntiMagic;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfChallenge;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfDivination;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfDread;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfEnchantment;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfForesight;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfMetamorphosis;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfMysticalEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPassage;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPrismaticImage;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfPsionicBlast;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfSirensSong;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -287,10 +320,48 @@ public class Potion extends Item {
 	protected void drink( Hero hero ) {
 		
 		detach( hero.belongings.backpack );
-		
-		hero.spend( TIME_TO_DRINK );
+
+        Buff.affect(hero, Thirst.class).satisfy(Thirst.THIRSTY);
+
+        hero.spend(TIME_TO_DRINK);
 		hero.busy();
-		apply( hero );
+        if (Dungeon.isChallenged(Challenges.REGION_DIFFS) && Dungeon.currentRegion() == Dungeon.Region.METROPOLIS && !(this instanceof PotionOfStrength) && Dungeon.hero.GetRegionArenaTiles(false)) {
+
+            HashMap<Class<? extends Scroll>, Float> scrollChances = new HashMap<>();
+            //<editor-fold desc="Potion Weights">
+            //We are weighing these a little for balance
+            scrollChances.put(ScrollOfIdentify.class, 1f);
+            scrollChances.put(ScrollOfRemoveCurse.class, 1f);
+            scrollChances.put(ScrollOfMagicMapping.class, 1f);
+            scrollChances.put(ScrollOfMirrorImage.class, 1f);
+            scrollChances.put(ScrollOfRecharging.class, 1f);
+            scrollChances.put(ScrollOfLullaby.class, 1f);
+            scrollChances.put(ScrollOfRetribution.class, 0.9f);
+            scrollChances.put(ScrollOfRage.class, 1.1f);
+            scrollChances.put(ScrollOfTeleportation.class, 1.1f);
+            scrollChances.put(ScrollOfTerror.class, 1.1f);
+            scrollChances.put(ScrollOfTransmutation.class, 0.5f);
+            //Exotic variants included, but not weighted higher if the user used an exotic potion, and the actually good ones are weighted down
+            //Once again we are turning up the negative ones to avoid making this a positive challenge
+            scrollChances.put(ScrollOfAntiMagic.class, 0.4f);
+            scrollChances.put(ScrollOfChallenge.class, 0.3f);
+            scrollChances.put(ScrollOfDivination.class, 0.05f);
+            scrollChances.put(ScrollOfDread.class, 0.3f);
+            scrollChances.put(ScrollOfForesight.class, 0.1f);
+            scrollChances.put(ScrollOfMetamorphosis.class, 0.05f);
+            scrollChances.put(ScrollOfMysticalEnergy.class, 0.1f);
+            scrollChances.put(ScrollOfPassage.class, 0.1f);
+            scrollChances.put(ScrollOfPrismaticImage.class, 0.3f);
+            scrollChances.put(ScrollOfPsionicBlast.class, 0.6f);
+            scrollChances.put(ScrollOfSirensSong.class, 0.4f);
+            //</editor-fold>
+            Scroll s = Reflection.newInstance(Random.chances(scrollChances));
+
+            s.anonymize();
+            s.doRead();
+
+
+        } else apply(hero);
 		
 		Sample.INSTANCE.play( Assets.Sounds.DRINK );
 		

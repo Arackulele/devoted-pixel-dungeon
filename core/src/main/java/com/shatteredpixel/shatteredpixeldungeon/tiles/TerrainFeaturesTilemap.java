@@ -76,8 +76,7 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 			} else if (tile == Terrain.GRASS) {
 				return 13 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 			}
-		}
-		else if (Dungeon.level instanceof ForgeLevel) {
+		} else if (Dungeon.level instanceof ForgeLevel || Dungeon.level instanceof ForgeBossLevel) {
 			if (tile == Terrain.HIGH_GRASS) {
 				return 9 + 16 * 8 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 			} else if (tile == Terrain.FURROWED_GRASS) {
@@ -94,8 +93,7 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 			} else if (tile == Terrain.GRASS) {
 				return 13 + 16 * 20 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 			}
-		}
-		else if (Dungeon.level instanceof CitadelLevel) {
+		} else if (Dungeon.level instanceof CitadelLevel || Dungeon.level instanceof CitadelBossLevel) {
 			if (tile == Terrain.HIGH_GRASS) {
 				return 9 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 			} else if (tile == Terrain.FURROWED_GRASS) {

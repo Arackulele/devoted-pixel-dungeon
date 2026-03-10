@@ -76,6 +76,8 @@ public class Amulet extends Item {
 				Statistics.amuletObtained = true;
 				hero.spend(-hero.cooldown());
 
+                Badges.validateRegionVictories();
+
 				//delay with an actor here so pickup behaviour can fully process.
 				Actor.add(new Actor(){
 

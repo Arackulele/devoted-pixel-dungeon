@@ -966,6 +966,8 @@ public abstract class Level implements Bundlable {
 	
 	public Heap drop( Item item, int cell ) {
 
+        if (cell < 0) cell = Math.max(1, length / 2);
+
 		if (item == null || Challenges.isItemBlocked(item)){
 
 			//create a dummy heap, give it a dummy sprite, don't add it to the game, and return it.
@@ -1202,7 +1204,9 @@ public abstract class Level implements Bundlable {
 			((Piranha) ch).dieOnLand();
 		}
 
-		if (Dungeon.level instanceof LavaLakeLevel && !ch.isImmune(Burning.class) && !ch.flying && map[ch.pos] == Terrain.WATER) {
+        //ToDo: Not sure if brimstone should cheese this entire quest
+        if ((!ch.isImmune(Burning.class)) &&
+                Dungeon.level instanceof LavaLakeLevel && !ch.isImmune(Burning.class) && !ch.flying && map[ch.pos] == Terrain.WATER) {
 
 			int dest = -1;
 			for (int i : PathFinder.NEIGHBOURS8) {

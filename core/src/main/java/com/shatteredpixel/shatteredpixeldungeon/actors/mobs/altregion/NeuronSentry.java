@@ -56,7 +56,7 @@ public class NeuronSentry extends Mob implements Callback {
 		spriteClass = NeuronSentrySprite.class;
 
 		HP = HT = 200;
-		defenseSkill = 12;
+        defenseSkill = 0;
 
 		EXP = 10;
 		maxLvl = -2;
@@ -192,6 +192,8 @@ public class NeuronSentry extends Mob implements Callback {
 
 	@Override
 	public void damage( int dmg, Object src ) {
+        shouldwarn = true;
+        wherestrike = -1;
 		Buff.prolong(this, Paralysis.class, dmg / 5);
 	}
 	@Override
@@ -209,7 +211,8 @@ public class NeuronSentry extends Mob implements Callback {
 				return noticeEnemy();
 
 			} else {
-
+                shouldwarn = true;
+                wherestrike = -1;
 				return continueWandering();
 
 			}

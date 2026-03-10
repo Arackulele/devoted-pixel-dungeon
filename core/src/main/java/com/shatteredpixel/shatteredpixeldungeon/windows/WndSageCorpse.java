@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfThorns;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.EndothermicRing;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
@@ -75,6 +76,9 @@ public class WndSageCorpse extends Window {
 		message.setPos(0, titlebar.bottom() + GAP);
 		add( message );
 
+        if (SageCorpse.Quest.item1 == null || SageCorpse.Quest.item2 == null)
+            SageCorpse.Quest.GenerateItems();
+
 		ItemButton btnWand1 = new ItemButton(){
 			@Override
 			protected void onClick() {
@@ -115,7 +119,8 @@ public class WndSageCorpse extends Window {
 		}
 
 		hide();
-
+        if (questItem.isEquipped(Dungeon.hero))
+            ((EquipableItem) questItem).doUnequip(Dungeon.hero, true);
 		questItem.detach( Dungeon.hero.belongings.backpack );
 
 		reward.identify(false);

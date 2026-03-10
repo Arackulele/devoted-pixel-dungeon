@@ -112,7 +112,7 @@ public class Yuria extends Mob implements Callback {
 	public static class DarkBolt{}
 
 	protected void zap() {
-		spend( 2f );
+        spend(Dungeon.isChallenged(Challenges.STRONGER_BOSSES) ? 1 : 2);
 
 		Invisibility.dispel(this);
 		if (hit( this, enemy, true )) {
@@ -203,7 +203,9 @@ public class Yuria extends Mob implements Callback {
 
 		if (Dungeon.level instanceof CitadelBossLevel) level = (CitadelBossLevel)Dungeon.level;
 
-		super.damage(dmg/2, src);
+        if (dmg > 40) dmg = ((int) (36 + (dmg * 0.1)));
+
+        super.damage(dmg / 2, src);
 		level.boss.HP=this.HP;
 		level.wendar.HP=this.HP;
 	}

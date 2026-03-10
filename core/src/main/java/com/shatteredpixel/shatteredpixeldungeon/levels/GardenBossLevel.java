@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.SewerPainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Emperor;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.gardensboss.CrystalRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.RatKingRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.StandardRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.gardensboss.DiamondEmperorRoom;
@@ -78,7 +79,6 @@ public class GardenBossLevel extends GardenLevel {
 		} else {
 					Music.INSTANCE.play(Assets.Music.GARDENS, true);
 		}
-
 	}
 
 	@Override
@@ -100,14 +100,17 @@ public class GardenBossLevel extends GardenLevel {
 		initRooms.add(gnollRoom);
 		((FigureEightBuilder)builder).setLandmarkRoom(gnollRoom);
 		initRooms.add(new RatKingRoom());
-		return initRooms;
+        initRooms.add(new CrystalRoom());
+        initRooms.add(new CrystalRoom());
+        initRooms.add(new CrystalRoom());
+        return initRooms;
 	}
 	
 	@Override
 	protected int standardRooms(boolean forceMax) {
-		if (forceMax) return 3;
+        if (forceMax) return 2;
 		//2 to 3, average 2.5
-		return 2+Random.chances(new float[]{1, 1});
+        return 1 + Random.chances(new float[]{1, 1});
 	}
 	
 	protected Builder builder(){

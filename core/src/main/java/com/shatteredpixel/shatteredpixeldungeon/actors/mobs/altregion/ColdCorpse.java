@@ -85,18 +85,18 @@ public class ColdCorpse extends Mob {
 
 	}
 
-	@Override
-	public float lootChance() {
-		//each drop makes future drops 1/2 as likely
-		// so loot chance looks like: 1/6, 1/12, 1/24, 1/48, etc.
-		return super.lootChance() * (float)Math.pow(1/2f, Dungeon.LimitedDrops.SKELE_WEP.count);
-	}
+    @Override
+    public float lootChance() {
+        //each drop makes future drops 1/3 as likely
+        // so loot chance looks like: 1/6, 1/18, 1/54, 1/162, etc.
+        return super.lootChance() * (float) Math.pow(1 / 3f, Dungeon.LimitedDrops.SKELE_WEP.count);
+    }
 
-	@Override
-	public Item createLoot() {
-		Dungeon.LimitedDrops.SKELE_WEP.count++;
-		return super.createLoot();
-	}
+    @Override
+    public Item createLoot() {
+        Dungeon.LimitedDrops.SKELE_WEP.count++;
+        return super.createLoot();
+    }
 
 	@Override
 	public int attackSkill( Char target ) {

@@ -104,7 +104,7 @@ public class ElixirOfOvergrowth extends Elixir {
 			int b = Dungeon.level.map[target.pos];
 			if (b == Terrain.GRASS || b == Terrain.FURROWED_GRASS || b == Terrain.HIGH_GRASS )
 			{
-				target.HP += (target.HT/55)+1;
+                target.Heal((target.HT / 55) + 1);
 				target.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
 			}
 

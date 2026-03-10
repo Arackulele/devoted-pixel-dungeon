@@ -248,8 +248,7 @@ public class BloodVial extends Artifact {
 
                 }
 
-                if (hero.pointsInTalent(Talent.NIHILISM) == 3) hero.spend(0.33f);
-                else hero.spend(1f);
+                hero.spend(1f);
             }
 
         } else if (action.equals(AC_STAB)) {
@@ -266,14 +265,14 @@ public class BloodVial extends Artifact {
 
                     else damage = (int)(2 + (hero.lvl * 0.75));
 
-                    if (Dungeon.hero.hasTalent(Talent.NIHILISM))
-                    {
-                        int reduction = 20 + Dungeon.hero.pointsInTalent((Talent.NIHILISM));
-                        reduction *= 0.01;
-                        damage -= damage * reduction;
-                    }
+                if (Dungeon.hero.hasTalent(Talent.NIHILISM)) {
+                    int reduction = 20 + Dungeon.hero.pointsInTalent((Talent.NIHILISM));
+                    reduction *= 0.01;
+                    damage -= damage * reduction;
+                }
 
-                    hero.spend(2f);
+                if (hero.pointsInTalent(Talent.NIHILISM) == 3) hero.spend(0.33f);
+                else hero.spend(2f);
                     hero.busy();
                     Sample.INSTANCE.play(Assets.Sounds.HIT_SLASH);
                     charge++;

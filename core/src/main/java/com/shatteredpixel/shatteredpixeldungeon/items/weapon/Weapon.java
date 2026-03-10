@@ -221,7 +221,7 @@ abstract public class Weapon extends KindOfWeapon {
 	private static final String ENCHANT_HARDENED = "enchant_hardened";
 	private static final String CURSE_INFUSION_BONUS = "curse_infusion_bonus";
 	private static final String MASTERY_POTION_BONUS = "mastery_potion_bonus";
-	private static final String GILD_DEGRADE = "mastery_potion_bonus";
+    private static final String GILD_DEGRADE = "gild_degrade";
 	private static final String AUGMENT	        = "augment";
 
 	@Override
@@ -233,9 +233,10 @@ abstract public class Weapon extends KindOfWeapon {
 		bundle.put( ENCHANT_HARDENED, enchantHardened );
 		bundle.put( CURSE_INFUSION_BONUS, curseInfusionBonus );
 		bundle.put( MASTERY_POTION_BONUS, masteryPotionBonus );
-		bundle.put( GILD_DEGRADE, GildDegrade );
 		bundle.put( AUGMENT, augment );
-	}
+        bundle.put(GILD_DEGRADE, GildDegrade);
+
+    }
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {

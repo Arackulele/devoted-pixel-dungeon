@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -120,7 +121,9 @@ public class BlastFurnace extends Mob {
 				}
 
 				if (!candidates.isEmpty()) {
-					Elemental.CoalElemental spawn = new Elemental.CoalElemental();
+                    Elemental spawn = new Elemental.CoalElemental();
+                    if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES) && Random.Int(4) == 2)
+                        spawn = new Elemental.FireElemental();
 
 					spawn.pos = Random.element(candidates);
 					spawn.state = spawn.HUNTING;

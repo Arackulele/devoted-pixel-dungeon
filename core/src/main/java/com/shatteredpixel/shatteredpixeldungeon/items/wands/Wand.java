@@ -678,7 +678,7 @@ public abstract class Wand extends Item {
 				int cell = shot.collisionPos;
 				
 				if (target == curUser.pos || cell == curUser.pos) {
-					if (target == curUser.pos && curUser.hasTalent(Talent.SHIELD_BATTERY)){
+                    if (target == curUser.pos && curUser.hasTalent(Talent.SHIELD_BATTERY) && !(curWand instanceof WandOfMalaise)) {
 
 						if (curUser.buff(MagicImmune.class) != null){
 							GLog.w( Messages.get(Wand.class, "no_magic") );

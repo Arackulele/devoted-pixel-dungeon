@@ -385,7 +385,7 @@ public class Assets {
 		public static final String FUNGAL_SPINNER   = "sprites/fungal_spinner.png";
 		public static final String FUNGAL_SENTRY    = "sprites/fungal_sentry.png";
 		public static final String FUNGAL_CORE      = "sprites/fungal_core.png";
-        public static final Object WISP 			= "sprites/Wsisp.png";
+        public static final Object WISP = "sprites/wisp.png";
 		public static final Object BLUEIMP 			= "sprites/imp.png";
 		public static final Object WASP 			= "sprites/Wasp.png";
         public static final Object WRETCH			= "sprites/wretch.png";
@@ -396,7 +396,8 @@ public class Assets {
 		public static final Object THORNLASHER		= "sprites/thornlasher.png";
 		public static final Object DRUID			= "sprites/druid.png";
 		public static final Object EMPEROR			= "sprites/emperor.png";
-		public static final Object COLDCORPSE		= "sprites/coldcorpse.png";
+        public static final Object EMPERORCRYSTAL = "sprites/emperorcrystal.png";
+        public static final Object COLDCORPSE = "sprites/coldcorpse.png";
 		public static final Object MEATRACK			= "sprites/meatrack.png";
         public static final Object GLASS_KNIGHT  	= "sprites/glass_knight.png";
         public static final Object WERERAT  	    = "sprites/wererat.png";

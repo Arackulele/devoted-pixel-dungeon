@@ -78,13 +78,6 @@ public class Pollen extends Blob {
 		}
 	}
 
-	@Override
-	public void seed(Level level, int cell, int amount) {
-		super.seed(level, cell, amount);
-		level.solid[cell] = cur[cell] > 0 || (Terrain.flags[level.map[cell]] & Terrain.SOLID) != 0;
-		level.flamable[cell] = cur[cell] > 0 || (Terrain.flags[level.map[cell]] & Terrain.FLAMABLE) != 0;
-	}
-
 
 	@Override
 	public void use( BlobEmitter emitter ) {
@@ -92,30 +85,7 @@ public class Pollen extends Blob {
 		emitter.start( PollenParticle.FACTORY, 0.05f, 0 );
 	}
 
-	@Override
-	public void clear(int cell) {
-		super.clear(cell);
-		if (cur == null) return;
-		Level l = Dungeon.level;
-		l.solid[cell] = cur[cell] > 0 || (Terrain.flags[l.map[cell]] & Terrain.SOLID) != 0;
-		l.flamable[cell] = cur[cell] > 0 || (Terrain.flags[l.map[cell]] & Terrain.FLAMABLE) != 0;
-	}
 
-	@Override
-	public void fullyClear() {
-		super.fullyClear();
-		Dungeon.level.buildFlagMaps();
-	}
-
-	@Override
-	public void onBuildFlagMaps(Level l) {
-		if (volume > 0){
-			for (int i=0; i < l.length(); i++) {
-				l.solid[i] = l.solid[i] || cur[i] > 0;
-				l.flamable[i] = l.flamable[i] || cur[i] > 0;
-			}
-		}
-	}
 
 	@Override
 	public String tileDesc() {

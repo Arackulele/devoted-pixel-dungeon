@@ -46,8 +46,8 @@ public class MeatRack extends Mob {
 	
 	{
 		spriteClass = MeatRackSprite.class;
-		
-		HP = HT = 34;
+
+        HP = HT = 32;
 		defenseSkill = 12;
 		
 		EXP = 5;

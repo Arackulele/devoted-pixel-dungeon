@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Wrath;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CitadelBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -54,7 +55,7 @@ public class Cultist extends Mob {
 		EXP = 7;
 		maxLvl = 20;
 
-		loot = Gold.class;
+        loot = Generator.Category.SEED;
 		lootChance = 0.3f;
 		
 		properties.add(Char.Property.UNDEAD);

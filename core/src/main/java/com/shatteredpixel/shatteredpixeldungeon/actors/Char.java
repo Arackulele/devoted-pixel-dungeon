@@ -52,8 +52,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.FerretTuft;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Sickle;
+import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Door;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GeyserTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GnollRockfallTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.GrimTrap;
@@ -114,6 +116,7 @@ import com.watabou.utils.BArray;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
+import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -151,6 +154,14 @@ public abstract class Char extends Actor {
 	public boolean[] fieldOfView = null;
 
 	private LinkedHashSet<Buff> buffs = new LinkedHashSet<>();
+
+    public void Heal(int amnt) {
+        HP = Math.min(HT, HP + amnt);
+    }
+
+    public void SetHealth(int newhealth) {
+        Heal(newhealth - HP);
+    }
 
 	@Override
 	protected boolean act() {
@@ -1244,7 +1255,10 @@ public abstract class Char extends Actor {
 		if (travelling && Dungeon.level.adjacent( step, pos ) && buff( Vertigo.class ) != null) {
 			sprite.interruptMotion();
 			int newPos = pos + PathFinder.NEIGHBOURS8[Random.Int( 8 )];
-			if (!(Dungeon.level.passable[newPos] || Dungeon.level.avoid[newPos])
+
+            boolean lavacheck = !isImmune(Burning.class) && !flying && Dungeon.level.map[newPos] == Terrain.MAGMA_TILE;
+
+            if (!(Dungeon.level.passable[newPos] || (Dungeon.level.avoid[newPos] && lavacheck))
 					|| (properties().contains(Property.LARGE) && !Dungeon.level.openSpace[newPos])
 					|| findChar( newPos ) != null)
 				return;
@@ -1405,4 +1419,32 @@ public abstract class Char extends Actor {
 	public static boolean hasProp( Char ch, Property p){
 		return (ch != null && ch.properties().contains(p));
 	}
+
+    public ArrayList<Integer> GetRoomTiles() {
+        ArrayList<Integer> AffectedCells = new ArrayList<>();
+
+        Room r = null;
+        if (Dungeon.level instanceof RegularLevel) {
+            r = ((RegularLevel) Dungeon.level).room(pos);
+        }
+
+        if (r != null) {
+            int cell;
+            for (Point p : r.getPoints()) {
+                cell = Dungeon.level.pointToCell(p);
+                AffectedCells.add(cell);
+            }
+
+            //if we don't have a room, then just do 5x5
+        } else {
+            PathFinder.buildDistanceMap(pos, BArray.not(Dungeon.level.solid, null), 2);
+            for (int i = 0; i < PathFinder.distance.length; i++) {
+                if (PathFinder.distance[i] < Integer.MAX_VALUE) {
+                    AffectedCells.add(i);
+                }
+            }
+        }
+
+        return AffectedCells;
+    }
 }

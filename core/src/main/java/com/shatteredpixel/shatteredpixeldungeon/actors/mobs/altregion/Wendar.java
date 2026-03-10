@@ -98,6 +98,8 @@ public class Wendar extends Mob {
 		if (thym.TWCombo && Dungeon.level.distance(level.boss.pos, pos) < 2)
 		{
 
+            if (enemy == null) enemy = Dungeon.hero;
+
 			Sample.INSTANCE.play(Assets.Sounds.ATK_CROSSBOW, 1f, 0.5f);
 
 				int cell = Dungeon.hero.pos;
@@ -226,13 +228,25 @@ public class Wendar extends Mob {
 				int type = Random.Int(100);
 				Mob mob;
 
-				if (type <= 50) {
-					mob = new Cultist();
-				} else if (type <= 70) {
-					mob = new Leader();
-				} else if (type <= 90) {
-					mob = new Trapper();
-				} else mob = new Warden();
+                if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) {
+                    if (type <= 30) {
+                        mob = new Cultist();
+                    } else if (type <= 50) {
+                        mob = new Leader();
+                    } else if (type <= 70) {
+                        mob = new Trapper();
+                    } else if (type <= 90) {
+                        mob = new Giant();
+                    } else mob = new Warden();
+                } else {
+                    if (type <= 50) {
+                        mob = new Cultist();
+                    } else if (type <= 70) {
+                        mob = new Leader();
+                    } else if (type <= 90) {
+                        mob = new Trapper();
+                    } else mob = new Cultist();
+                }
 				//Wendar summons weaker mobs so the ability is less opressive
 				mob.HT = mob.HP = mob.HT/2;
 
@@ -340,11 +354,14 @@ public class Wendar extends Mob {
 	@Override
 	public void damage(int dmg, Object src) {
 
-		if (Dungeon.level instanceof CitadelBossLevel) level = (CitadelBossLevel)Dungeon.level;
+        if (Dungeon.level instanceof CitadelBossLevel) level = (CitadelBossLevel) Dungeon.level;
 
-		super.damage(dmg, src);
-		level.yuria.HP=this.HP;
-		level.boss.HP=this.HP;
+        if (dmg > 40) dmg = (int) (36 + (dmg * 0.1));
+
+
+        super.damage(dmg, src);
+        level.yuria.HP = this.HP;
+        level.boss.HP = this.HP;
 	}
 
 

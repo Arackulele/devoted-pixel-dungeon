@@ -38,6 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.keys.SkeletonKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.StaffSplinter;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.gardensboss.CrystalRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
@@ -143,7 +144,23 @@ public class Emperor extends Mob {
 
 				}
 
-			}
+                if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) {
+                    Random.shuffle(OuterTiles);
+                    for (Integer i : OuterTiles) {
+
+                        if (Dungeon.level.distance(Tile, i) == 1) {
+
+                            OuterTiles.remove(i);
+                            CellEmitters.remove(CellEmitter.get(i));
+                            break;
+
+                        }
+                    }
+
+                }
+
+
+            }
 			else if (explodeattack == false) explodetimer--;
 		}
 		if (explodeattack)
@@ -198,6 +215,11 @@ public class Emperor extends Mob {
 			//ToDo: Badder Bosses/Enraged Damage
 			int dmg = com.watabou.utils.Random.NormalIntRange(8, 18);
 
+            if (enemy == Dungeon.hero) {
+                Statistics.qualifiedForBossChallengeBadge = false;
+                Statistics.bossScores[0] -= 100;
+            }
+
 			WandOfMagicMissile m = new WandOfMagicMissile();
 			ch.damage(dmg, m);
 		}
@@ -218,6 +240,11 @@ public class Emperor extends Mob {
 				//ToDo: Badder Bosses/Enraged Damage
 				int dmg = com.watabou.utils.Random.NormalIntRange(8, 18);
 
+                if (enemy == Dungeon.hero) {
+                    Statistics.qualifiedForBossChallengeBadge = false;
+                    Statistics.bossScores[0] -= 100;
+                }
+
 				WandOfMagicMissile m = new WandOfMagicMissile();
 				ch.damage(dmg, m);
 			}
@@ -232,7 +259,7 @@ public class Emperor extends Mob {
 	{
 		for(int i : input) {
 			com.watabou.noosa.particles.Emitter e = CellEmitter.get(i);;
-			if (type == 1) sprite.parent.add(new TargetedCell(i, 0xFF0000));
+            if (type == 1) sprite.parent.add(new TargetedCell(i, 0xfa079d));
 			if (type == 2) e.burst(MagicMissile.WardParticle.FACTORY, 8);
 			if (type == 3) {
 				e.on = false;
@@ -252,26 +279,6 @@ public class Emperor extends Mob {
 
 		if (!start)CellEmitters.clear();
 
-	}
-
-
-
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		damage = super.attackProc( enemy, damage );
-		if (Random.Int( 3 ) == 0) {
-			if (HP*2 <= HT) {
-
-				this.HP += damage;
-				this.sprite.emitter().burst(Speck.factory(Speck.HEALING), 4);
-				this.sprite.showStatus(CharSprite.POSITIVE, "+" + damage);
-				enemy.sprite.burst( 0x00CC6666, 5 );
-			}
-
-		}
-
-
-		return damage;
 	}
 
 	@Override
@@ -347,6 +354,13 @@ public class Emperor extends Mob {
 		Statistics.bossScores[0] += 1000;
 
 		yell( Messages.get(this, "defeated") );
+
+        for (Mob m : Dungeon.level.mobs) {
+            if (m instanceof CrystalRoom.MagicCrystal) {
+                m.die(this);
+                break;
+            }
+        }
 	}
 
 	@Override

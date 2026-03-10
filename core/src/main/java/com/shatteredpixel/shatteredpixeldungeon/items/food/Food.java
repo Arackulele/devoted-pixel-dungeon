@@ -22,15 +22,24 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.food;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.RatBeast;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ColdhouseBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -104,7 +113,8 @@ public class Food extends Item {
 			|| Dungeon.hero.hasTalent(Talent.MYSTICAL_MEAL)
 			|| Dungeon.hero.hasTalent(Talent.INVIGORATING_MEAL)
 			|| Dungeon.hero.hasTalent(Talent.FOCUSED_MEAL)
-			|| Dungeon.hero.hasTalent(Talent.ENLIGHTENING_MEAL)){
+                || Dungeon.hero.hasTalent(Talent.ENLIGHTENING_MEAL)
+                || Dungeon.hero.hasTalent(Talent.CLEANSING_MEAL)) {
 			return TIME_TO_EAT - 2;
 		} else {
 			return TIME_TO_EAT;
@@ -140,4 +150,27 @@ public class Food extends Item {
 	public int value() {
 		return 10 * quantity;
 	}
+
+    @Override
+    protected void onThrow(int cell) {
+
+        if (Dungeon.level instanceof ColdhouseBossLevel) {
+            if (Actor.findChar(cell) != null) {
+
+                Sample.INSTANCE.play(Assets.Sounds.EAT);
+
+                Char c = Actor.findChar(cell);
+
+                if (c instanceof RatBeast) {
+
+                    ((RatBeast) c).TimesStolen++;
+                    Buff.affect(c, Barrier.class).incShield(25);
+                    Buff.prolong(c, Adrenaline.class, 10f);
+                    return;
+                }
+            }
+        }
+        super.onThrow(cell);
+
+    }
 }

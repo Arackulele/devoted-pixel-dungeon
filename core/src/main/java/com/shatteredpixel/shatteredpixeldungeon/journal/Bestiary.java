@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.quest.CorpseDust;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.gardensboss.CrystalRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.PowerOfMany;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
@@ -154,7 +155,7 @@ public enum Bestiary {
 				);
 
 		BOSSES.addEntities(Goo.class,
-				Emperor.class,
+                Emperor.class, CrystalRoom.MagicCrystal.class,
 				Tengu.class,
 				RatBeast.class,
 				Pylon.class, DM300.class,

@@ -103,9 +103,7 @@ public class Mole extends Mob {
 
 		if (state != HUNTING && digging)
 		{
-			digging = false;
-			((MoleSprite)sprite).setEmerge();
-			spend(1f);
+            Emerge();
 			return true;
 		}
 
@@ -122,52 +120,68 @@ public class Mole extends Mob {
 
 	}
 
-	private class Hunting extends Mob.Hunting {
+    public void Emerge() {
 
-		@Override
-		public boolean act(boolean enemyInFOV, boolean justAlerted) {
+        //This is somewhat inefficient but otherwise id probably have to put emerging in the movement code, which would prevent the mole from popping up from right under an enemy
 
-			if (!digging && enemyInFOV && Dungeon.level.distance(enemy.pos, pos) > 1) {
-
-				digging = true;
-				((MoleSprite)sprite).setSubmerge();
-				com.watabou.noosa.audio.Sample.INSTANCE.play(Assets.Sounds.DIG);
-				spend(1f);
-
-				return true;
-			}
-			else if (digging && enemyInFOV && Dungeon.level.distance(enemy.pos, pos) < 2)
-			{
-
-                if (Actor.findChar(pos) != null) {
-
-					int pushPos = pos;
-					for (int c : PathFinder.NEIGHBOURS8) {
-						if (findChar(pos + c) == null
-								&& Dungeon.level.passable[pos + c]
-								&& (Dungeon.level.openSpace[pos + c] || !hasProp(findChar(pos), Property.LARGE))
-								&& Dungeon.level.trueDistance(pos, pos + c) > Dungeon.level.trueDistance(pos, pushPos)) {
-							pushPos = pos + c;
-						}
-					}
+        Char ch = findChar(pos);
 
 
-					//push enemy, or wait a turn if there is no valid pushing position
-					if (pushPos != pos) {
-						Char ch = findChar(pos);
-						Actor.add(new Pushing(ch, ch.pos, pushPos));
+        if (ch == null) {
+            for (Mob m : Dungeon.level.mobs) {
+                if (m.pos == pos && m != this) ch = m;
+            }
 
-						ch.pos = pushPos;
-						Dungeon.level.occupyCell(ch);
+            if (ch == null && Dungeon.hero.pos == pos) ch = Dungeon.hero;
+        }
+
+        if (ch != null) {
+
+            int pushPos = pos;
+            for (int c : PathFinder.NEIGHBOURS8) {
+                if (findChar(pos + c) == null
+                        && Dungeon.level.passable[pos + c]
+                        && (Dungeon.level.openSpace[pos + c] || !hasProp(findChar(pos), Property.LARGE))
+                        && Dungeon.level.trueDistance(pos, pos + c) > Dungeon.level.trueDistance(pos, pushPos)) {
+                    pushPos = pos + c;
+                }
+            }
 
 
-					}
-				}
+            //push enemy, or wait a turn if there is no valid pushing position
+            if (pushPos != pos) {
+                Actor.add(new Pushing(ch, ch.pos, pushPos));
 
-				digging = false;
-				((MoleSprite)sprite).setEmerge();
-				com.watabou.noosa.audio.Sample.INSTANCE.play(Assets.Sounds.DIG);
-				spend(1f);
+                ch.pos = pushPos;
+                Dungeon.level.occupyCell(ch);
+
+
+            }
+        }
+
+        digging = false;
+        ((MoleSprite) sprite).setEmerge();
+        com.watabou.noosa.audio.Sample.INSTANCE.play(Assets.Sounds.DIG);
+        spend(1f);
+
+    }
+
+    private class Hunting extends Mob.Hunting {
+
+        @Override
+        public boolean act(boolean enemyInFOV, boolean justAlerted) {
+
+            if (!digging && enemyInFOV && Dungeon.level.distance(enemy.pos, pos) > 1) {
+
+                digging = true;
+                ((MoleSprite) sprite).setSubmerge();
+                com.watabou.noosa.audio.Sample.INSTANCE.play(Assets.Sounds.DIG);
+                spend(1f);
+
+                return true;
+            } else if (digging && enemyInFOV && Dungeon.level.distance(enemy.pos, pos) < 2) {
+
+                Emerge();
 
 				for (int i = 0; i < com.watabou.utils.PathFinder.NEIGHBOURS8.length; i++) {
 					CellEmitter.get(pos + com.watabou.utils.PathFinder.NEIGHBOURS8[i]).burst(SmokeParticle.FACTORY, 5);

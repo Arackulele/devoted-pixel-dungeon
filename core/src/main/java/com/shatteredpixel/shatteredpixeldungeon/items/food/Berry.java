@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items.food;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Thirst;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
@@ -46,7 +47,8 @@ public class Berry extends Food {
 				|| Dungeon.hero.hasTalent(Talent.MYSTICAL_MEAL)
 				|| Dungeon.hero.hasTalent(Talent.INVIGORATING_MEAL)
 				|| Dungeon.hero.hasTalent(Talent.FOCUSED_MEAL)
-				|| Dungeon.hero.hasTalent(Talent.ENLIGHTENING_MEAL)){
+                || Dungeon.hero.hasTalent(Talent.ENLIGHTENING_MEAL)
+                || Dungeon.hero.hasTalent(Talent.CLEANSING_MEAL)) {
 			return 0;
 		} else {
 			return 1;
@@ -56,6 +58,7 @@ public class Berry extends Food {
 	@Override
 	protected void satisfy(Hero hero) {
 		super.satisfy(hero);
+        Buff.affect(hero, Thirst.class).satisfy(Thirst.THIRSTY / 2);
 		SeedCounter counter = Buff.count(hero, SeedCounter.class, 1);
 		if (counter.count() >= 2){
 			Dungeon.level.drop(Generator.randomUsingDefaults(Generator.Category.SEED), hero.pos).sprite.drop();

@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BrawlerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
@@ -175,6 +176,10 @@ public abstract class TrollBrawler extends Mob {
 		public int newdmg = 0;
 
 		protected void zap() {
+
+            //If i ever make this work using non-hero magic attacks, this would have to be changed
+            if (enemy == null) enemy = Dungeon.hero;
+
 			Invisibility.dispel(this);
 			if (Char.hit( this, enemy, true )) {
 
@@ -192,7 +197,7 @@ public abstract class TrollBrawler extends Mob {
 		}
 
 		public void onZapComplete() {
-			enemy.damage( newdmg, this );
+            if (enemy != null) enemy.damage(newdmg, this);
 			zap();
 			next();
 		}
@@ -200,7 +205,8 @@ public abstract class TrollBrawler extends Mob {
 		@Override
 		public void damage( int dmg, Object src ){
 
-			if ((src instanceof Wand || src instanceof ClericSpell) && cooldown < 1) {
+            //It would be nice if allies that use magic attacks could also have their attacks reflected
+            if ((src instanceof Wand || src instanceof ClericSpell || src instanceof MagesStaff) && cooldown < 1) {
 				sprite.showStatus(CharSprite.POSITIVE, Messages.get(TrollBrawler.class, "deflect"));
 				newdmg = dmg/2;
 				cooldown += 5;

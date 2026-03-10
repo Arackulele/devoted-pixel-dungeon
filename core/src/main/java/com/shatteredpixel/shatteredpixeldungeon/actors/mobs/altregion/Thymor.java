@@ -78,6 +78,19 @@ public class Thymor extends Mob {
 
 	@Override
 	protected void spend( float time ) {
+
+        if (Dungeon.hero != null) {
+            //This kind of allows some strats where you immediately equip and unequip something but its probably not that bad
+            if (Dungeon.hero.belongings.weapon != null ||
+                    Dungeon.hero.belongings.armor != null ||
+                    Dungeon.hero.belongings.ring != null ||
+                    Dungeon.hero.belongings.artifact != null ||
+                    Dungeon.hero.belongings.secondWep != null ||
+                    Dungeon.hero.belongings.misc != null
+            ) Statistics.qualifiedForBossChallengeBadge = false;
+
+        }
+
 		timer+= time;
 
 		if (HP * 2 <= HT && combocooldown > 0
@@ -240,15 +253,26 @@ public class Thymor extends Mob {
 		if (Dungeon.level instanceof CitadelBossLevel) level = (CitadelBossLevel)Dungeon.level;
 
 		timer += (dmg/4f);
+        if (dmg > 40) dmg = ((int) (36 + (dmg * 0.1)));
 
+
+        boolean doInvinc = false;
         //When reaching final phase, instantly activate triple combo
-        if (HP * 4 >= HT && ( (HP - dmg/2.5f ) * 4 <= HT )) {
-            TripleCombo = true;
-        }
+        if (HP * 4 >= HT && ((HP - dmg / 2.5f) * 4 <= HT)) doInvinc = true;
 
 		super.damage((int)(dmg/2.5f), src);
 		level.yuria.HP=this.HP;
 		level.wendar.HP=this.HP;
+
+        if (doInvinc) {
+            doInvinc = false;
+            Buff.affect(this, Invulnerability.class, 8f);
+            Buff.affect(level.yuria, Invulnerability.class, 8f);
+            Buff.affect(level.wendar, Invulnerability.class, 8f);
+
+            TripleCombo = true;
+
+        }
 	}
 
 	@Override
@@ -263,6 +287,11 @@ public class Thymor extends Mob {
 		if (HP * 2 <= HT) attack = 22;
 		return attack;
 	}
+
+    @Override
+    public float attackDelay() {
+        return Dungeon.isChallenged(Challenges.STRONGER_BOSSES) ? 0.5f : 1;
+    }
 
 
 	@Override
@@ -351,8 +380,8 @@ public class Thymor extends Mob {
 		if (Statistics.qualifiedForBossChallengeBadge) {
 			Badges.validateBossChallengeCompleted();
 		}
-		Statistics.bossScores[0] += 1050;
-		Statistics.bossScores[0] = Math.min(1000, Statistics.bossScores[0]);
+        Statistics.bossScores[3] += 4000;
+
 
 		yell(Messages.get(this, "defeated"));
 

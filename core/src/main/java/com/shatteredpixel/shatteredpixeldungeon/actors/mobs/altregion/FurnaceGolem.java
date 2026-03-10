@@ -44,7 +44,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.EmberEssence;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ForgeBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -76,12 +78,13 @@ public class FurnaceGolem extends Mob {
 		defenseSkill = 20;
 		spriteClass = FurnaceGolemSprite.class;
 		baseSpeed = 1f;
+        flying = true;
 
 		properties.add(Char.Property.BOSS);
 		properties.add(Char.Property.INORGANIC);
 		properties.add(Char.Property.LARGE);
 
-	}
+    }
 
 
 	@Override
@@ -174,7 +177,7 @@ public class FurnaceGolem extends Mob {
 		fireblasttimer--;
 		com.watabou.utils.PointF p = DungeonTilemap.raisedTileCenterToWorld(fireblasttile);
 		FloatingText.show(p.x, p.y, fireblasttile, (fireblasttimer+1) + "...", CharSprite.WARNING);
-		sprite.parent.add(new TargetedCell(fireblasttile, 0xFF0000));
+        sprite.parent.add(new TargetedCell(fireblasttile, 0x03fc1c));
 		com.watabou.noosa.audio.Sample.INSTANCE.play( Assets.Sounds.ALERT );
 	}
 
@@ -295,6 +298,7 @@ public class FurnaceGolem extends Mob {
 	public void BombattackLogic()
 	{
 		bombattackcooldown = 14;
+        if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) bombattackcooldown -= 5;
 		//this should always target the hero to prevent ally cheese
 		ArrayList<Integer> validtiles = new ArrayList<Integer>();
 		PathFinder.buildDistanceMap( Dungeon.hero.pos, com.watabou.utils.BArray.not( Dungeon.level.solid, null ), 2 );
@@ -365,6 +369,7 @@ public class FurnaceGolem extends Mob {
 					Furnaces.get(0).animated = true;
 				}
 				fireblastcooldown = 35;
+                if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)) fireblastcooldown -= 6;
 
 			}
 			else {
@@ -441,16 +446,22 @@ public class FurnaceGolem extends Mob {
 			Dungeon.level.drop( new EmberEssence(), pos + ofs ).sprite.drop( pos );
 		}
 
-		Badges.validateBossSlain();
+        if (cause instanceof MagesStaff) cause = ((MagesStaff) cause).wand;
+
+        if (Dungeon.hero.HP < (Dungeon.hero.HT * 0.3f) && cause instanceof Wand && ((Wand) cause).curCharges < 2 && infireblast) {
+        } else Statistics.qualifiedForBossChallengeBadge = false;
+
+
+        Badges.validateBossSlain();
 		if (Statistics.qualifiedForBossChallengeBadge) {
 			Badges.validateBossChallengeCompleted();
 		}
-		Statistics.bossScores[0] += 1050;
-		Statistics.bossScores[0] = Math.min(1000, Statistics.bossScores[0]);
+        Statistics.bossScores[2] += 3000;
+
 
         for (Heap heap : Dungeon.level.heaps.valueList()){
                 for (Item item : heap.items){
-                    if (!(item instanceof BombAbility.BombItem)){
+                    if ((item instanceof BombAbility.BombItem)) {
                         heap.destroy();
                     }
                 }
@@ -471,11 +482,11 @@ public class FurnaceGolem extends Mob {
 
 		resistances.add(Charm.class);
 		resistances.add(Vertigo.class);
-		resistances.add(Cripple.class);
-		resistances.add(Roots.class);
-		resistances.add(Slow.class);
+        resistances.add(Slow.class);
+        resistances.add(Roots.class);
 		immunities.add(Fire.class);
-		immunities.add(Smog.class);
+        immunities.add(Burning.class);
+        immunities.add(Smog.class);
 	}
 
 	private static String PHASETRANSITION1 = "PHASETRANSITION1";

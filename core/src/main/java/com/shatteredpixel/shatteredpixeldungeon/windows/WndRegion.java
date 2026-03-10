@@ -36,10 +36,6 @@ public class WndRegion extends Window {
 	private static final int BTN_HEIGHT = 16;
 	private static final int GAP        = 1;
 
-	private boolean Gardens;
-
-	private boolean Coldhouse;
-
 	private CheckBox cb;
 
 	private CheckBox cb2;

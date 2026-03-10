@@ -52,7 +52,7 @@ public class Healing extends Buff {
 	public boolean act(){
 
 		if (target.HP < target.HT) {
-			target.HP = Math.min(target.HT, target.HP + healingThisTick());
+            target.Heal(healingThisTick());
 
 			if (target.HP == target.HT && target instanceof Hero) {
 				((Hero) target).resting = false;

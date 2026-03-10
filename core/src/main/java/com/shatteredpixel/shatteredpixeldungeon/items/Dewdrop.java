@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Healing;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Thirst;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.VialOfBlood;
@@ -84,8 +85,9 @@ public class Dewdrop extends Item {
 		int effect = Math.round( hero.HT * 0.05f * quantity );
 
 		int heal = Math.min( hero.HT - hero.HP, effect );
+        Buff.affect(hero, Thirst.class).satisfy((Thirst.THIRSTY / 20) * quantity);
 
-		int shield = 0;
+        int shield = 0;
 		if (hero.hasTalent(Talent.SHIELDING_DEW)){
 
 			//When vial is present, this allocates exactly as much of the effect as is needed
@@ -109,7 +111,7 @@ public class Dewdrop extends Item {
 				healing.setHeal(heal, 0, VialOfBlood.maxHealPerTurn());
 				healing.applyVialEffect();
 			} else {
-				hero.HP += heal;
+                hero.Heal(heal);
 				if (heal > 0){
 					hero.sprite.showStatusWithIcon( CharSprite.POSITIVE, Integer.toString(heal), FloatingText.HEALING);
 				}

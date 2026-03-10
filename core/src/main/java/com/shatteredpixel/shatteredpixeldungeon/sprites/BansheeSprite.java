@@ -42,8 +42,8 @@ public class BansheeSprite extends MobSprite {
 		
 		run = new Animation( 5, true );
 		run.frames( frames, 8, 9, 10, 9, 8 );
-		
-		attack = new Animation( 9, false );
+
+        attack = new Animation(12, false);
 		attack.frames( frames, 3, 4, 5, 6, 6, 7 );
 		
 		die = new Animation( 3, false );

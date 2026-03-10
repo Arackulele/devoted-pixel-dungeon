@@ -126,7 +126,7 @@ public class Terrain {
 		flags[REGION_DECO_ALT] = flags[STATUE_SP];
 		flags[MINE_CRYSTAL] = SOLID;
 		flags[MINE_BOULDER] = SOLID;
-		flags[MAGMA_TILE]	= AVOID | DRYNESS;
+        flags[MAGMA_TILE] = AVOID | DRYNESS | PASSABLE;
 
 	}
 

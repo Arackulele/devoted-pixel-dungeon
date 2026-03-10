@@ -28,7 +28,6 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.watabou.noosa.Tilemap;
@@ -41,9 +40,9 @@ public class WeakFloorRoom extends SpecialRoom {
 		
 		Painter.fill( level, this, Terrain.WALL );
 		Painter.fill( level, this, 1, Terrain.CHASM );
-		
-		Room.Door door = entrance();
-		door.set( Room.Door.Type.REGULAR );
+
+        Door door = entrance();
+        door.set(Door.Type.REGULAR);
 		
 		Point well = null;
 		
