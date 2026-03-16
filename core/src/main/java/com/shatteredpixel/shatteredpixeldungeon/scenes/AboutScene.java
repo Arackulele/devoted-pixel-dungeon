@@ -62,7 +62,87 @@ public class AboutScene extends PixelScene {
 		Component content = list.content();
 		content.clear();
 
-		//*** Shattered Pixel Dungeon Credits ***
+        //*** Devoted Credits ***
+        CreditsBlock devo = new CreditsBlock(true, Window.DEVO_COLOR,
+                "Devoted Pixel Dungeon",
+                Icons.DEVO.get(),
+                "Developed by: _Arackulele_\nA fork of Shattered Pixel Dungeon which is in turn a fork of pixel dungeon",
+                "Official Repository",
+                "https://github.com/Arackulele/devoted-pixel-dungeon");
+        if (landscape()){
+            devo.setRect((w - fullWidth)/2f - 6, 10, 120, 0);
+        } else {
+            devo.setRect((w - fullWidth)/2f, 6, 120, 0);
+        }
+        content.add(devo);
+
+        CreditsBlock cev = new CreditsBlock(false, Window.DEVO_COLOR,
+                "Music, Sprites:",
+                Icons.CEVIN.get(),
+                "Cevin2006",
+                "ToDo: Sndtrck Link",
+                "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+        cev.setSize(colWidth/2f, 0);
+        if (landscape()){
+            cev.setPos(devo.right(), devo.top() + (devo.height() - cev.height()*2)/2f);
+        } else {
+            cev.setPos(w/2f - colWidth/2f, devo.bottom()+5);
+        }
+        content.add(cev);
+
+        CreditsBlock dars = new CreditsBlock(false, Window.DEVO_COLOR,
+                "Sprites, Concepting:",
+                Icons.DARSON.get(),
+                "TheDarson",
+                "ToDo: Dars Link",
+                "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+        dars.setRect(cev.right(), cev.top(), colWidth/2f, 0);
+        content.add(dars);
+
+        CreditsBlock keks = new CreditsBlock(false, Window.DEVO_COLOR,
+                "Sprites, balancing:",
+                Icons.KEKS.get(),
+                "Keks307",
+                "ToDo: Keks Link",
+                "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+        keks.setRect(devo.right(), cev.bottom() + 5, colWidth/2f, 0);
+        content.add(keks);
+
+        CreditsBlock sami = new CreditsBlock(false, Window.DEVO_COLOR,
+                "Sprites:",
+                Icons.SAMI.get(),
+                "hey.im.sami",
+                "ToDo: Sami link",
+                "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+        sami.setRect(keks.right(), cev.bottom() + 5, colWidth/2f, 0);
+        content.add(sami);
+
+        addLine(devo.bottom() + 12, content);
+
+
+        CreditsBlock devoassets = new CreditsBlock(true,
+                Window.TITLE_COLOR,
+                null,
+                null,
+                "Devoted Pixel Dungeon uses the following Assets:\n\n" +
+
+                        "Contributors:\n" +
+                        "Vel Taleth and Thornlasher Sprites by _Cevin2006_\n" +
+                        "Cold corpse, Crag Wolf, Homonculus, Meatrack, Pyronaut, Sacrifice, Troll Knight, Troll Spearman, Vault Sprites by _TheDarson_\n" +
+                        "(With animations and edits by _Arackulele_)\n" +
+                        "Gnoll Druid, Bomb Imp, Wasp Sprites by _Keks307_\n" +
+                        "Dwarven Council, Furnace Golem Sprites by _hey.im.sami_\n\n" +
+                        "Devoted Pixel Dungeon Soundtrack by _Cevin2006_\n\n",
+                "",
+                "");
+        devoassets.setRect((Camera.main.width - colWidth)/2f, keks.bottom() + 8, colWidth+20, 0);
+        content.add(devoassets);
+
+        addLine(devoassets.bottom() -11, content);
+
+
+
+        //*** Shattered Pixel Dungeon Credits ***
 
 		CreditsBlock shpx = new CreditsBlock(true, Window.SHPX_COLOR,
 				"Shattered Pixel Dungeon",
@@ -70,12 +150,13 @@ public class AboutScene extends PixelScene {
 				"Developed by: _Evan Debenham_\nBased on Pixel Dungeon's open source",
 				"ShatteredPixel.com",
 				"https://ShatteredPixel.com");
-		if (landscape()){
-			shpx.setRect((w - fullWidth)/2f - 6, 10, 120, 0);
-		} else {
-			shpx.setRect((w - fullWidth)/2f, 6, 120, 0);
-		}
+        if (landscape()){
+            shpx.setRect(devo.left(), devoassets.bottom() -3 , colWidth, 0);
+        } else {
+            shpx.setRect(devo.left(), devoassets.bottom() -3 , colWidth, 0);
+        }
 		content.add(shpx);
+
 
 		CreditsBlock alex = new CreditsBlock(false, Window.SHPX_COLOR,
 				"Splash Art & Design:",

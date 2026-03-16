@@ -135,7 +135,13 @@ public enum Icons {
 	CUBE_CODE,
 	PURIGRO,
 	ARCNOR,
-	DEVO;
+	DEVO,
+
+    //Devoted PD credits icons
+    CEVIN,
+    DARSON,
+    KEKS,
+    SAMI;
 
 	public Image get() {
 		return get( this );
@@ -437,6 +443,22 @@ public enum Icons {
 				icon.frame( icon.texture.uvRectBySize( 160, 96, 27, 30 ) );
 				icon.scale.set(PixelScene.align(0.49f));
 				break;
+            case CEVIN:
+                icon.frame( icon.texture.uvRectBySize( 192, 96, 32, 32 ) );
+                icon.scale.set(PixelScene.align(0.49f));
+                break;
+            case DARSON:
+                icon.frame( icon.texture.uvRectBySize( 224, 96, 32, 32 ) );
+                icon.scale.set(PixelScene.align(0.49f));
+                break;
+            case KEKS:
+                icon.frame( icon.texture.uvRectBySize( 256, 96, 32, 32 ) );
+                icon.scale.set(PixelScene.align(0.49f));
+                break;
+            case SAMI:
+                icon.frame( icon.texture.uvRectBySize( 288, 96, 32, 32 ) );
+                icon.scale.set(PixelScene.align(0.49f));
+                break;
 
 		}
 		return icon;
