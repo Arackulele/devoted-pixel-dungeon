@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,19 +28,21 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor.Glyph;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 
-public class Viscosity extends Armor.Glyph {
+public class Viscosity extends Glyph {
 	
 	private static ItemSprite.Glowing PURPLE = new ItemSprite.Glowing( 0x8844CC );
 	
 	@Override
-	public int proc(Armor armor, Char attacker, Char defender, int damage ) {
+	public int proc( Armor armor, Char attacker, Char defender, int damage ) {
 
 		//we use a tracker so that this glyph can apply after armor
 		Buff.affect(defender, ViscosityTracker.class).level = armor.buffedLvl();
@@ -50,7 +52,7 @@ public class Viscosity extends Armor.Glyph {
 	}
 
 	@Override
-	public ItemSprite.Glowing glowing() {
+	public Glowing glowing() {
 		return PURPLE;
 	}
 
@@ -124,7 +126,7 @@ public class Viscosity extends Armor.Glyph {
 		public void extend( float damage ) {
 			if (this.damage == 0){
 				//wait 1 turn before damaging if this is freshly applied
-				postpone(Actor.TICK);
+				postpone(TICK);
 			}
 			this.damage += damage;
 		}
@@ -152,7 +154,7 @@ public class Viscosity extends Armor.Glyph {
 					Dungeon.fail( this );
 					GLog.n( Messages.get(this, "ondeath") );
 				}
-				spend( Actor.TICK );
+				spend( TICK );
 
 				damage -= damageThisTick;
 				if (damage <= 0) {

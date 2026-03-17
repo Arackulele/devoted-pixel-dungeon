@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,10 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
-import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 
@@ -43,7 +42,7 @@ public class GreaterHaste extends Buff {
 
 		spendMove();
 
-		spend(Actor.TICK);
+		spend(TICK);
 		return true;
 	}
 
@@ -75,7 +74,7 @@ public class GreaterHaste extends Buff {
 	@Override
 	public float iconFadePercent() {
 		//currently tied to the lethal haste talent, as that's the only source
-		float duration = 1 + 2* Dungeon.hero.pointsInTalent(Talent.LETHAL_HASTE);
+		float duration = 1 + 2*Dungeon.hero.pointsInTalent(Talent.LETHAL_HASTE);
 		return Math.max(0, (duration - left) / duration);
 	}
 

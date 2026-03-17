@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.CorrosiveGas;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.MetalShard;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.DM201Sprite;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -39,7 +39,7 @@ public class DM201 extends DM200 {
 
 		HP = HT = 120;
 
-		properties.add(Char.Property.IMMOVABLE);
+		properties.add(Property.IMMOVABLE);
 
 		HUNTING = new Hunting();
 	}
@@ -53,9 +53,11 @@ public class DM201 extends DM200 {
 
 	@Override
 	public void damage(int dmg, Object src) {
-		if ((src instanceof Char && !Dungeon.level.adjacent(pos, ((Char)src).pos))
-				|| enemy == null || !Dungeon.level.adjacent(pos, enemy.pos)){
-			threatened = true;
+		if (!(src instanceof Corruption)) {
+			if ((src instanceof Char && !Dungeon.level.adjacent(pos, ((Char) src).pos))
+					|| enemy == null || !Dungeon.level.adjacent(pos, enemy.pos)) {
+				threatened = true;
+			}
 		}
 		super.damage(dmg, src);
 	}
@@ -67,7 +69,7 @@ public class DM201 extends DM200 {
 
 	private void zap( ){
 		threatened = false;
-		spend(Actor.TICK);
+		spend(TICK);
 
 		GameScene.add(Blob.seed(enemy.pos, 15, CorrosiveGas.class).setStrength(8));
 		for (int i : PathFinder.NEIGHBOURS8){

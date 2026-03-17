@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2022 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@ package com.shatteredpixel.shatteredpixeldungeon;
 
 public class Assets {
 
-    public static class Effects {
-        public static final String EFFECTS = "effects/effects.png";
-        public static final String FIREBALL = "effects/fireball.png";
-        public static final String SPECKS = "effects/specks.png";
-        public static final String SPELL_ICONS = "effects/spell_icons.png";
-        public static final String TEXT_ICONS = "effects/text_icons.png";
-    }
+	public static class Effects {
+		public static final String EFFECTS      = "effects/effects.png";
+		public static final String FIREBALL     = "effects/fireball.png";
+		public static final String SPECKS       = "effects/specks.png";
+		public static final String SPELL_ICONS  = "effects/spell_icons.png";
+		public static final String TEXT_ICONS   = "effects/text_icons.png";
+	}
 
     public static class Environment {
         public static final String TERRAIN_FEATURES = "environment/terrain_features.png";
@@ -52,27 +52,30 @@ public class Assets {
         public static final String TILES_CAVES_CRYSTAL = "environment/tiles_caves_crystal.png";
         public static final String TILES_CAVES_GNOLL = "environment/tiles_caves_gnoll.png";
 
-        public static final String WATER_SEWERS = "environment/water0.png";
+		public static final String WATER_SEWERS = "environment/water0.png";
+		public static final String WATER_PRISON = "environment/water1.png";
+		public static final String WATER_CAVES  = "environment/water2.png";
+		public static final String WATER_CITY   = "environment/water3.png";
+		public static final String WATER_HALLS  = "environment/water4.png";
         public static final String WATER_GARDEN = "environment/water5.png";
-        public static final String WATER_PRISON = "environment/water1.png";
         public static final String WATER_COLDHOUSE = "environment/water6.png";
-        public static final String WATER_CAVES = "environment/water2.png";
         public static final String WATER_FORGE = "environment/water7.png";
-        public static final String WATER_CITY = "environment/water3.png";
         public static final String WATER_CITADEL = "environment/water8.png";
-        public static final String WATER_HALLS = "environment/water4.png";
         public static final String WATER_VOID = "environment/water9.png";
 
         public static final String WATER_LAVALAKE = "environment/waterdanger.png";
 
-        public static final String WEAK_FLOOR = "environment/custom_tiles/weak_floor.png";
-        public static final String SEWER_BOSS = "environment/custom_tiles/sewer_boss.png";
-        public static final String PRISON_QUEST = "environment/custom_tiles/prison_quest.png";
-        public static final String PRISON_EXIT = "environment/custom_tiles/prison_exit.png";
-        public static final String CAVES_QUEST = "environment/custom_tiles/caves_quest.png";
-        public static final String CAVES_BOSS = "environment/custom_tiles/caves_boss.png";
-        public static final String CITY_BOSS = "environment/custom_tiles/city_boss.png";
-        public static final String HALLS_SP = "environment/custom_tiles/halls_special.png";
+		public static final String WEAK_FLOOR       = "environment/custom_tiles/weak_floor.png";
+		public static final String SEWER_BOSS       = "environment/custom_tiles/sewer_boss.png";
+		public static final String PRISON_QUEST     = "environment/custom_tiles/prison_quest.png";
+		public static final String PRISON_EXIT      = "environment/custom_tiles/prison_exit.png";
+		public static final String CAVES_QUEST      = "environment/custom_tiles/caves_quest.png";
+		public static final String CAVES_BOSS       = "environment/custom_tiles/caves_boss.png";
+		public static final String CITY_QUEST        = "environment/custom_tiles/city_quest.png";
+		public static final String CITY_BOSS        = "environment/custom_tiles/city_boss.png";
+		public static final String HALLS_SP         = "environment/custom_tiles/halls_special.png";
+
+
         public static final Object GARDENS_BOSS = "environment/custom_tiles/gardens_boss.png";
         public static final Object COLDHOUSE_BOSS = "environment/custom_tiles/coldhouse_boss.png";
         public static final Object FORGE_BOSS = "environment/custom_tiles/forge_boss.png";
@@ -81,13 +84,14 @@ public class Assets {
 
         public static final Object VOID_SP_END = "environment/custom_tiles/void_special_end.png";
 
-
     }
-
-    //TODO include other font assets here? Some are platform specific though...
-    public static class Fonts {
+	
+	//TODO include other font assets here? Some are platform specific though...
+	public static class Fonts {
         public static final String PIXELFONT = "fonts/pixel_font.png";
     }
+
+
 
     public static class Interfaces {
         public static final String ARCS_BG = "interfaces/arcs1.png";
@@ -108,8 +112,8 @@ public class Assets {
 
         public static final String SURFACE = "interfaces/surface.png";
 
-        public static final String BUFFS_SMALL = "interfaces/buffs.png";
-        public static final String BUFFS_LARGE = "interfaces/large_buffs.png";
+		public static final String BUFFS_SMALL      = "interfaces/buffs.png";
+		public static final String BUFFS_LARGE      = "interfaces/large_buffs.png";
 
         public static final String TALENT_ICONS = "interfaces/talent_icons.png";
         public static final String TALENT_BUTTON = "interfaces/talent_button.png";

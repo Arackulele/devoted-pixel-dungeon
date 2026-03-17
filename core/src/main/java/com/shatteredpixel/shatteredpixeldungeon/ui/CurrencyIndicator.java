@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,14 +61,14 @@ public class CurrencyIndicator extends Component {
 	
 	@Override
 	protected void layout() {
-		energy.x = x + (width - energy.width()) / 2;
-		energy.y = bottom() - energy.height();
+		gold.x = x+1;
+		gold.y = top() + 1;
 
-		gold.x = x + (width - gold.width()) / 2;
-		if (energy.visible) {
-			gold.y = bottom() - gold.height()- gold.height() + 2;
+		energy.x = x+1;
+		if (gold.visible) {
+			energy.y = top() + energy.height() - 1;
 		} else {
-			gold.y = bottom() - gold.height();
+			energy.y = top() + 1;
 		}
 	}
 	

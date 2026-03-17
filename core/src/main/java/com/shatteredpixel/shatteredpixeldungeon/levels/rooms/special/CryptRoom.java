@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Point;
 
 public class CryptRoom extends SpecialRoom {
@@ -46,9 +45,9 @@ public class CryptRoom extends SpecialRoom {
 		int cx = c.x;
 		int cy = c.y;
 		
-		Room.Door entrance = entrance();
+		Door entrance = entrance();
 		
-		entrance.set( Room.Door.Type.LOCKED );
+		entrance.set( Door.Type.LOCKED );
 		level.addItemToSpawn( new IronKey( Dungeon.depth ) );
 		
 		if (entrance.x == left) {
@@ -72,7 +71,7 @@ public class CryptRoom extends SpecialRoom {
 		level.drop( prize( level ), cx + cy * level.width() ).type = Heap.Type.TOMB;
 	}
 	
-	private static Item prize(Level level ) {
+	private static Item prize( Level level ) {
 		
 		//1 floor set higher than normal
 		Armor prize = Generator.randomArmor( (Dungeon.depth / 5) + 1);

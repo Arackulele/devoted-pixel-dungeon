@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,14 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BeeSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -148,13 +149,30 @@ public class Bee extends Mob {
 		
 		//if something is holding the pot, target that
 		}else if (Actor.findById(potHolder) != null){
-			return (Char) findById(potHolder);
+			return (Char) Actor.findById(potHolder);
 			
 		//if the pot is on the ground
-		}else {
+		} else {
+
+			//copypasta from regular mob logic for aggression with added limit for pot distance
+			if ((alignment == Alignment.ENEMY || buff(Amok.class) != null ) && state != PASSIVE && state != SLEEPING) {
+				if (enemy != null
+						&& enemy.buff(StoneOfAggression.Aggression.class) != null
+						&& Dungeon.level.distance(enemy.pos, potPos) <= 3){
+					state = HUNTING;
+					return enemy;
+				}
+				for (Char ch : Actor.chars()) {
+					if (ch != this && fieldOfView[ch.pos] && Dungeon.level.distance(ch.pos, potPos) <= 3
+							&& ch.buff(StoneOfAggression.Aggression.class) != null) {
+						state = HUNTING;
+						return ch;
+					}
+				}
+			}
 			
 			//try to find a new enemy in these circumstances
-			if (enemy == null || !enemy.isAlive() || !chars().contains(enemy) || state == WANDERING
+			if (enemy == null || !enemy.isAlive() || !Actor.chars().contains(enemy) || state == WANDERING
 					|| Dungeon.level.distance(enemy.pos, potPos) > 3
 					|| (alignment == Alignment.ALLY && enemy.alignment == Alignment.ALLY)
 					|| (buff( Amok.class ) == null && enemy.isInvulnerable(getClass()))){
@@ -195,7 +213,7 @@ public class Bee extends Mob {
 	protected boolean getCloser(int target) {
 		if (alignment == Alignment.ALLY && enemy == null && buffs(AllyBuff.class).isEmpty()) {
 			target = Dungeon.hero.pos;
-		} else if (enemy != null && findById(potHolder) == enemy) {
+		} else if (enemy != null && Actor.findById(potHolder) == enemy) {
 			target = enemy.pos;
 		} else if (potPos != -1 && (state == WANDERING || Dungeon.level.distance(target, potPos) > 3)) {
 			if (!Dungeon.level.insideMap(potPos)){

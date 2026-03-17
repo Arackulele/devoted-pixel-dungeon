@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,8 +79,8 @@ public class CavesFissureRoom extends StandardRoom {
 			Painter.fill(level, this, Terrain.WALL);
 			Painter.fill(level, this, 1, Terrain.EMPTY);
 
-			for (Room.Door door : connected.values()) {
-				door.set(Room.Door.Type.REGULAR);
+			for (Door door : connected.values()) {
+				door.set(Door.Type.REGULAR);
 			}
 
 			PointF center = new PointF(center());
@@ -89,7 +89,7 @@ public class CavesFissureRoom extends StandardRoom {
 
 			//find the angle of each door from our center point
 			ArrayList<Float> doorAngles = new ArrayList<>();
-			for (Room.Door d : connected.values()) {
+			for (Door d : connected.values()) {
 				PointF doorCenter = new PointF(d.x + 0.5f, d.y + 0.5f);
 				float doorAngle = angleBetweenPoints(center, doorCenter);
 				if (doorAngle < 0) doorAngle += 360f;
@@ -206,7 +206,7 @@ public class CavesFissureRoom extends StandardRoom {
 			}
 
 			int doorPoint = 0;
-			for (Room.Door door : connected.values()) {
+			for (Door door : connected.values()) {
 				Painter.drawInside(level, this, door, 1, Terrain.EMPTY);
 				if (door.x == left)         doorPoint = xyToRoomCoords(door.x+1, door.y);
 				else if (door.x == right)   doorPoint = xyToRoomCoords(door.x-1, door.y);

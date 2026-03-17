@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,29 +24,34 @@ package com.shatteredpixel.shatteredpixeldungeon.effects;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.*;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Daze;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hex;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.GuidingLight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredStatue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.MirrorImage;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.PrismaticImage;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Stone;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfAccuracy;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEvasion;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.FerretTuft;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Quarterstaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Scimitar;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.GuidingLight;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.MirrorImage;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.PrismaticImage;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
@@ -115,7 +120,6 @@ public class FloatingText extends RenderedTextBlock {
 	public static int HIT_SUPR  = 45;
 	public static int HIT_PRES  = 46;
 	public static int HIT_MOMEN = 47;
-	public static int HIT_INVINC = 48;
 
 	//extra row for hit icons that are armor-piercing
 
@@ -142,7 +146,7 @@ public class FloatingText extends RenderedTextBlock {
 	private static final SparseArray<ArrayList<FloatingText>> stacks = new SparseArray<>();
 	
 	public FloatingText() {
-		super(9* PixelScene.defaultZoom);
+		super(9*PixelScene.defaultZoom);
 		setHightlighting(false);
 	}
 	
@@ -180,8 +184,8 @@ public class FloatingText extends RenderedTextBlock {
 			} else {
 				icon.x = left() + width() - icon.width();
 			}
-			icon.y = top();
-			PixelScene.align(icon);
+			icon.x = PixelScene.align(Camera.main, icon.x);
+			icon.y = PixelScene.align(Camera.main, top());
 		}
 	}
 
@@ -327,10 +331,6 @@ public class FloatingText extends RenderedTextBlock {
 				&& attacker.buff(Talent.LiquidAgilACCTracker.class) != null){
 			return HIT_LIQ;
 		}
-		if (attacker.buff(Invulnerability.class) != null && attacker instanceof Hero && Dungeon.hero.pointsInTalent(Talent.WRATHFUL_STRIKE) > 0){
-			return HIT_INVINC;
-		}
-
 
 		KindOfWeapon wep = null;
 		if (attacker instanceof Hero) wep = ((Hero) attacker).belongings.attackingWeapon();
@@ -343,6 +343,11 @@ public class FloatingText extends RenderedTextBlock {
 		if (defender instanceof PrismaticImage) arm = Dungeon.hero.belongings.armor();
 		if (defender instanceof ArmoredStatue) arm = ((ArmoredStatue)defender).armor();
 		if (defender instanceof DriedRose.GhostHero) arm = ((DriedRose.GhostHero)defender).armor();
+
+		//one last check
+		if (defRoll == 0 && arm != null && arm.hasGlyph(Stone.class, defender)){
+			return HIT_ARM;
+		}
 
 		//accuracy boosts (always > 1)
 		if (wep != null && wep.accuracyFactor(attacker, defender) > 1){
@@ -364,6 +369,9 @@ public class FloatingText extends RenderedTextBlock {
 		if (RingOfAccuracy.accuracyMultiplier(attacker) > 1)    hitReasons.put(HIT_ACC, RingOfAccuracy.accuracyMultiplier(attacker));
 		if (attacker.buff(Scimitar.SwordDance.class) != null)   hitReasons.put(HIT_DANCE, 1.5f);
 		if (!(wep instanceof MissileWeapon)) {
+			if (attacker instanceof Hero && ((Hero) attacker).hasTalent(Talent.PRECISE_ASSAULT) && ((Hero) attacker).heroClass != HeroClass.DUELIST){
+				hitReasons.put(HIT_PRES, 0.1f * Dungeon.hero.pointsInTalent(Talent.PRECISE_ASSAULT));
+			}
 			if (attacker.buff(Talent.PreciseAssaultTracker.class) != null){
 				hitReasons.put(HIT_PRES, Dungeon.hero.pointsInTalent(Talent.PRECISE_ASSAULT) == 2 ? 5f : 2f);
 			} else if (attacker.buff(Talent.LiquidAgilACCTracker.class) != null) {
@@ -393,8 +401,6 @@ public class FloatingText extends RenderedTextBlock {
 			if (defender instanceof Hero)   hitReasons.put(HIT_SUPR, 0.5f);
 			else                            return HIT_SUPR;
 		}
-
-
 
 		//sort from largest modifier to smallest one
 		ArrayList<Integer> sortedReasons = new ArrayList<>(hitReasons.keySet());

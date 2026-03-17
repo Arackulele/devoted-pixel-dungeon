@@ -64,6 +64,7 @@ public enum Icons {
 	RIGHTARROW,
 	CALENDAR,
 	CHEVRON,
+    SHUFFLE,
 
 	//misc larger icons, mainly used for buttons, tabs, and journal, spacing for 16x16
 	TARGET,
@@ -109,6 +110,7 @@ public enum Icons {
 	SLEEP,
 	ALERT,
 	LOST,
+    INVESTIGATE,
 	DEPTH,      //depth icons have three variants, for regular, seeded, daily, and daily replay runs
 	DEPTH_CHASM,
 	DEPTH_WATER,
@@ -131,7 +133,7 @@ public enum Icons {
 	ALEKS,
 	WATA,
 	CELESTI,
-	KRISTJAN,
+    LUMINE,
 	CUBE_CODE,
 	PURIGRO,
 	ARCNOR,
@@ -242,7 +244,9 @@ public enum Icons {
 			case REGION_ACTIVE:
 				icon.frame( icon.texture.uvRectBySize( 269, 16, 15, 12 ) );
 				break;
-
+            case SHUFFLE:
+                icon.frame(icon.texture.uvRectBySize( 240, 32, 15, 12 ) );
+                break;
 			case TARGET:
 				icon.frame( icon.texture.uvRectBySize( 0, 32, 16, 16 ) );
 				break;
@@ -363,6 +367,8 @@ public enum Icons {
 			case LOST:
 				icon.frame( icon.texture.uvRectBySize( 24, 88, 8, 8 ) );
 				break;
+            case INVESTIGATE:
+                icon.frame( icon.texture.uvRectBySize( 16, 88, 8, 8 ) );
 			case DEPTH:
 				icon.frame( icon.texture.uvRectBySize( 32 + runTypeOfsX(), 80 + runTypeOfsY(), 6, 7 ) );
 				break;
@@ -427,7 +433,7 @@ public enum Icons {
 				icon.frame( icon.texture.uvRectBySize( 32, 96, 32, 32 ) );
 				icon.scale.set(PixelScene.align(0.49f));
 				break;
-			case KRISTJAN:
+			case LUMINE:
 				icon.frame( icon.texture.uvRectBySize( 64, 96, 32, 32 ) );
 				icon.scale.set(PixelScene.align(0.49f));
 				break;

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Point;
@@ -48,8 +47,8 @@ public class RotGardenRoom extends SpecialRoom {
 
 	public void paint( Level level ) {
 
-		Room.Door entrance = entrance();
-		entrance.set(Room.Door.Type.LOCKED);
+		Door entrance = entrance();
+		entrance.set(Door.Type.LOCKED);
 		level.addItemToSpawn(new IronKey(Dungeon.depth));
 
 		//define basic terrain, mostly high grass with some chaotically placed wall tiles
@@ -59,6 +58,7 @@ public class RotGardenRoom extends SpecialRoom {
 		ArrayList<Integer> candidates = new ArrayList<>();
 		boolean[] passable = new boolean[level.length()];
 		int entryPos = level.pointToCell(entrance());
+		int openCells;
 		do {
 			Painter.fill(level, this, 1, Terrain.HIGH_GRASS);
 			for (int i = 0; i < 12; i++) {
@@ -79,9 +79,11 @@ public class RotGardenRoom extends SpecialRoom {
 			//place the heart in a slightly random location sufficiently far from the entrance
 			PathFinder.buildDistanceMap(entryPos, passable);
 			candidates.clear();
+			openCells = 0;
 			for (Point p : getPoints()) {
 				int i = level.pointToCell(p);
 				if (PathFinder.distance[i] != Integer.MAX_VALUE) {
+					openCells++;
 					if (PathFinder.distance[i] >= 7) {
 						candidates.add(i);
 					}
@@ -103,7 +105,8 @@ public class RotGardenRoom extends SpecialRoom {
 				closestPos++;
 			}
 
-		} while (candidates.isEmpty());
+		//retry if there are no distanc candidates, or more than ~half the room is closed off
+		} while (candidates.isEmpty() || openCells < 35);
 		int heartPos = Random.element(candidates);
 		placePlant(level, heartPos, new RotHeart());
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.watabou.noosa.audio.Sample;
 
 public abstract class InventoryScroll extends Scroll {
@@ -40,7 +40,7 @@ public abstract class InventoryScroll extends Scroll {
 		
 		if (!isKnown()) {
 			identify();
-			Item.curItem = detach( Item.curUser.belongings.backpack );
+			curItem = detach( curUser.belongings.backpack );
 			identifiedByUse = true;
 		} else {
 			identifiedByUse = false;
@@ -50,25 +50,36 @@ public abstract class InventoryScroll extends Scroll {
 	}
 	
 	private void confirmCancelation() {
-		GameScene.show( new WndOptions(new ItemSprite(this),
-				Messages.titleCase(name()),
-				Messages.get(this, "warning"),
-				Messages.get(this, "yes"),
-				Messages.get(this, "no") ) {
-			@Override
-			protected void onSelect( int index ) {
-				switch (index) {
+		GameScene.show( new WndConfirmCancel() );
+	}
+
+	public class WndConfirmCancel extends WndOptions{
+
+		public WndConfirmCancel(){
+			super(new ItemSprite(InventoryScroll.this),
+					Messages.titleCase(name()),
+					Messages.get(InventoryScroll.this, "warning"),
+					Messages.get(InventoryScroll.this, "yes"),
+					Messages.get(InventoryScroll.this, "no") );
+		}
+		@Override
+		protected void onSelect( int index ) {
+			switch (index) {
 				case 0:
-					Item.curUser.spendAndNext( TIME_TO_READ );
+					curUser.spendAndNext( TIME_TO_READ );
 					identifiedByUse = false;
 					break;
 				case 1:
 					GameScene.selectItem( itemSelector );
 					break;
-				}
 			}
-			public void onBackPressed() {}
-		} );
+		}
+		public void onBackPressed() {}
+
+		public WndBag.ItemSelector getItemSelector(){
+			return itemSelector;
+		}
+
 	}
 
 	private String inventoryTitle(){
@@ -105,7 +116,7 @@ public abstract class InventoryScroll extends Scroll {
 			
 			//FIXME this safety check shouldn't be necessary
 			//it would be better to eliminate the curItem static variable.
-			if (!(Item.curItem instanceof InventoryScroll)){
+			if (!(curItem instanceof InventoryScroll)){
 				return;
 			}
 			
@@ -113,23 +124,23 @@ public abstract class InventoryScroll extends Scroll {
 
 				//SoU opens a separate window that can be cancelled
 				//so we don't do a lot of logic here
-				if (!identifiedByUse && !(Item.curItem instanceof ScrollOfUpgrade)) {
-					Item.curItem = detach(Item.curUser.belongings.backpack);
+				if (!identifiedByUse && !(curItem instanceof ScrollOfUpgrade)) {
+					curItem = detach(curUser.belongings.backpack);
 				}
-				((InventoryScroll) Item.curItem).onItemSelected( item );
+				((InventoryScroll)curItem).onItemSelected( item );
 
-				if (!(Item.curItem instanceof ScrollOfUpgrade)) {
-					((InventoryScroll) Item.curItem).readAnimation();
+				if (!(curItem instanceof ScrollOfUpgrade)) {
+					((InventoryScroll) curItem).readAnimation();
 					Sample.INSTANCE.play(Assets.Sounds.READ);
 				}
 				
-			} else if (identifiedByUse && !((Scroll) Item.curItem).anonymous) {
+			} else if (identifiedByUse && !((Scroll)curItem).anonymous) {
 				
-				((InventoryScroll) Item.curItem).confirmCancelation();
+				((InventoryScroll)curItem).confirmCancelation();
 				
-			} else if (((Scroll) Item.curItem).anonymous) {
+			} else if (((Scroll)curItem).anonymous) {
 
-				Item.curUser.spendAndNext( TIME_TO_READ );
+				curUser.spendAndNext( TIME_TO_READ );
 
 			}
 		}

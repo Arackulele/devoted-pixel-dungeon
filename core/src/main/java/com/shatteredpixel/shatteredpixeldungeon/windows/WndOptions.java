@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ public class WndOptions extends Window {
 				}
 			};
 			if (hasIcon(i)) btn.icon(getIcon(i));
-			btn.enable(enabled(i));
+			btn.multiline = true;
 			add( btn );
 
 			if (!hasInfo(i)) {
@@ -109,6 +109,8 @@ public class WndOptions extends Window {
 				info.setRect(width-BUTTON_HEIGHT, pos, BUTTON_HEIGHT, BUTTON_HEIGHT);
 				add(info);
 			}
+
+			btn.enable(enabled(i));
 
 			pos += BUTTON_HEIGHT + MARGIN;
 		}

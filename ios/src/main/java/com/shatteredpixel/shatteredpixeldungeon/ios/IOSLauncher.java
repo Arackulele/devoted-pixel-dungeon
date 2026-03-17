@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,10 @@
 package com.shatteredpixel.shatteredpixeldungeon.ios;
 
 import com.badlogic.gdx.Files;
+import com.badlogic.gdx.backends.iosrobovm.DefaultIOSInput;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
+import com.badlogic.gdx.backends.iosrobovm.IOSInput;
 import com.badlogic.gdx.backends.iosrobovm.IOSPreferences;
 import com.badlogic.gdx.backends.iosrobovm.bindings.metalangle.MGLDrawableColorFormat;
 import com.badlogic.gdx.backends.iosrobovm.bindings.metalangle.MGLDrawableDepthFormat;
@@ -45,6 +47,7 @@ import org.robovm.apple.foundation.NSObject;
 import org.robovm.apple.foundation.NSString;
 import org.robovm.apple.uikit.UIApplication;
 import org.robovm.apple.uikit.UIInterfaceOrientation;
+import org.robovm.apple.uikit.UITextField;
 
 import java.io.File;
 
@@ -185,7 +188,22 @@ public class IOSLauncher extends IOSApplication.Delegate {
 		config.addIosDevice("SIMULATOR_64",     "x86_64", 460);
 		config.addIosDevice("SIMULATOR_ARM64",  "arm64", 460);
 
-		return new IOSApplication(new ShatteredPixelDungeon(new IOSPlatformSupport()), config);
+		return new IOSApplication(new ShatteredPixelDungeon(new IOSPlatformSupport()), config){
+			@Override
+			protected IOSInput createInput() {
+				//FIXME essentially a backport of a fix to text fields from libGDX ios backend 1.13.5
+				return new DefaultIOSInput(this){
+					@Override
+					public void setOnscreenKeyboardVisible(boolean visible, OnscreenKeyboardType type) {
+						super.setOnscreenKeyboardVisible(visible, type);
+						if (visible){
+							((UITextField)getActiveKeyboardTextField()).setText("x");
+						}
+					}
+				};
+
+			}
+		};
 	}
 
 	@Override

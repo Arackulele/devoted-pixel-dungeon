@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,22 +21,21 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.blobs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.WebParticle;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BlobEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.WebParticle;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 
 public class Web extends Blob {
 
 	{
 		//acts before the hero, to ensure terrain is adjusted correctly
-		actPriority = Actor.HERO_PRIO+1;
+		actPriority = HERO_PRIO+1;
 	}
 	
 	@Override
@@ -54,6 +53,7 @@ public class Web extends Blob {
 
 				l.solid[cell] = off[cell] > 0 || (Terrain.flags[l.map[cell]] & Terrain.SOLID) != 0;
 				l.flamable[cell] = off[cell] > 0 || (Terrain.flags[l.map[cell]] & Terrain.FLAMABLE) != 0;
+				l.updateOpenSpace(cell);
 			}
 		}
 	}
@@ -63,6 +63,7 @@ public class Web extends Blob {
 		super.seed(level, cell, amount);
 		level.solid[cell] = cur[cell] > 0 || (Terrain.flags[level.map[cell]] & Terrain.SOLID) != 0;
 		level.flamable[cell] = cur[cell] > 0 || (Terrain.flags[level.map[cell]] & Terrain.FLAMABLE) != 0;
+		level.updateOpenSpace(cell);
 	}
 
 	//affects characters as they step on it. See Level.OccupyCell and Level.PressCell
@@ -84,6 +85,7 @@ public class Web extends Blob {
 		Level l = Dungeon.level;
 		l.solid[cell] = cur[cell] > 0 || (Terrain.flags[l.map[cell]] & Terrain.SOLID) != 0;
 		l.flamable[cell] = cur[cell] > 0 || (Terrain.flags[l.map[cell]] & Terrain.FLAMABLE) != 0;
+		l.updateOpenSpace(cell);
 	}
 
 	@Override
@@ -98,6 +100,7 @@ public class Web extends Blob {
 			for (int i=0; i < l.length(); i++) {
 				l.solid[i] = l.solid[i] || cur[i] > 0;
 				l.flamable[i] = l.flamable[i] || cur[i] > 0;
+				//openSpace will be updated as part of building flap maps
 			}
 		}
 	}

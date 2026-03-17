@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrinketCatalyst;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
@@ -41,7 +40,7 @@ public class ArmoryRoom extends SpecialRoom {
 		Painter.fill( level, this, Terrain.WALL );
 		Painter.fill( level, this, 1, Terrain.EMPTY );
 		
-		Room.Door entrance = entrance();
+		Door entrance = entrance();
 		Point statue = null;
 		if (entrance.x == left) {
 			statue = new Point( right-1, Random.Int( 2 ) == 0 ? top+1 : bottom-1 );
@@ -75,7 +74,7 @@ public class ArmoryRoom extends SpecialRoom {
 			level.drop( cata, pos );
 		}
 		
-		entrance.set( Room.Door.Type.LOCKED );
+		entrance.set( Door.Type.LOCKED );
 		level.addItemToSpawn( new IronKey( Dungeon.depth ) );
 	}
 

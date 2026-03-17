@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,11 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.spells;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -50,12 +49,27 @@ public abstract class TargetedSpell extends Spell {
 	protected abstract void affectTarget( Ballistica bolt, Hero hero );
 	
 	protected void fx( Ballistica bolt, Callback callback ) {
-		MagicMissile.boltFromChar( Item.curUser.sprite.parent,
+		MagicMissile.boltFromChar( curUser.sprite.parent,
 				MagicMissile.MAGIC_MISSILE,
-				Item.curUser.sprite,
+				curUser.sprite,
 				bolt.collisionPos,
 				callback);
 		Sample.INSTANCE.play( Assets.Sounds.ZAP );
+	}
+
+	protected void onSpellused(){
+		detach( curUser.belongings.backpack );
+		Invisibility.dispel();
+		updateQuickslot();
+		curUser.spendAndNext( timeToCast() );
+		Catalog.countUse(getClass());
+		if (Random.Float() < talentChance){
+			Talent.onScrollUsed(curUser, curUser.pos, talentFactor, getClass());
+		}
+	}
+
+	protected float timeToCast(){
+		return Actor.TICK;
 	}
 	
 	private static CellSelector.Listener targeter = new  CellSelector.Listener(){
@@ -68,16 +82,16 @@ public abstract class TargetedSpell extends Spell {
 				//FIXME this safety check shouldn't be necessary
 				//it would be better to eliminate the curItem static variable.
 				final TargetedSpell curSpell;
-				if (Item.curItem instanceof TargetedSpell) {
-					curSpell = (TargetedSpell) Item.curItem;
+				if (curItem instanceof TargetedSpell) {
+					curSpell = (TargetedSpell)curItem;
 				} else {
 					return;
 				}
 				
-				final Ballistica shot = new Ballistica( Item.curUser.pos, target, curSpell.collisionProperties);
+				final Ballistica shot = new Ballistica( curUser.pos, target, curSpell.collisionProperties);
 				int cell = shot.collisionPos;
 				
-				Item.curUser.sprite.zap(cell);
+				curUser.sprite.zap(cell);
 				
 				//attempts to target the cell aimed at if something is there, otherwise targets the collision pos.
 				if (Actor.findChar(target) != null)
@@ -85,19 +99,11 @@ public abstract class TargetedSpell extends Spell {
 				else
 					QuickSlotButton.target(Actor.findChar(cell));
 				
-				Item.curUser.busy();
+				curUser.busy();
 				
 				curSpell.fx(shot, new Callback() {
 					public void call() {
-						curSpell.affectTarget(shot, Item.curUser);
-						curSpell.detach( Item.curUser.belongings.backpack );
-						Invisibility.dispel();
-						curSpell.updateQuickslot();
-						Item.curUser.spendAndNext( 1f );
-						Catalog.countUse(curSpell.getClass());
-						if (Random.Float() < curSpell.talentChance){
-							Talent.onScrollUsed(Item.curUser, Item.curUser.pos, curSpell.talentFactor, curSpell.getClass());
-						}
+						curSpell.affectTarget(shot, curUser);
 					}
 				});
 				

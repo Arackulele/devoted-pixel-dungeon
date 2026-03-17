@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,9 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.wands;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.WandEmpower;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Wrath;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.WandEmpower;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.noosa.audio.Sample;
 
@@ -61,23 +59,6 @@ public abstract class DamageWand extends Wand{
 			}
 			Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG, 0.75f, 1.2f);
 		}
-
-		if (Dungeon.hero.hasTalent(Talent.ANGER_MANAGEMENT) && Dungeon.hero.buff(Wrath.class) != null)
-		{
-			float amnt;
-
-			switch (Dungeon.hero.pointsInTalent(Talent.ANGER_MANAGEMENT))
-			{
-				default:
-				case 1: amnt = 0.005f;
-				case 2: amnt = 0.0075f;
-				case 3: amnt = 0.01f;
-			}
-
-			dmg += (Dungeon.hero.buff(Wrath.class).cooldown() * amnt) * dmg;
-
-		}
-
 		return dmg;
 	}
 

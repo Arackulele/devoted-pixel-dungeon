@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +30,15 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Crossbow;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -85,12 +84,12 @@ public class Dart extends MissileWeapon {
 	public int min(int lvl) {
 		if (bow != null){
 			if (!(this instanceof TippedDart) && Dungeon.hero.buff(Crossbow.ChargedShot.class) != null){
-				//ability increases base dmg by 50%, scaling by 50%
-				return  8 +                     //8 base
-						2*bow.buffedLvl() + lvl;//+2 per bow level, +1 per level
+				return bow.dartMin()            //crossbow dart damage
+						+ 4 + bow.buffedLvl()   //ability increases base dmg by 50%, scaling by 50%
+						+ lvl;                  //another +1 per level (ring of sharpshooting)
 			} else {
-				return  4 +                     //4 base
-						bow.buffedLvl() + lvl;  //+1 per level or bow level
+				return bow.dartMin()            //crossbow dart damage
+						+ lvl;                  //another +1 per level (ring of sharpshooting)
 			}
 		} else {
 			return  1 +     //1 base, down from 2
@@ -102,12 +101,12 @@ public class Dart extends MissileWeapon {
 	public int max(int lvl) {
 		if (bow != null){
 			if (!(this instanceof TippedDart) && Dungeon.hero.buff(Crossbow.ChargedShot.class) != null){
-				//ability increases base dmg by 50%, scaling by 50%
-				return  16 +                       //16 base
-						4*bow.buffedLvl() + 2*lvl; //+4 per bow level, +2 per level
+				return bow.dartMax()            //crossbow dart damage
+						+ 4 + bow.buffedLvl()   //ability increases base dmg by 50%, scaling by 50%
+						+ 2*lvl;                //another +2 per level (ring of sharpshooting)
 			} else {
-				return  12 +                       //12 base
-						3*bow.buffedLvl() + 2*lvl; //+3 per bow level, +2 per level
+				return bow.dartMax()            //crossbow dart damage
+						+ 2*lvl;                //another +2 per level (ring of sharpshooting)
 			}
 		} else {
 			return  2 +     //2 base, down from 5
@@ -135,7 +134,7 @@ public class Dart extends MissileWeapon {
 	}
 	
 	@Override
-	public boolean hasEnchant(Class<? extends Weapon.Enchantment> type, Char owner) {
+	public boolean hasEnchant(Class<? extends Enchantment> type, Char owner) {
 		if (bow != null && bow.hasEnchant(type, owner)){
 			return true;
 		} else {
@@ -286,14 +285,14 @@ public class Dart extends MissileWeapon {
 			
 			if (item == null) return;
 			
-			final int maxToTip = Math.min(Item.curItem.quantity(), item.quantity()*2);
+			final int maxToTip = Math.min(curItem.quantity(), item.quantity()*2);
 			final int maxSeedsToUse = (maxToTip+1)/2;
 			
 			final int singleSeedDarts;
 			
 			final String[] options;
 			
-			if (Item.curItem.quantity() == 1){
+			if (curItem.quantity() == 1){
 				singleSeedDarts = 1;
 				options = new String[]{
 						Messages.get(Dart.class, "tip_one"),
@@ -325,39 +324,39 @@ public class Dart extends MissileWeapon {
 					
 					if (index == 0 && options.length == 3){
 						if (item.quantity() <= maxSeedsToUse){
-							item.detachAll( Item.curUser.belongings.backpack );
+							item.detachAll( curUser.belongings.backpack );
 						} else {
 							item.quantity(item.quantity() - maxSeedsToUse);
 						}
 						
-						if (maxToTip < Item.curItem.quantity()){
-							Item.curItem.quantity(Item.curItem.quantity() - maxToTip);
+						if (maxToTip < curItem.quantity()){
+							curItem.quantity(curItem.quantity() - maxToTip);
 						} else {
-							Item.curItem.detachAll(Item.curUser.belongings.backpack);
+							curItem.detachAll(curUser.belongings.backpack);
 						}
 						
 						TippedDart newDart = TippedDart.getTipped((Plant.Seed) item, maxToTip);
-						if (!newDart.collect()) Dungeon.level.drop(newDart, Item.curUser.pos).sprite.drop();
+						if (!newDart.collect()) Dungeon.level.drop(newDart, curUser.pos).sprite.drop();
 						
-						Item.curUser.spend( 1f );
-						Item.curUser.busy();
-						Item.curUser.sprite.operate(Item.curUser.pos);
+						curUser.spend( 1f );
+						curUser.busy();
+						curUser.sprite.operate(curUser.pos);
 						
 					} else if ((index == 1 && options.length == 3) || (index == 0 && options.length == 2)){
-						item.detach( Item.curUser.belongings.backpack );
+						item.detach( curUser.belongings.backpack );
 						
-						if (Item.curItem.quantity() <= singleSeedDarts){
-							Item.curItem.detachAll( Item.curUser.belongings.backpack );
+						if (curItem.quantity() <= singleSeedDarts){
+							curItem.detachAll( curUser.belongings.backpack );
 						} else {
-							Item.curItem.quantity(Item.curItem.quantity() - singleSeedDarts);
+							curItem.quantity(curItem.quantity() - singleSeedDarts);
 						}
 						
 						TippedDart newDart = TippedDart.getTipped((Plant.Seed) item, singleSeedDarts);
-						if (!newDart.collect()) Dungeon.level.drop(newDart, Item.curUser.pos).sprite.drop();
+						if (!newDart.collect()) Dungeon.level.drop(newDart, curUser.pos).sprite.drop();
 						
-						Item.curUser.spend( 1f );
-						Item.curUser.busy();
-						Item.curUser.sprite.operate(Item.curUser.pos);
+						curUser.spend( 1f );
+						curUser.busy();
+						curUser.sprite.operate(curUser.pos);
 					}
 				}
 			});

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
@@ -71,7 +70,7 @@ public class LibraryHallRoom extends StandardRoom {
 		}
 
 		//lastly, if all else is equal, prefer to leave the sides with the most doors open
-		for (Room.Door door : connected.values()) {
+		for (Door door : connected.values()) {
 			if (door.x == left || door.x == right){
 				topBottomBooks += 0.1f;
 			} else {
@@ -135,9 +134,9 @@ public class LibraryHallRoom extends StandardRoom {
 		}
 
 		//ensure doors can still be accessed
-		for (Room.Door door : connected.values()) {
+		for (Door door : connected.values()) {
 			Painter.drawInside(level, this, door, 1, Terrain.EMPTY);
-			door.set( Room.Door.Type.REGULAR );
+			door.set( Door.Type.REGULAR );
 		}
 
 	}

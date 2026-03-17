@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,32 +22,31 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
-import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
-import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Chains;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Effects;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Chains;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Effects;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
+import com.shatteredpixel.shatteredpixeldungeon.levels.MiningLevel;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
@@ -93,7 +92,7 @@ public class EtherealChains extends Artifact {
 
 		if (action.equals(AC_CAST)){
 
-			Item.curUser = hero;
+			curUser = hero;
 
 			if (!isEquipped( hero )) {
 				GLog.i( Messages.get(Artifact.class, "need_to_equip") );
@@ -129,17 +128,17 @@ public class EtherealChains extends Artifact {
 
 				//chains cannot be used to go where it is impossible to walk to
 				PathFinder.buildDistanceMap(target, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
-				if (!(Dungeon.level instanceof MiningLevel) && PathFinder.distance[Item.curUser.pos] == Integer.MAX_VALUE){
+				if (!(Dungeon.level instanceof MiningLevel) && PathFinder.distance[curUser.pos] == Integer.MAX_VALUE){
 					GLog.w( Messages.get(EtherealChains.class, "cant_reach") );
 					return;
 				}
 				
-				final Ballistica chain = new Ballistica(Item.curUser.pos, target, Ballistica.STOP_TARGET);
+				final Ballistica chain = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET);
 				
 				if (Actor.findChar( chain.collisionPos ) != null){
-					chainEnemy( chain, Item.curUser, Actor.findChar( chain.collisionPos ));
+					chainEnemy( chain, curUser, Actor.findChar( chain.collisionPos ));
 				} else {
-					chainLocation( chain, Item.curUser );
+					chainLocation( chain, curUser );
 				}
 
 			}
@@ -199,7 +198,7 @@ public class EtherealChains extends Artifact {
 						charge -= chargeUse;
 						Invisibility.dispel(hero);
 						Talent.onArtifactUsed(hero);
-						Item.updateQuickslot();
+						updateQuickslot();
 
 						Dungeon.level.occupyCell(enemy);
 						Dungeon.observe();
@@ -267,7 +266,7 @@ public class EtherealChains extends Artifact {
 						charge -= chargeUse;
 						Invisibility.dispel(hero);
 						Talent.onArtifactUsed(hero);
-						Item.updateQuickslot();
+						updateQuickslot();
 
 						Dungeon.level.occupyCell(hero);
 						hero.spendAndNext(1f);
@@ -294,7 +293,7 @@ public class EtherealChains extends Artifact {
 			while (partialCharge >= 1){
 				partialCharge--;
 				charge++;
-				Item.updateQuickslot();
+				updateQuickslot();
 			}
 		}
 	}
@@ -335,9 +334,9 @@ public class EtherealChains extends Artifact {
 				charge ++;
 			}
 
-			Item.updateQuickslot();
+			updateQuickslot();
 
-			spend( Actor.TICK );
+			spend( TICK );
 
 			return true;
 		}

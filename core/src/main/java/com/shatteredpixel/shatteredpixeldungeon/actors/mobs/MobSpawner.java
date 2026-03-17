@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,12 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.*;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.RatSkull;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class MobSpawner extends Actor {
 	{
@@ -69,300 +69,141 @@ public class MobSpawner extends Actor {
 
 	//returns a rotation of standard mobs, unshuffled.
 	private static ArrayList<Class<? extends Mob>> standardMobRotation( int depth ){
-		switch(depth) {
+		switch(depth){
 
 			// Sewers
-			case 1:
-			default:
+			case 1: default:
 				//3x rat, 1x snake
-				if (Dungeon.seweralt == true) {
-					return new ArrayList<>(Arrays.asList(
-							Toad.class, Toad.class, Toad.class,
-							Grub.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(
-							Rat.class, Rat.class, Rat.class,
-							Snake.class));
-				}
+				return new ArrayList<>(Arrays.asList(
+						Rat.class, Rat.class, Rat.class,
+						Snake.class));
 			case 2:
 				//2x rat, 1x snake, 2x gnoll
-				if (Dungeon.seweralt == true) {
-					return new ArrayList<>(Arrays.asList(
-							Toad.class, Toad.class, Grub.class,
-							Gnoll.class, Gnoll.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(Rat.class, Rat.class,
-							Snake.class,
-							Gnoll.class, Gnoll.class));
-				}
+				return new ArrayList<>(Arrays.asList(Rat.class, Rat.class,
+						Snake.class,
+						Gnoll.class, Gnoll.class));
 			case 3:
 				//1x rat, 1x snake, 3x gnoll, 1x swarm, 1x crab
-				if (Dungeon.seweralt == true) {
-					return new ArrayList<>(Arrays.asList(
-							Toad.class, Grub.class, Butterfly.class,
-							Gnoll.class, Gnoll.class, Druid.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(Rat.class,
-							Snake.class,
-							Gnoll.class, Gnoll.class, Gnoll.class,
-							Swarm.class,
-							Crab.class));
-				}
-			case 4:
-			case 5:
+				return new ArrayList<>(Arrays.asList(Rat.class,
+						Snake.class,
+						Gnoll.class, Gnoll.class, Gnoll.class,
+						Swarm.class,
+						Crab.class));
+			case 4: case 5:
 				//1x gnoll, 1x swarm, 2x crab, 2x slime
-				if (Dungeon.seweralt == true) {
-					return new ArrayList<>(Arrays.asList(
-							Druid.class, Druid.class, Butterfly.class,
-							Gnoll.class, ThornLasher.class, ThornLasher.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(Gnoll.class,
-							Swarm.class,
-							Crab.class, Crab.class,
-							Slime.class, Slime.class));
-				}
+				return new ArrayList<>(Arrays.asList(Gnoll.class,
+						Swarm.class,
+						Crab.class, Crab.class,
+						Slime.class, Slime.class));
 
-				// Prison
+			// Prison
 			case 6:
 				//3x skeleton, 1x thief, 1x swarm
-				if (Dungeon.prisonalt == true) {
-					return new ArrayList<>(Arrays.asList(ColdCorpse.class, ColdCorpse.class, ColdCorpse.class,
-							MeatRack.class,
-							Crab.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(Skeleton.class, Skeleton.class, Skeleton.class,
-							Thief.class,
-							Swarm.class));
-				}
+				return new ArrayList<>(Arrays.asList(Skeleton.class, Skeleton.class, Skeleton.class,
+						Thief.class,
+						Swarm.class));
 			case 7:
 				//3x skeleton, 1x thief, 1x DM-100, 1x guard
-				if (Dungeon.prisonalt == true) {
-					return new ArrayList<>(Arrays.asList(ColdCorpse.class, ColdCorpse.class, ColdCorpse.class,
-							MeatRack.class,
-							Banshee.class,
-							GlassKnight.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(Skeleton.class, Skeleton.class, Skeleton.class,
-							Thief.class,
-							DM100.class,
-							Guard.class));
-				}
+				return new ArrayList<>(Arrays.asList(Skeleton.class, Skeleton.class, Skeleton.class,
+						Thief.class,
+						DM100.class,
+						Guard.class));
 			case 8:
 				//2x skeleton, 1x thief, 2x DM-100, 2x guard, 1x necromancer
-				if (Dungeon.prisonalt == true) {
-					return new ArrayList<>(Arrays.asList(ColdCorpse.class, ColdCorpse.class,
-							MeatRack.class,
-							Banshee.class, Banshee.class,
-							GlassKnight.class, GlassKnight.class,
-							Wererat.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(Skeleton.class, Skeleton.class,
-							Thief.class,
-							DM100.class, DM100.class,
-							Guard.class, Guard.class,
-							Necromancer.class));
-				}
-			case 9:
+				return new ArrayList<>(Arrays.asList(Skeleton.class, Skeleton.class,
+						Thief.class,
+						DM100.class, DM100.class,
+						Guard.class, Guard.class,
+						Necromancer.class));
+			case 9: case 10:
 				//1x skeleton, 1x thief, 2x DM-100, 2x guard, 2x necromancer
-				if (Dungeon.prisonalt == true) {
-					return new ArrayList<>(Arrays.asList(ColdCorpse.class,
-							MeatRack.class,
-							Banshee.class, Banshee.class,
-							GlassKnight.class, GlassKnight.class,
-							Wererat.class, Wererat.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(Skeleton.class,
-							Thief.class,
-							DM100.class, DM100.class,
-							Guard.class, Guard.class,
-							Necromancer.class, Necromancer.class));
-				}
+				return new ArrayList<>(Arrays.asList(Skeleton.class,
+						Thief.class,
+						DM100.class, DM100.class,
+						Guard.class, Guard.class,
+						Necromancer.class, Necromancer.class));
 
-			case 10:
-				//For summoning traps on rat boss room, this is set for coldhouse level
-				if (Dungeon.prisonalt == true) {
-					return new ArrayList<>(Arrays.asList(Rat.class, Rat.class, Rat.class,
-							FetidRat.class,
-							Albino.class,
-							Wererat.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(Skeleton.class,
-							Thief.class,
-							DM100.class, DM100.class,
-							Guard.class, Guard.class,
-							Necromancer.class, Necromancer.class));
-				}
-				// Caves
+			// Caves
 			case 11:
 				//3x bat, 1x brute, 1x shaman
-				if (Dungeon.cavealt == true) {
-					return new ArrayList<>(Arrays.asList(
-							GraniteTroll.class, GraniteTroll.class, GraniteTroll.class,
-							TrollBrawler.random(),
-							TrollRanger.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(
-							Bat.class, Bat.class, Bat.class,
-							Brute.class,
-							Shaman.random()));
-				}
+				return new ArrayList<>(Arrays.asList(
+						Bat.class, Bat.class, Bat.class,
+						Brute.class,
+						Shaman.random()));
 			case 12:
 				//2x bat, 2x brute, 1x shaman, 1x spinner
-				if (Dungeon.cavealt == true) {
-					return new ArrayList<>(Arrays.asList(
-							GraniteTroll.class, GraniteTroll.class,
-							TrollBrawler.random(), TrollBrawler.random(),
-							TrollRanger.class,
-							Mole.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(
-							Bat.class, Bat.class,
-							Brute.class, Brute.class,
-							Shaman.random(),
-							Spinner.class));
-				}
+				return new ArrayList<>(Arrays.asList(
+						Bat.class, Bat.class,
+						Brute.class, Brute.class,
+						Shaman.random(),
+						Spinner.class));
 			case 13:
 				//1x bat, 2x brute, 2x shaman, 2x spinner, 1x DM-200
-				if (Dungeon.cavealt == true) {
-					return new ArrayList<>(Arrays.asList(
-							GraniteTroll.class,
-							TrollBrawler.random(), TrollBrawler.random(),
-							TrollRanger.class, TrollRanger.class,
-							Mole.class, Mole.class,
-							RockGolem.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(
-							Bat.class,
-							Brute.class, Brute.class,
-							Shaman.random(), Shaman.random(),
-							Spinner.class, Spinner.class,
-							DM200.class));
-				}
-			case 14:
-			case 15:
+				return new ArrayList<>(Arrays.asList(
+						Bat.class,
+						Brute.class, Brute.class,
+						Shaman.random(), Shaman.random(),
+						Spinner.class, Spinner.class,
+						DM200.class));
+			case 14: case 15:
 				//1x bat, 1x brute, 2x shaman, 2x spinner, 2x DM-300
-				if (Dungeon.cavealt == true) {
-					return new ArrayList<>(Arrays.asList(
-							GraniteTroll.class,
-							TrollBrawler.random(),
-							TrollRanger.class, TrollRanger.class,
-							Mole.class, Mole.class,
-							RockGolem.class, RockGolem.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(
-							Bat.class,
-							Brute.class,
-							Shaman.random(), Shaman.random(),
-							Spinner.class, Spinner.class,
-							DM200.class, DM200.class));
-				}
-				// City
+				return new ArrayList<>(Arrays.asList(
+						Bat.class,
+						Brute.class,
+						Shaman.random(), Shaman.random(),
+						Spinner.class, Spinner.class,
+						DM200.class, DM200.class));
+
+			// City
 			case 16:
-				if (Dungeon.cityalt == true) {
-					return new ArrayList<>(Arrays.asList(
-							Cultist.class, Cultist.class, Cultist.class,
-							Giant.class,
-							Leader.class));
-				} else {
-					//3x ghoul, 1x elemental, 1x warlock
-					return new ArrayList<>(Arrays.asList(
-							Ghoul.class, Ghoul.class, Ghoul.class,
-							Elemental.random(),
-							Warlock.class));
-				}
+				//3x ghoul, 1x elemental, 1x warlock
+				return new ArrayList<>(Arrays.asList(
+						Ghoul.class, Ghoul.class, Ghoul.class,
+						Elemental.random(),
+						Warlock.class));
 			case 17:
 				//1x ghoul, 2x elemental, 1x warlock, 1x monk
-				if (Dungeon.cityalt == true) {
-					return new ArrayList<>(Arrays.asList(
-							Cultist.class,
-							Giant.class, Giant.class,
-							Leader.class,
-							Trapper.class));
-				}
-				else {
 				return new ArrayList<>(Arrays.asList(
 						Ghoul.class,
 						Elemental.random(), Elemental.random(),
 						Warlock.class,
 						Monk.class));
-					}
 			case 18:
 				//1x ghoul, 1x elemental, 2x warlock, 2x monk, 1x golem
-				if (Dungeon.cityalt == true) {
-					return new ArrayList<>(Arrays.asList(
-							Cultist.class,
-                            Giant.class,
-							Leader.class, Leader.class,
-							Trapper.class, Trapper.class,
-							Warden.class));
-				}
-				else {
-					return new ArrayList<>(Arrays.asList(
-							Ghoul.class,
-							Elemental.random(),
-							Warlock.class, Warlock.class,
-							Monk.class, Monk.class,
-							Golem.class));
-				}
+				return new ArrayList<>(Arrays.asList(
+						Ghoul.class,
+						Elemental.random(),
+						Warlock.class, Warlock.class,
+						Monk.class, Monk.class,
+						Golem.class));
 			case 19: case 20:
 				//1x elemental, 2x warlock, 2x monk, 3x golem
-                if (Dungeon.cityalt == true) {
-                    return new ArrayList<>(Arrays.asList(
-                            Cultist.class,
-                            Leader.class, Leader.class,
-                            Trapper.class, Trapper.class,
-                            Warden.class, Warden.class, Warden.class));
-                }
-                else {
-                    return new ArrayList<>(Arrays.asList(
-                            Elemental.random(),
-                            Warlock.class, Warlock.class,
-                            Monk.class, Monk.class,
-                            Golem.class, Golem.class, Golem.class));
-                }
+				return new ArrayList<>(Arrays.asList(
+						Elemental.random(),
+						Warlock.class, Warlock.class,
+						Monk.class, Monk.class,
+						Golem.class, Golem.class, Golem.class));
+
 			// Halls
 			case 21:
 				//2x succubus, 1x evil eye
-				if (Dungeon.hallsalt == true) {
-					return new ArrayList<>(Arrays.asList(
-                            Frogeat.random(),
-							Puppet.class));
-				} else {
-					return new ArrayList<>(Arrays.asList(
-							Succubus.class, Succubus.class,
-							Eye.class));
-				}
+				return new ArrayList<>(Arrays.asList(
+						Succubus.class, Succubus.class,
+						Eye.class));
 			case 22:
 				//1x succubus, 1x evil eye
-                if (Dungeon.hallsalt == true) {
-                    return new ArrayList<>(Arrays.asList(
-                            Sacrifice.class, Frogeat.random(), BedrockGolem.class,
-                            Puppet.class));
-                } else {
-                    return new ArrayList<>(Arrays.asList(
-                            Succubus.class,
-                            Eye.class));
-                }
+				return new ArrayList<>(Arrays.asList(
+						Succubus.class,
+						Eye.class));
 			case 23:
 				//1x succubus, 2x evil eye, 1x scorpio
-                if (Dungeon.hallsalt == true) {
-                    return new ArrayList<>(Arrays.asList(
-                            Sacrifice.class, BedrockGolem.class, BedrockGolem.class ,Frogeat.random(),
-                            Puppet.class));
-                } else {
-                    return new ArrayList<>(Arrays.asList(
-                            Succubus.class,
-                            Eye.class, Eye.class,
-                            Scorpio.class));
-                }
+				return new ArrayList<>(Arrays.asList(
+						Succubus.class,
+						Eye.class, Eye.class,
+						Scorpio.class));
 			case 24: case 25: case 26:
 				//1x succubus, 2x evil eye, 3x scorpio
-                if (Dungeon.hallsalt == true) {
-                    return new ArrayList<>(Arrays.asList(
-                            Sacrifice.class, BedrockGolem.class, BedrockGolem.class ,
-                            Puppet.class));
-                }
-				else return new ArrayList<>(Arrays.asList(
+				return new ArrayList<>(Arrays.asList(
 						Succubus.class,
 						Eye.class, Eye.class,
 						Scorpio.class, Scorpio.class, Scorpio.class));
@@ -405,35 +246,31 @@ public class MobSpawner extends Actor {
 		for (int i = 0; i < rotation.size(); i++) {
 			if (Random.Float() < altChance) {
 				Class<? extends Mob> cl = rotation.get(i);
-				if (cl == Rat.class)                cl = Albino.class;
-				else if (cl == Gnoll.class)         cl = GnollExile.class;
-				else if (cl == Crab.class)          cl = HermitCrab.class;
-				else if (cl == Slime.class)         cl = CausticSlime.class;
-
-				else if (cl == Thief.class)         cl = Bandit.class;
-				else if (cl == Necromancer.class)   cl = SpectralNecromancer.class;
-
-				else if (cl == Brute.class)         cl = ArmoredBrute.class;
-				else if (cl == DM200.class)         cl = DM201.class;
-
-				else if (cl == Monk.class)          cl = Senior.class;
-				//chaos elemental spawning happens in Elemental.Random
-
-				else if (cl == Scorpio.class)       cl = Acidic.class;
-
-				else if (cl == Toad.class)          cl = PoisonToad.class;
-				else if (cl == Grub.class)         	cl = RoyalGrub.class;
-
-				else if (cl == MeatRack.class)         cl = PrimeRib.class;
-				else if (cl == Banshee.class)         cl = Revenant.class;
-
-				else if (cl == GraniteTroll.class)  cl = GraniteElder.class;
-				else if (cl == Mole.class)        	cl = FlamingMole.class;
-
-				else if (cl == Leader.class)        cl = Conjurer.class;
-
-				rotation.set(i, cl);
+				Class<? extends Mob> alt = RARE_ALTS.get(cl);
+				if (alt != null) {
+					rotation.set(i, alt);
+				}
 			}
 		}
+	}
+
+	public static final HashMap<Class<?extends Mob>, Class<?extends Mob>> RARE_ALTS = new HashMap<>();
+	static {
+		RARE_ALTS.put(Rat.class,            Albino.class);
+		RARE_ALTS.put(Gnoll.class,          GnollExile.class);
+		RARE_ALTS.put(Crab.class,           HermitCrab.class);
+		RARE_ALTS.put(Slime.class,          CausticSlime.class);
+
+		RARE_ALTS.put(Thief.class,          Bandit.class);
+		RARE_ALTS.put(Necromancer.class,    SpectralNecromancer.class);
+
+		RARE_ALTS.put(Brute.class,          ArmoredBrute.class);
+		RARE_ALTS.put(DM200.class,          DM201.class);
+
+		RARE_ALTS.put(Monk.class,           Senior.class);
+		//swapping to chaos elemental actually happens in Elemental.random
+		RARE_ALTS.put(Elemental.class,      Elemental.ChaosElemental.class);
+
+		RARE_ALTS.put(Scorpio.class,        Acidic.class);
 	}
 }

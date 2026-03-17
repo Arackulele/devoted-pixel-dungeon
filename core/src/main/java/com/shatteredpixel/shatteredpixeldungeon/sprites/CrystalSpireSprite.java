@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ public abstract class CrystalSpireSprite extends MobSprite {
 		super.update();
 		if (curAnim != die && ch != null && visible != wasVisible){
 			if (visible){
-				DungeonWallsTilemap.skipCells.add(ch.pos - 2* Dungeon.level.width());
+				DungeonWallsTilemap.skipCells.add(ch.pos - 2*Dungeon.level.width());
 				DungeonWallsTilemap.skipCells.add(ch.pos - Dungeon.level.width());
 			} else {
 				DungeonWallsTilemap.skipCells.remove(ch.pos - 2*Dungeon.level.width());

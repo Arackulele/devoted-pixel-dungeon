@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,21 +22,19 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.AlchemyScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.AlchemyScene;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
@@ -143,7 +141,7 @@ public class AlchemistsToolkit extends Artifact {
 			}
 		}
 
-		Item.updateQuickslot();
+		updateQuickslot();
 	}
 
 	@Override
@@ -162,12 +160,12 @@ public class AlchemistsToolkit extends Artifact {
 	
 	@Override
 	public void charge(Hero target, float amount) {
-		if (target.buff(MagicImmune.class) != null ) return;
+		if (target.buff(MagicImmune.class) != null) return;
 		partialCharge += 0.25f*amount;
 		while (partialCharge >= 1){
 			partialCharge--;
 			charge++;
-			Item.updateQuickslot();
+			updateQuickslot();
 		}
 	}
 
@@ -233,10 +231,10 @@ public class AlchemistsToolkit extends Artifact {
 					float turnsToWarmUp = (int) Math.pow(10 - level(), 2);
 					warmUpDelay -= 100 / turnsToWarmUp;
 				}
-				Item.updateQuickslot();
+				updateQuickslot();
 			}
 
-			spend(Actor.TICK);
+			spend(TICK);
 			return true;
 		}
 
@@ -255,7 +253,7 @@ public class AlchemistsToolkit extends Artifact {
 				charge++;
 				partialCharge -= 1;
 
-				Item.updateQuickslot();
+				updateQuickslot();
 			}
 		}
 

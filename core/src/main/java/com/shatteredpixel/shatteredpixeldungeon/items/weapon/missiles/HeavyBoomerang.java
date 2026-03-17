@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
 import com.watabou.noosa.tweeners.AlphaTweener;
@@ -45,21 +44,27 @@ public class HeavyBoomerang extends MissileWeapon {
 		sticky = false;
 		baseUses = 5;
 	}
-	
+
 	@Override
 	public int max(int lvl) {
 		return  4 * tier +                  //16 base, down from 20
 				(tier-1) * lvl;             //3 scaling, down from 4
 	}
 
-	boolean circleBackhit = false;
+	boolean circlingBack = false;
 
 	@Override
 	protected float adjacentAccFactor(Char owner, Char target) {
-		if (circleBackhit){
+		if (circlingBack){
 			return 1.5f;
 		}
 		return super.adjacentAccFactor(owner, target);
+	}
+
+	@Override
+	public float pickupDelay() {
+		//pickup is instant when circling back
+		return circlingBack ? 0f : super.pickupDelay();
 	}
 
 	@Override
@@ -96,7 +101,7 @@ public class HeavyBoomerang extends MissileWeapon {
 			this.returnPos = returnPos;
 			this.returnDepth = returnDepth;
 			this.returnBranch = returnBranch;
-			left = 4;
+			left = 5;
 		}
 		
 		public int returnPos(){
@@ -127,22 +132,18 @@ public class HeavyBoomerang extends MissileWeapon {
 										@Override
 										public void call() {
 											detach();
+											boomerang.circlingBack = true;
 											if (returnTarget == target){
 												if (!boomerang.spawnedForEffect) {
-													if (target instanceof Hero && boomerang.doPickUp((Hero) target)) {
-														//grabbing the boomerang takes no time
-														((Hero) target).spend(-Item.TIME_TO_PICK_UP);
-													} else {
+													if (!(target instanceof Hero) || !boomerang.doPickUp((Hero) target)) {
 														Dungeon.level.drop(boomerang, returnPos).sprite.drop();
 													}
 												}
 												
 											} else if (returnTarget != null){
-												boomerang.circleBackhit = true;
 												if (((Hero)target).shoot( returnTarget, boomerang )) {
 													boomerang.decrementDurability();
 												}
-												boomerang.circleBackhit = false;
 												if (!boomerang.spawnedForEffect && boomerang.durability > 0) {
 													Dungeon.level.drop(boomerang, returnPos).sprite.drop();
 												}
@@ -150,6 +151,7 @@ public class HeavyBoomerang extends MissileWeapon {
 											} else if (!boomerang.spawnedForEffect) {
 												Dungeon.level.drop(boomerang, returnPos).sprite.drop();
 											}
+											boomerang.circlingBack = false;
 											CircleBack.this.next();
 										}
 									});
@@ -159,7 +161,7 @@ public class HeavyBoomerang extends MissileWeapon {
 					return false;
 				}
 			}
-			spend( Actor.TICK );
+			spend( TICK );
 			return true;
 		}
 		

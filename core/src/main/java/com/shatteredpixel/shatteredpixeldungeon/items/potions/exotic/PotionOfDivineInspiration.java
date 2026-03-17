@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,17 +27,16 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StatusPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TalentsPane;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHero;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -58,7 +57,7 @@ public class PotionOfDivineInspiration extends ExoticPotion {
 
 		if (!isKnown()) {
 			identify();
-			Item.curItem = detach( hero.belongings.backpack );
+			curItem = detach( hero.belongings.backpack );
 			identifiedByUse = true;
 		} else {
 			identifiedByUse = false;
@@ -104,17 +103,17 @@ public class PotionOfDivineInspiration extends ExoticPotion {
 				super.onSelect(index);
 
 				if (index != -1){
-					Buff.affect(Item.curUser, DivineInspirationTracker.class).setBoosted(index+1);
+					Buff.affect(curUser, DivineInspirationTracker.class).setBoosted(index+1);
 
 					if (!identifiedByUse) {
-						Item.curItem.detach(Item.curUser.belongings.backpack);
+						curItem.detach(curUser.belongings.backpack);
 					}
 					identifiedByUse = false;
 
-					Item.curUser.busy();
-					Item.curUser.sprite.operate(Item.curUser.pos);
+					curUser.busy();
+					curUser.sprite.operate(curUser.pos);
 
-					Item.curUser.spendAndNext(1f);
+					curUser.spendAndNext(1f);
 
 					boolean unspentTalents = false;
 					for (int i = 1; i <= Dungeon.hero.talents.size(); i++){
@@ -133,13 +132,13 @@ public class PotionOfDivineInspiration extends ExoticPotion {
 					Sample.INSTANCE.play( Assets.Sounds.DRINK );
 					Sample.INSTANCE.playDelayed(Assets.Sounds.LEVELUP, 0.3f, 0.7f, 1.2f);
 					Sample.INSTANCE.playDelayed(Assets.Sounds.LEVELUP, 0.6f, 0.7f, 1.2f);
-					new Flare( 6, 32 ).color(0xFFFF00, true).show( Item.curUser.sprite, 2f );
+					new Flare( 6, 32 ).color(0xFFFF00, true).show( curUser.sprite, 2f );
 					GLog.p(Messages.get(PotionOfDivineInspiration.class, "bonus"));
 
 					if (!anonymous) {
 						Catalog.countUse(PotionOfDivineInspiration.class);
 						if (Random.Float() < talentChance) {
-							Talent.onPotionUsed(Item.curUser, Item.curUser.pos, talentFactor);
+							Talent.onPotionUsed(curUser, curUser.pos, talentFactor);
 						}
 					}
 

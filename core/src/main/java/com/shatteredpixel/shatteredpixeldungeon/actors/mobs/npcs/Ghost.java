@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
@@ -32,14 +31,17 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.FetidRat;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollTrickster;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GreatCrab;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.ElderThorn;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.EmperorButterfly;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.HornedToad;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.LeatherArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.MailArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ParchmentScrap;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -47,17 +49,11 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuest;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndSadGhost;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.LeatherArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.MailArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.ScaleArmor;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
-import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.Random;
 
 public class Ghost extends NPC {
@@ -71,10 +67,10 @@ public class Ghost extends NPC {
 		state = WANDERING;
 
 		//not actually large of course, but this makes the ghost stick to the exit room
-		properties.add(Char.Property.LARGE);
+		properties.add(Property.LARGE);
 	}
 
-	protected class Wandering extends Mob.Wandering {
+	protected class Wandering extends Mob.Wandering{
 		@Override
 		protected int randomDestination() {
 			int pos = super.randomDestination();
@@ -103,7 +99,7 @@ public class Ghost extends NPC {
 
 	@Override
 	public int defenseSkill( Char enemy ) {
-		return Char.INFINITE_EVASION;
+		return INFINITE_EVASION;
 	}
 	
 	@Override
@@ -165,15 +161,6 @@ public class Ghost extends NPC {
 								case 3:
 									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "crab_2")));
 									break;
-								case 4:
-									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "toad_2")));
-									break;
-								case 5:
-									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "butterfly_2")));
-									break;
-								case 6:
-									GameScene.show(new WndQuest(Ghost.this, Messages.get(Ghost.this, "lasher_2")));
-									break;
 							}
 						}
 					});
@@ -194,15 +181,6 @@ public class Ghost extends NPC {
 				case 3:
 					questBoss = new GreatCrab();
 					txt_quest = Messages.get(this, "crab_1", Messages.titleCase(Dungeon.hero.name())); break;
-				case 4:
-					questBoss = new HornedToad();
-					txt_quest = Messages.get(this, "toad_1", Messages.titleCase(Dungeon.hero.name())); break;
-				case 5:
-					questBoss = new EmperorButterfly();
-					txt_quest = Messages.get(this, "butterfly_1", Messages.titleCase(Dungeon.hero.name())); break;
-				case 6:
-					questBoss = new ElderThorn();
-					txt_quest = Messages.get(this, "lasher_1", Messages.titleCase(Dungeon.hero.name())); break;
 			}
 
 			questBoss.pos = Dungeon.level.randomRespawnCell( this );
@@ -336,9 +314,6 @@ public class Ghost extends NPC {
 				//dungeon depth determines type of quest.
 				//depth2=fetid rat, 3=gnoll trickster, 4=great crab
 				type = Dungeon.depth-1;
-
-				//5=hornedtoadetc
-				if (Dungeon.seweralt) type += 3;
 				
 				given = false;
 				processed = false;
@@ -429,7 +404,6 @@ public class Ghost extends NPC {
 		}
 		
 		public static boolean completed(){
-            if (DeviceCompat.isDebug()) return true;
 			return processed() && weapon == null && armor == null;
 		}
 	}

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,8 +59,8 @@ public class MagicalFireRoom extends SpecialRoom {
 		Painter.fill( level, this, Terrain.WALL );
 		Painter.fill( level, this, 1, Terrain.EMPTY );
 
-		Room.Door door = entrance();
-		door.set( Room.Door.Type.REGULAR );
+		Door door = entrance();
+		door.set( Door.Type.REGULAR );
 
 		Point firePos = center();
 		Room behindFire = new EmptyRoom();
@@ -113,7 +113,7 @@ public class MagicalFireRoom extends SpecialRoom {
 
 	}
 
-	private static Item prize(Level level ) {
+	private static Item prize( Level level ) {
 
 		if (Random.Int(3) != 0){
 			Item prize = level.findPrizeItem();
@@ -160,7 +160,7 @@ public class MagicalFireRoom extends SpecialRoom {
 
 			int cell;
 
-			Freezing freeze = (Freezing) Dungeon.level.blobs.get( Freezing.class );
+			Freezing freeze = (Freezing)Dungeon.level.blobs.get( Freezing.class );
 			Blizzard bliz = (Blizzard)Dungeon.level.blobs.get( Blizzard.class );
 
 			Fire fire = (Fire)Dungeon.level.blobs.get( Fire.class );

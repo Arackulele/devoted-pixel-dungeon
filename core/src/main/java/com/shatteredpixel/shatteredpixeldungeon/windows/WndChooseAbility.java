@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
+import com.shatteredpixel.shatteredpixeldungeon.items.KingsCrown;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.items.KingsCrown;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.Trinity;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -37,6 +37,8 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.watabou.noosa.Game;
+import com.watabou.utils.Random;
 
 public class WndChooseAbility extends Window {
 
@@ -54,6 +56,44 @@ public class WndChooseAbility extends Window {
 		titlebar.setRect( 0, 0, WIDTH, 0 );
 		add( titlebar );
 
+		IconButton random = new IconButton(Icons.SHUFFLE.get()){
+			@Override
+			protected void onClick() {
+				super.onClick();
+				GameScene.show(new WndOptions(Icons.SHUFFLE.get(),
+						Messages.get(WndChooseAbility.class, "random_title"),
+						Messages.get(WndChooseAbility.class, "random_sure"),
+						Messages.get(WndChooseAbility.class, "yes"),
+						Messages.get(WndChooseAbility.class, "no")){
+					@Override
+					protected void onSelect(int index) {
+						super.onSelect(index);
+						if (index == 0){
+							WndChooseAbility.this.hide();
+							ArmorAbility abil = Random.oneOf(hero.heroClass.armorAbilities());
+							crown.upgradeArmor(hero, armor, abil);
+							GameScene.show(new WndInfoArmorAbility(hero.heroClass, abil));
+						}
+					}
+				});
+			}
+
+			@Override
+			public void update() {
+				if (Statistics.qualifiedForRandomVictoryBadge){
+					icon.tint(1, 1, 1, (float)Math.abs(Math.cos(1.5f*Math.PI* Game.timeTotal)/2f));
+				}
+				super.update();
+			}
+
+			@Override
+			protected String hoverText() {
+				return Messages.get(WndChooseAbility.class, "random_title");
+			}
+		};
+		random.setRect(WIDTH-16, 0, 16, 16);
+		if (crown != null) add(random);
+
 		RenderedTextBlock body = PixelScene.renderTextBlock( 6 );
 		if (crown != null) {
 			body.text(Messages.get(this, "message"), WIDTH);
@@ -66,18 +106,12 @@ public class WndChooseAbility extends Window {
 		float pos = body.bottom() + 3*GAP;
 		for (ArmorAbility ability : hero.heroClass.armorAbilities()) {
 
-			String warn;
-			if (Dungeon.initialVersion < 821 && ability instanceof Trinity){
-				warn = "_WARNING, code to track which items you have found for use in trinity was added in BETA-2.2. This run was started before that, and so some items you have encountered may not be usable with Trinity. Any items you currently hold can be made selectable by dropping and picking them back up._\n\n";
-			} else {
-				warn = "";
-			}
 			RedButton abilityButton = new RedButton(ability.shortDesc(), 6){
 				@Override
 				protected void onClick() {
 					GameScene.show(new WndOptions( new HeroIcon( ability ),
 							Messages.titleCase(ability.name()),
-							warn + Messages.get(WndChooseAbility.this, "are_you_sure"),
+							Messages.get(WndChooseAbility.this, "are_you_sure"),
 							Messages.get(WndChooseAbility.this, "yes"),
 							Messages.get(WndChooseAbility.this, "no")){
 
@@ -91,6 +125,7 @@ public class WndChooseAbility extends Window {
 								} else {
 									new KingsCrown().upgradeArmor(hero, null, ability);
 								}
+								Statistics.qualifiedForRandomVictoryBadge = false;
 							}
 						}
 					});

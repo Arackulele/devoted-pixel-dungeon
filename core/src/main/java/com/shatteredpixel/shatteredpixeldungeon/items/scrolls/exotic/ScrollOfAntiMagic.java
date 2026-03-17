@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ package com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class ScrollOfAntiMagic extends ExoticScroll {
@@ -36,9 +35,9 @@ public class ScrollOfAntiMagic extends ExoticScroll {
 	@Override
 	public void doRead() {
 
-		detach(Item.curUser.belongings.backpack);
-		Buff.affect( Item.curUser, MagicImmune.class, MagicImmune.DURATION );
-		new Flare( 5, 32 ).color( 0x00FF00, true ).show( Item.curUser.sprite, 2f );
+		detach(curUser.belongings.backpack);
+		Buff.affect( curUser, MagicImmune.class, MagicImmune.DURATION );
+		new Flare( 5, 32 ).color( 0x00FF00, true ).show( curUser.sprite, 2f );
 
 		identify();
 		

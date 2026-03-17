@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,14 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PinCushion;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
@@ -37,6 +41,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ParchmentScrap;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.ShardOfOblivion;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Explosive;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Projecting;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -47,12 +52,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.InventoryPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.PinCushion;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.curses.Explosive;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -69,7 +68,7 @@ abstract public class MissileWeapon extends Weapon {
 		
 		bones = true;
 
-		defaultAction = Item.AC_THROW;
+		defaultAction = AC_THROW;
 		usesTargeting = true;
 	}
 
@@ -128,9 +127,6 @@ abstract public class MissileWeapon extends Weapon {
 	
 	public int STRReq(int lvl){
 		int req = STRReq(tier, lvl) - 1; //1 less str than normal for their tier
-		if (GildDegrade){
-			req = STRReq(tier, 0);
-		}
 		if (masteryPotionBonus){
 			req -= 2;
 		}
@@ -146,7 +142,7 @@ abstract public class MissileWeapon extends Weapon {
 		}
 	}
 
-	public Item upgrade(boolean enchant ) {
+	public Item upgrade( boolean enchant ) {
 		if (!bundleRestoring) {
 			durability = MAX_DURABILITY;
 			extraThrownLeft = false;
@@ -176,7 +172,7 @@ abstract public class MissileWeapon extends Weapon {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		actions.remove( EquipableItem.AC_EQUIP );
+		actions.remove( AC_EQUIP );
 		return actions;
 	}
 	
@@ -225,7 +221,7 @@ abstract public class MissileWeapon extends Weapon {
 	protected float adjacentAccFactor(Char owner, Char target){
 		if (Dungeon.level.adjacent( owner.pos, target.pos )) {
 			if (owner instanceof Hero){
-				return (0.5f + 0.2f*((Hero) owner).pointsInTalent(Talent.POINT_BLANK));
+				return (0.5f + 0.25f*((Hero) owner).pointsInTalent(Talent.POINT_BLANK));
 			} else {
 				return 0.5f;
 			}
@@ -269,24 +265,24 @@ abstract public class MissileWeapon extends Weapon {
 	@Override
 	protected void onThrow( int cell ) {
 		Char enemy = Actor.findChar( cell );
-		if (enemy == null || enemy == Item.curUser) {
+		if (enemy == null || enemy == curUser) {
 			parent = null;
 
 			//metamorphed seer shot logic
-			if (Item.curUser.hasTalent(Talent.SEER_SHOT)
-					&& Item.curUser.heroClass != HeroClass.HUNTRESS
-					&& Item.curUser.buff(Talent.SeerShotCooldown.class) == null){
+			if (curUser.hasTalent(Talent.SEER_SHOT)
+					&& curUser.heroClass != HeroClass.HUNTRESS
+					&& curUser.buff(Talent.SeerShotCooldown.class) == null){
 				if (Actor.findChar(cell) == null) {
-					RevealedArea a = Buff.affect(Item.curUser, RevealedArea.class, 5 * Item.curUser.pointsInTalent(Talent.SEER_SHOT));
+					RevealedArea a = Buff.affect(curUser, RevealedArea.class, 5 * curUser.pointsInTalent(Talent.SEER_SHOT));
 					a.depth = Dungeon.depth;
 					a.pos = cell;
-					Buff.affect(Item.curUser, Talent.SeerShotCooldown.class, 20f);
+					Buff.affect(curUser, Talent.SeerShotCooldown.class, 20f);
 				}
 			}
 
 			if (!spawnedForEffect) super.onThrow( cell );
 		} else {
-			if (!Item.curUser.shoot( enemy, this )) {
+			if (!curUser.shoot( enemy, this )) {
 				rangedMiss( cell );
 			} else {
 				
@@ -331,10 +327,12 @@ abstract public class MissileWeapon extends Weapon {
 					parent.identify();
 				}
 			}
+		} else if (parent != null && isIdentified() && !parent.isIdentified()){
+			parent.identify();
 		}
 
 		if (!isIdentified() && ShardOfOblivion.passiveIDDisabled()){
-			Buff.prolong(Item.curUser, ShardOfOblivion.ThrownUseTracker.class, 50f);
+			Buff.prolong(curUser, ShardOfOblivion.ThrownUseTracker.class, 50f);
 		}
 
 		return result;
@@ -447,9 +445,9 @@ abstract public class MissileWeapon extends Weapon {
 	public float durabilityPerUse( int level ){
 		float usages = baseUses * (float)(Math.pow(1.5f, level));
 
-		//+33%/50% durability
+		//+50%/75% durability
 		if (Dungeon.hero != null && Dungeon.hero.hasTalent(Talent.DURABLE_PROJECTILES)){
-			usages *= 1f + (1+Dungeon.hero.pointsInTalent(Talent.DURABLE_PROJECTILES))/6f;
+			usages *= 1.25f + (0.25f*Dungeon.hero.pointsInTalent(Talent.DURABLE_PROJECTILES));
 		}
 		if (holster) {
 			usages *= MagicalHolster.HOLSTER_DURABILITY_FACTOR;
@@ -511,7 +509,7 @@ abstract public class MissileWeapon extends Weapon {
 				damage += Hero.heroDamageIntRange( 0, exStr );
 			}
 			if (owner.buff(Momentum.class) != null && owner.buff(Momentum.class).freerunning()) {
-				damage = Math.round(damage * (1f + 0.1f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
+				damage = Math.round(damage * (1f + 0.15f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
 			}
 		}
 		
@@ -543,9 +541,13 @@ abstract public class MissileWeapon extends Weapon {
 				durability = MAX_DURABILITY;
 			}
 
-			masteryPotionBonus = masteryPotionBonus || ((MissileWeapon) other).masteryPotionBonus;
 			levelKnown = levelKnown || other.levelKnown;
 			cursedKnown = cursedKnown || other.cursedKnown;
+			if (((Weapon)other).readyToIdentify()){
+				setIDReady();
+			}
+
+			masteryPotionBonus = masteryPotionBonus || ((MissileWeapon) other).masteryPotionBonus;
 			enchantHardened = enchantHardened || ((MissileWeapon) other).enchantHardened;
 
 			//if other has a curse/enchant status that's a higher priority, copy it. in the following order:
@@ -587,6 +589,11 @@ abstract public class MissileWeapon extends Weapon {
 			m.durability = MAX_DURABILITY;
 			m.parent = this;
 			extraThrownLeft = m.extraThrownLeft = true;
+
+			//explosive durability is tracked only in the parent
+			if (m.enchantment instanceof Explosive){
+				((Explosive) m.enchantment).clear();
+			}
 		}
 		
 		return split;
@@ -597,7 +604,7 @@ abstract public class MissileWeapon extends Weapon {
 		parent = null;
 		if (!UpgradedSetTracker.pickupValid(hero, this)){
 			Sample.INSTANCE.play( Assets.Sounds.ITEM );
-			hero.spendAndNext( Item.TIME_TO_PICK_UP );
+			hero.spendAndNext( pickupDelay() );
 			GLog.w(Messages.get(this, "dust"));
 			quantity(0);
 			return true;
@@ -634,7 +641,7 @@ abstract public class MissileWeapon extends Weapon {
 		}
 
 		if (enchantment != null && (cursedKnown || !enchantment.curse())){
-			info += "\n\n" + Messages.get(Weapon.class, "enchanted", enchantment.name());
+			info += "\n\n" + Messages.capitalize(Messages.get(Weapon.class, "enchanted", enchantment.name()));
 			if (enchantHardened) info += " " + Messages.get(Weapon.class, "enchant_hardened");
 			info += " " + enchantment.desc();
 		} else if (enchantHardened){
@@ -648,7 +655,7 @@ abstract public class MissileWeapon extends Weapon {
 		}
 
 		info += "\n\n";
-		String statsInfo = Messages.get(this, "stats_desc");
+		String statsInfo = statsInfo();
 		if (!statsInfo.equals("")) info += statsInfo + " ";
 		info += Messages.get(MissileWeapon.class, "distance");
 
@@ -679,6 +686,10 @@ abstract public class MissileWeapon extends Weapon {
 		}
 		
 		return info;
+	}
+
+	public String statsInfo(){
+		return Messages.get(this, "stats_desc");
 	}
 	
 	@Override
@@ -770,6 +781,10 @@ abstract public class MissileWeapon extends Weapon {
 
 	//also used by liquid metal crafting to track when a set is consumed
 	public static class UpgradedSetTracker extends Buff {
+
+		{
+			revivePersists = true;
+		}
 
 		public HashMap<Long, Integer> levelThresholds = new HashMap<>();
 

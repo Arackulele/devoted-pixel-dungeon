@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,22 +27,24 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor.Glyph;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
 
-public class Metabolism extends Armor.Glyph {
+public class Metabolism extends Glyph {
 
 	private static ItemSprite.Glowing BLACK = new ItemSprite.Glowing( 0x000000 );
 	
 	@Override
-	public int proc(Armor armor, Char attacker, Char defender, int damage) {
+	public int proc( Armor armor, Char attacker, Char defender, int damage) {
 
 		float procChance = 1/6f * procChanceMultiplier(defender);
 		if ( Random.Float() < procChance && defender instanceof Hero) {
 
 			//assumes using up 10% of starving, and healing of 1 hp per 10 turns;
-			int healing = Math.min((int) Hunger.STARVING/100, defender.HT - defender.HP);
+			int healing = Math.min((int)Hunger.STARVING/100, defender.HT - defender.HP);
 
 			if (healing > 0) {
 				
@@ -52,7 +54,7 @@ public class Metabolism extends Armor.Glyph {
 					
 					hunger.affectHunger( healing * -10 );
 					
-					defender.HP += healing;
+					defender.Heal(healing);
 					defender.sprite.showStatusWithIcon( CharSprite.POSITIVE, Integer.toString( healing ), FloatingText.HEALING);
 				}
 			}
@@ -63,7 +65,7 @@ public class Metabolism extends Armor.Glyph {
 	}
 
 	@Override
-	public ItemSprite.Glowing glowing() {
+	public Glowing glowing() {
 		return BLACK;
 	}
 

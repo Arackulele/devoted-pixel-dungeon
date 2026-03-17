@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ public abstract class InventorySpell extends Spell {
 			
 			//FIXME this safety check shouldn't be necessary
 			//it would be better to eliminate the curItem static variable.
-			if (!(Item.curItem instanceof InventorySpell)){
+			if (!(curItem instanceof InventorySpell)){
 				return;
 			}
 			
@@ -83,22 +83,22 @@ public abstract class InventorySpell extends Spell {
 
 				//Infusion opens a separate window that can be cancelled
 				//so we don't do a lot of logic here
-				if (!(Item.curItem instanceof MagicalInfusion)) {
-					Item.curItem = detach(Item.curUser.belongings.backpack);
+				if (!(curItem instanceof MagicalInfusion)) {
+					curItem = detach(curUser.belongings.backpack);
 				}
 				
-				((InventorySpell) Item.curItem).onItemSelected( item );
-				if (!(Item.curItem instanceof MagicalInfusion)) {
-					Item.curUser.spend(1f);
-					Item.curUser.busy();
-					(Item.curUser.sprite).operate(Item.curUser.pos);
+				((InventorySpell)curItem).onItemSelected( item );
+				if (!(curItem instanceof MagicalInfusion)) {
+					curUser.spend(1f);
+					curUser.busy();
+					(curUser.sprite).operate(curUser.pos);
 
 					Sample.INSTANCE.play(Assets.Sounds.READ);
 					Invisibility.dispel();
 
-					Catalog.countUse(Item.curItem.getClass());
-					if (Random.Float() < ((Spell) Item.curItem).talentChance) {
-						Talent.onScrollUsed(Item.curUser, Item.curUser.pos, ((Spell) Item.curItem).talentFactor, Item.curItem.getClass());
+					Catalog.countUse(curItem.getClass());
+					if (Random.Float() < ((Spell) curItem).talentChance) {
+						Talent.onScrollUsed(curUser, curUser.pos, ((Spell) curItem).talentFactor, curItem.getClass());
 					}
 				}
 				

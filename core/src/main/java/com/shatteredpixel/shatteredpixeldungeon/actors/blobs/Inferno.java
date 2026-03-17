@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.blobs;
 
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BlobEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 
 public class Inferno extends Blob {
 	
@@ -36,7 +36,7 @@ public class Inferno extends Blob {
 		int cell;
 		boolean observe = false;
 		
-		Fire fire = (Fire) Dungeon.level.blobs.get( Fire.class );
+		Fire fire = (Fire)Dungeon.level.blobs.get( Fire.class );
 		Freezing freeze = (Freezing)Dungeon.level.blobs.get( Freezing.class );
 		
 		Blizzard bliz = (Blizzard)Dungeon.level.blobs.get( Blizzard.class );
@@ -71,7 +71,7 @@ public class Inferno extends Blob {
 						|| cur[cell+Dungeon.level.width()] > 0)) {
 
 					if (fire == null || fire.cur == null || fire.cur[cell] == 0) {
-						GameScene.add(seed(cell, 4, Fire.class));
+						GameScene.add(Fire.seed(cell, 4, Fire.class));
 					}
 
 				}

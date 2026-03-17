@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ public class Blizzard extends Blob {
 		
 		int cell;
 		
-		Fire fire = (Fire) Dungeon.level.blobs.get( Fire.class );
+		Fire fire = (Fire)Dungeon.level.blobs.get( Fire.class );
 		Freezing freeze = (Freezing)Dungeon.level.blobs.get( Freezing.class );
 		
 		Inferno inf = (Inferno)Dungeon.level.blobs.get( Inferno.class );

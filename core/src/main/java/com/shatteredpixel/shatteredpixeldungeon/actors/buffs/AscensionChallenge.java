@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,42 +22,12 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.Statistics;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Banshee;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.BedrockGolem;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Butterfly;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.ColdCorpse;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Cultist;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Druid;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Frogeat;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Giant;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.GlassKnight;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.GraniteTroll;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Grub;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Leader;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.MeatRack;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Mole;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Puppet;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.RockGolem;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Sacrifice;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.ThornLasher;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Toad;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Trapper;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.TrollBrawler;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.TrollRanger;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Warden;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Wererat;
-import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
-import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bat;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Brute;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Crab;
@@ -84,6 +54,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Succubus;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Swarm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Thief;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Warlock;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
+import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 
@@ -100,60 +78,28 @@ public class AscensionChallenge extends Buff {
 		modifiers.put(Crab.class,           8f);
 		modifiers.put(Slime.class,          8f);
 
-        modifiers.put(Toad.class,            10f);
-        modifiers.put(Grub.class,          9f);
-        modifiers.put(Butterfly.class,          8.5f);
-        modifiers.put(Druid.class,           8f);
-        modifiers.put(ThornLasher.class,          8f);
-
-
-        modifiers.put(Skeleton.class,       5f);
+		modifiers.put(Skeleton.class,       5f);
 		modifiers.put(Thief.class,          5f);
 		modifiers.put(DM100.class,          4.5f);
 		modifiers.put(Guard.class,          4f);
 		modifiers.put(Necromancer.class,    4f);
 
-        modifiers.put(ColdCorpse.class,       5f);
-        modifiers.put(MeatRack.class,          5f);
-        modifiers.put(Banshee.class,          4.5f);
-        modifiers.put(GlassKnight.class,          4f);
-        modifiers.put(Wererat.class,    4f);
-
-
-        modifiers.put(Bat.class,            2.5f);
+		modifiers.put(Bat.class,            2.5f);
 		modifiers.put(Brute.class,          2.25f);
 		modifiers.put(Shaman.class,         2.25f);
 		modifiers.put(Spinner.class,        2f);
 		modifiers.put(DM200.class,          2f);
 
-        modifiers.put(GraniteTroll.class,            2.5f);
-        modifiers.put(TrollBrawler.class,          2.25f);
-        modifiers.put(TrollRanger.class,         2.25f);
-        modifiers.put(Mole.class,        2f);
-        modifiers.put(RockGolem.class,          2f);
-
-
-        modifiers.put(Ghoul.class,          1.67f);
+		modifiers.put(Ghoul.class,          1.67f);
 		modifiers.put(Elemental.class,      1.67f);
 		modifiers.put(Warlock.class,        1.5f);
 		modifiers.put(Monk.class,           1.5f);
 		modifiers.put(Golem.class,          1.33f);
 
-        modifiers.put(Cultist.class,          1.67f);
-        modifiers.put(Giant.class,      1.67f);
-        modifiers.put(Leader.class,        1.5f);
-        modifiers.put(Trapper.class,           1.5f);
-        modifiers.put(Warden.class,          1.33f);
-
 		modifiers.put(RipperDemon.class,    1.2f);
 		modifiers.put(Succubus.class,       1.2f);
 		modifiers.put(Eye.class,            1.1f);
 		modifiers.put(Scorpio.class,        1.1f);
-
-        modifiers.put(Frogeat.class,    1.2f);
-        modifiers.put(BedrockGolem.class,       1.2f);
-        modifiers.put(Puppet.class,            1.1f);
-        modifiers.put(Sacrifice.class,        1.1f);
 	}
 
 	public static float statModifier(Char ch){
@@ -312,6 +258,13 @@ public class AscensionChallenge extends Buff {
 			} else {
 				stacks += 2f;
 
+				//doors locked by the hero are reset, to prevent blocking out enemies
+				for (int i = 0; i < Dungeon.level.length(); i++){
+					if (Dungeon.level.map[i] == Terrain.HERO_LKD_DR){
+						Level.set(i, Terrain.DOOR, Dungeon.level);
+					}
+				}
+
 				//clears any existing mobs from the level and adds one initial one
 				//this helps balance difficulty between levels with lots of mobs left, and ones with few
 				for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
@@ -358,7 +311,9 @@ public class AscensionChallenge extends Buff {
 			} else if (stacks >= 2f){
 				GLog.n(Messages.get(this, "beckon"));
 			}
-			if (stacks > 8 || stacks > 4 && Dungeon.depth > 20){
+			if (stacks > 4 && !stacksLowered){
+				GLog.h(Messages.get(this, "weaken_info_no_kills"));
+			} else if (stacks > 8){
 				GLog.h(Messages.get(this, "weaken_info"));
 			}
 		}
@@ -387,7 +342,7 @@ public class AscensionChallenge extends Buff {
 			damageInc = 0;
 		}
 
-		spend(Actor.TICK);
+		spend(TICK);
 		return true;
 	}
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,12 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.items.TengusMask;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -35,6 +36,8 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.watabou.noosa.Game;
+import com.watabou.utils.Random;
 
 public class WndChooseSubclass extends Window {
 	
@@ -48,8 +51,46 @@ public class WndChooseSubclass extends Window {
 		IconTitle titlebar = new IconTitle();
 		titlebar.icon( new ItemSprite( tome.image(), null ) );
 		titlebar.label( tome.name() );
-		titlebar.setRect( 0, 0, WIDTH, 0 );
+		titlebar.setRect( 0, 0, WIDTH-16, 0 );
 		add( titlebar );
+
+		IconButton random = new IconButton(Icons.SHUFFLE.get()){
+			@Override
+			protected void onClick() {
+				super.onClick();
+				GameScene.show(new WndOptions(Icons.SHUFFLE.get(),
+						Messages.get(WndChooseSubclass.class, "random_title"),
+						Messages.get(WndChooseSubclass.class, "random_sure"),
+						Messages.get(WndChooseSubclass.class, "yes"),
+						Messages.get(WndChooseSubclass.class, "no")){
+					@Override
+					protected void onSelect(int index) {
+						super.onSelect(index);
+						if (index == 0){
+							WndChooseSubclass.this.hide();
+							HeroSubClass cls = Random.oneOf(hero.heroClass.subClasses());
+							tome.choose(cls);
+							GameScene.show(new WndInfoSubclass(hero.heroClass, cls));
+						}
+					}
+				});
+			}
+
+			@Override
+			public void update() {
+				if (Statistics.qualifiedForRandomVictoryBadge){
+					icon.tint(1, 1, 1, (float)Math.abs(Math.cos(1.5f*Math.PI* Game.timeTotal)/2f));
+				}
+				super.update();
+			}
+
+			@Override
+			protected String hoverText() {
+				return Messages.get(WndChooseSubclass.class, "random_title");
+			}
+		};
+		random.setRect(WIDTH-16, 0, 16, 16);
+		add(random);
 
 		RenderedTextBlock message = PixelScene.renderTextBlock( 6 );
 		message.text( Messages.get(this, "message"), WIDTH );
@@ -73,6 +114,7 @@ public class WndChooseSubclass extends Window {
 							if (index == 0 && WndChooseSubclass.this.parent != null){
 								WndChooseSubclass.this.hide();
 								tome.choose( subCls );
+								Statistics.qualifiedForRandomVictoryBadge = false;
 							}
 						}
 					});

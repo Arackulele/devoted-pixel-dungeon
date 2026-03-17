@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
-import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -31,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.PrismaticImage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
@@ -76,7 +76,7 @@ public class PrismaticGuard extends Buff {
 				PrismaticImage pris = new PrismaticImage();
 				pris.duplicate(hero, (int)Math.floor(HP) );
 				if (powerOfManyTurns > 0){
-					affect(pris, PowerOfMany.PowerBuff.class, powerOfManyTurns);
+					Buff.affect(pris, PowerOfMany.PowerBuff.class, powerOfManyTurns);
 				}
 				pris.state = pris.HUNTING;
 				GameScene.add(pris, 1);
@@ -84,12 +84,12 @@ public class PrismaticGuard extends Buff {
 				
 				detach();
 			} else {
-				spend( Actor.TICK );
+				spend( TICK );
 			}
 			
 			
 		} else {
-			spend(Actor.TICK);
+			spend(TICK);
 		}
 		
 		if (HP < maxHP() && Regeneration.regenOn()){

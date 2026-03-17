@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.BodyForm;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.HolyWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfAccuracy;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEvasion;
@@ -42,8 +44,6 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MirrorSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.BodyForm;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.HolyWeapon;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -55,11 +55,11 @@ public class MirrorImage extends NPC {
 		HP = HT = 1;
 		defenseSkill = 1;
 		
-		alignment = Char.Alignment.ALLY;
+		alignment = Alignment.ALLY;
 		state = HUNTING;
 		
 		//before other mobs
-		actPriority = Actor.MOB_PRIO + 1;
+		actPriority = MOB_PRIO + 1;
 	}
 	
 	private Hero hero;
@@ -183,12 +183,12 @@ public class MirrorImage extends NPC {
 			return damage;
 		} else {
 			//hero benefits from holy weapon and body form when unarmed, so do mirror images
-			boolean wasEnemy = enemy.alignment == Char.Alignment.ENEMY;
+			boolean wasEnemy = enemy.alignment == Alignment.ENEMY;
 			if (hero.buff(BodyForm.BodyFormBuff.class) != null
 					&& hero.buff(BodyForm.BodyFormBuff.class).enchant() != null){
 				damage = hero.buff(BodyForm.BodyFormBuff.class).enchant().proc(new WornShortsword(), this, enemy, damage);
 			}
-			if (!wasEnemy || enemy.alignment == Char.Alignment.ENEMY) {
+			if (!wasEnemy || enemy.alignment == Alignment.ENEMY) {
 				if (hero.buff(HolyWeapon.HolyWepBuff.class) != null) {
 					int dmg = hero.subClass == HeroSubClass.PALADIN ? 6 : 2;
 					enemy.damage(Math.round(dmg * Weapon.Enchantment.genericProcChanceMultiplier(this)), HolyWeapon.INSTANCE);

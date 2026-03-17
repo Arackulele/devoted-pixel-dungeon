@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ public class DirectableAlly extends NPC {
 		state = WANDERING;
 
 		//before other mobs
-		actPriority = Actor.MOB_PRIO + 1;
+		actPriority = MOB_PRIO + 1;
 
 	}
 
@@ -147,7 +147,7 @@ public class DirectableAlly extends NPC {
 						defendingPos = pos;
 						movingToDefendPos = false;
 					}
-					spend( Actor.TICK );
+					spend( TICK );
 				}
 
 			}

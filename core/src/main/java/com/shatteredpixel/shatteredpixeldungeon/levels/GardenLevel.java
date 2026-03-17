@@ -190,11 +190,11 @@ public class GardenLevel extends RegularLevel {
 						1, 1, 1, 1, 1};
 	}
 
-	@Override
-	protected void createMobs() {
-		Ghost.Quest.spawn( this, roomExit );
-		super.createMobs();
-	}
+    @Override
+    protected void createMobs() {
+        Ghost.Quest.spawn( this, roomExit );
+        super.createMobs();
+    }
 
 	@Override
 	public String tileName( int tile ) {

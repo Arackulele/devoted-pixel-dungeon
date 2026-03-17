@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,8 +97,7 @@ public class LootIndicator extends Tag {
 					heap.type == Heap.Type.TOMB ? ItemSlot.TOMB :
 					heap.type == Heap.Type.SKELETON ? ItemSlot.SKELETON :
 					heap.type == Heap.Type.REMAINS ? ItemSlot.REMAINS :
-                    heap.type == Heap.Type.ICE ? ItemSlot.ICE :
-                    heap.peek();
+					heap.peek();
 				if (item != lastItem || item.quantity() != lastQuantity) {
 					lastItem = item;
 					lastQuantity = item.quantity();

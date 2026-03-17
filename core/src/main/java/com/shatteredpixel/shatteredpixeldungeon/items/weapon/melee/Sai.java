@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,8 +155,8 @@ public class Sai extends MeleeWeapon {
 
 		@Override
 		public boolean act() {
-			comboTime-= Actor.TICK;
-			spend(Actor.TICK);
+			comboTime-=TICK;
+			spend(TICK);
 			if (comboTime <= 0) {
 				detach();
 			}
@@ -200,19 +200,8 @@ public class Sai extends MeleeWeapon {
 		@Override
 		public void restoreFromBundle(Bundle bundle) {
 			super.restoreFromBundle(bundle);
-			if (bundle.contains(TIME)){
-				comboTime = bundle.getInt(TIME);
-				hits = bundle.getInt(RECENT_HITS);
-			} else {
-				//pre-2.4.0 saves
-				comboTime = 5f;
-				hits = 0;
-				if (bundle.contains(RECENT_HITS)) {
-					for (int i : bundle.getIntArray(RECENT_HITS)) {
-						hits += i;
-					}
-				}
-			}
+			comboTime = bundle.getInt(TIME);
+			hits = bundle.getInt(RECENT_HITS);
 		}
 	}
 

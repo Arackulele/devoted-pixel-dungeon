@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,17 @@ public class CheckBox extends RedButton {
 		icon.x = x + width - margin - icon.width;
 		icon.y = y + margin;
 		PixelScene.align(icon);
+
+		int size = 9;
+		while (width > 0 && text.right() > icon.x){
+			size--;
+			remove(text);
+			text = PixelScene.renderTextBlock(text.text, size);
+			margin = (height - text.height()) / 2;
+			text.setPos( x + margin, y + margin);
+			PixelScene.align(text);
+			add(text);
+		}
 	}
 	
 	public boolean checked() {

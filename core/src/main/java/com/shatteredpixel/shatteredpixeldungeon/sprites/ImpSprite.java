@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.watabou.noosa.TextureFilm;
 
@@ -48,15 +46,6 @@ public class ImpSprite extends MobSprite {
 		die.frames( frames, 0, 3, 2, 1, 0, 3, 2, 1, 0 );
 		
 		play( idle );
-	}
-	
-	@Override
-	public void link( Char ch ) {
-		super.link( ch );
-		
-		if (ch instanceof Imp) {
-			alpha( 0.5f );
-		}
 	}
 	
 	@Override

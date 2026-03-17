@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,27 +213,29 @@ public class ItemSprite extends MovieClip {
 		if (heap.size() <= 0 || heap.items == null){
 			return view( 0, null );
 		}
-		
+
 		switch (heap.type) {
 			case HEAP: case FOR_SALE:
-				return view( heap.peek() );
+				view( heap.peek() ); break;
 			case CHEST:
-				return view( ItemSpriteSheet.CHEST, null );
+				view( ItemSpriteSheet.CHEST, null ); break;
 			case LOCKED_CHEST:
-				return view( ItemSpriteSheet.LOCKED_CHEST, null );
+				view( ItemSpriteSheet.LOCKED_CHEST, null ); break;
 			case CRYSTAL_CHEST:
-				return view( ItemSpriteSheet.CRYSTAL_CHEST, null );
+				view( ItemSpriteSheet.CRYSTAL_CHEST, null ); break;
 			case TOMB:
-				return view( ItemSpriteSheet.TOMB, null );
+				view( ItemSpriteSheet.TOMB, null ); break;
 			case SKELETON:
-				return view( ItemSpriteSheet.BONES, null );
+				view( ItemSpriteSheet.BONES, null ); break;
 			case REMAINS:
-				return view( ItemSpriteSheet.REMAINS, null );
-            case ICE:
-                return view( ItemSpriteSheet.ICE, null );
+				view( ItemSpriteSheet.REMAINS, null ); break;
 			default:
-				return view( 0, null );
+				view( 0, null );
 		}
+
+		alpha( heap.hidden ? 0.15f : 1f);
+
+		return this;
 	}
 	
 	public ItemSprite view( int image, Glowing glowing ) {

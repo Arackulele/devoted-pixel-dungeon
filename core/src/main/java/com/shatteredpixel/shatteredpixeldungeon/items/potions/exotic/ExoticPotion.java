@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ public class ExoticPotion extends Potion {
 	public void setKnown() {
 		if (!isKnown()) {
 			handler.know(exoToReg.get(this.getClass()));
-			Item.updateQuickslot();
+			updateQuickslot();
 		}
 	}
 	
@@ -122,7 +122,7 @@ public class ExoticPotion extends Potion {
 		return (Reflection.newInstance(exoToReg.get(getClass())).energyVal() + 4) * quantity;
 	}
 
-	public static class PotionToExotic extends Recipe {
+	public static class PotionToExotic extends Recipe{
 
 		@Override
 		public boolean testIngredients(ArrayList<Item> ingredients) {

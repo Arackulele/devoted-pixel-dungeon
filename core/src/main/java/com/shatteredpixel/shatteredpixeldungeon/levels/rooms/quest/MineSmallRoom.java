@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,13 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.quest;
 
-import com.shatteredpixel.shatteredpixeldungeon.levels.LavaLakeLevel;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.CaveRoom;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
@@ -68,19 +67,19 @@ public class MineSmallRoom extends CaveRoom {
 
 			//connections to non-secret rooms have a 9/10 chance to become empty, otherwise wall
 			for (Room n : connected.keySet()){
-				if (!(n instanceof SecretRoom) && connected.get(n).type == Room.Door.Type.REGULAR){
+				if (!(n instanceof SecretRoom) && connected.get(n).type == Door.Type.REGULAR){
 					if (Random.Int(10) == 0){
-						connected.get(n).set(Room.Door.Type.EMPTY);
+						connected.get(n).set(Door.Type.EMPTY);
 					} else {
-						connected.get(n).set(Room.Door.Type.WALL);
+						connected.get(n).set(Door.Type.WALL);
 					}
 					connected.get(n).lockTypeChanges(true);
 				}
 			}
 
-			ArrayList<Room.Door> doors = new ArrayList<>();
-			for (Room.Door d : connected.values()){
-				if (d.type == Room.Door.Type.WALL){
+			ArrayList<Door> doors = new ArrayList<>();
+			for (Door d : connected.values()){
+				if (d.type == Door.Type.WALL){
 					doors.add(d);
 				}
 			}
@@ -89,7 +88,7 @@ public class MineSmallRoom extends CaveRoom {
 				int cell = level.pointToCell(p);
 				if (level.map[cell] == Terrain.EMPTY){
 					float dist = 1000;
-					for (Room.Door d : doors){
+					for (Door d : doors){
 						dist = Math.min(dist, Point.distance(p, d));
 					}
 					dist = GameMath.gate(1f, dist, 5f);
@@ -102,13 +101,6 @@ public class MineSmallRoom extends CaveRoom {
 				}
 			}
 
-		} else if (level instanceof LavaLakeLevel){
-			for (int i = 0; i < width()*height()/8; i ++){
-				Point r = random(1);
-				if (level.map[level.pointToCell(r)] != Terrain.WALL) {
-					Painter.set(level, r, Terrain.REGION_DECO);
-				}
-			}
 		}
 
 	}

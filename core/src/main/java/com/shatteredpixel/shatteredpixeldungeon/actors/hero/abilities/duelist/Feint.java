@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,16 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.BlobImmunity;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vulnerable;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Weakness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
@@ -40,14 +48,6 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.MirrorSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TargetHealthIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.BlobImmunity;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vulnerable;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Weakness;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.noosa.tweeners.Delayer;
@@ -111,13 +111,15 @@ public class Feint extends ArmorAbility {
 				hero.pos = target;
 				Dungeon.level.occupyCell(hero);
 				Invisibility.dispel();
-				hero.spendAndNext(1f);
+				hero.next();
 			}
 		});
+		hero.spend(1f);
 
 		AfterImage image = new AfterImage();
 		image.pos = hero.pos;
-		GameScene.add(image, 1);
+		GameScene.add(image);
+		image.syncToHero(hero);
 
 		int imageAttackPos;
 		Char enemyTarget = TargetHealthIndicator.instance.target();
@@ -161,15 +163,25 @@ public class Feint extends ArmorAbility {
 			spriteClass = AfterImageSprite.class;
 			defenseSkill = 0;
 
-			properties.add(Char.Property.IMMOVABLE);
+			properties.add(Property.IMMOVABLE);
 
-			alignment = Char.Alignment.ALLY;
+			alignment = Alignment.ALLY;
 			state = PASSIVE;
 
 			HP = HT = 1;
 
 			//fades just before the hero's next action
 			actPriority = Actor.HERO_PRIO+1;
+		}
+
+		@Override
+		public String name() {
+			return ""; //shouldn't be examinable
+		}
+
+		@Override
+		public String description() {
+			return ""; //shouldn't be examinable
 		}
 
 		@Override
@@ -184,6 +196,12 @@ public class Feint extends ArmorAbility {
 			return true;
 		}
 
+		public void syncToHero(Hero hero){
+			if (cooldown() != hero.cooldown()){
+				spendConstant(hero.cooldown() - cooldown());
+			}
+		}
+
 		@Override
 		public void damage( int dmg, Object src ) {
 
@@ -191,7 +209,7 @@ public class Feint extends ArmorAbility {
 
 		@Override
 		public int defenseSkill(Char enemy) {
-			if (enemy.alignment == Char.Alignment.ENEMY) {
+			if (enemy.alignment == Alignment.ENEMY) {
 				if (enemy instanceof Mob) {
 					((Mob) enemy).clearEnemy();
 				}

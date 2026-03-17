@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndKeyBindings;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndKeyBindings;
 import com.watabou.input.GameAction;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
@@ -73,14 +73,14 @@ public class DangerIndicator extends Tag {
 	protected void layout() {
 		super.layout();
 		
-		icon.x = right() - 10;
+		icon.x = left() + 14;
 		icon.y = y + (height - icon.height) / 2;
 		
 		placeNumber();
 	}
 	
 	private void placeNumber() {
-		number.x = right() - 11 - number.width();
+		number.x = left() + 13 - number.width();
 		number.y = y + (height - number.baseLine()) / 2f;
 		PixelScene.align(number);
 	}

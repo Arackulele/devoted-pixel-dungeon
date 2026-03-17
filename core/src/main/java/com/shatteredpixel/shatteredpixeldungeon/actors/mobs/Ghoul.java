@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,19 +21,19 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
-import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SacrificialFire;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
-import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SacrificialFire;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.Challenge;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Pushing;
+import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GhoulSprite;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.Challenge;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -112,7 +112,7 @@ public class Ghoul extends Mob {
 			for (int n : neighbours) {
 				if (Dungeon.level.passable[n]
 						&& Actor.findChar( n ) == null
-						&& (!hasProp(this, Property.LARGE) || Dungeon.level.openSpace[n])) {
+						&& (!Char.hasProp(this, Property.LARGE) || Dungeon.level.openSpace[n])) {
 					candidates.add( n );
 				}
 			}
@@ -156,7 +156,7 @@ public class Ghoul extends Mob {
 			if (nearby != null){
 				beingLifeLinked = true;
 				timesDowned++;
-				remove(this);
+				Actor.remove(this);
 				Dungeon.level.mobs.remove( this );
 				Buff.append(nearby, GhoulLifeLink.class).set(timesDowned*5, this);
 				((GhoulSprite)sprite).crumple();
@@ -198,7 +198,7 @@ public class Ghoul extends Mob {
 	private class Sleeping extends Mob.Sleeping {
 		@Override
 		public boolean act( boolean enemyInFOV, boolean justAlerted ) {
-			Ghoul partner = (Ghoul) findById( partnerID );
+			Ghoul partner = (Ghoul) Actor.findById( partnerID );
 			if (partner != null && partner.state != partner.SLEEPING){
 				state = WANDERING;
 				target = partner.pos;
@@ -215,7 +215,7 @@ public class Ghoul extends Mob {
 		protected boolean continueWandering() {
 			enemySeen = false;
 			
-			Ghoul partner = (Ghoul) findById( partnerID );
+			Ghoul partner = (Ghoul) Actor.findById( partnerID );
 			if (partner != null && (partner.state != partner.WANDERING || Dungeon.level.distance( pos,  partner.target) > 1)){
 				target = partner.pos;
 				int oldPos = pos;
@@ -272,7 +272,7 @@ public class Ghoul extends Mob {
 						int cell = ghoul.pos + n;
 						if (Dungeon.level.passable[cell]
 								&& Actor.findChar( cell ) == null
-								&& (!hasProp(ghoul, Property.LARGE) || Dungeon.level.openSpace[cell])) {
+								&& (!Char.hasProp(ghoul, Property.LARGE) || Dungeon.level.openSpace[cell])) {
 							candidates.add( cell );
 						}
 					}
@@ -282,7 +282,7 @@ public class Ghoul extends Mob {
 						ghoul.pos = newPos;
 
 					} else {
-						spend(Actor.TICK);
+						spend(TICK);
 						return true;
 					}
 				}
@@ -294,11 +294,14 @@ public class Ghoul extends Mob {
 				Dungeon.level.occupyCell( ghoul );
 				ghoul.sprite.idle();
 				ghoul.sprite.showStatusWithIcon(CharSprite.POSITIVE, Integer.toString(Math.round(ghoul.HT/10f)), FloatingText.HEALING);
+				if (ghoul.enemy != null && ghoul.enemy.alignment == ghoul.alignment){
+					ghoul.enemy = null; //reset enemy
+				}
 				super.detach();
 				return true;
 			}
 
-			spend(Actor.TICK);
+			spend(TICK);
 			return true;
 		}
 

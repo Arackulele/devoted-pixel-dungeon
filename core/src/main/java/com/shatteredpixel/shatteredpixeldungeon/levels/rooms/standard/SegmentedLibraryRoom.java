@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 import com.watabou.utils.Rect;
@@ -44,7 +43,7 @@ public class SegmentedLibraryRoom extends StandardRoom {
 		Painter.fill( level, this, 2 , Terrain.EMPTY_SP );
 
 		for (Door door : connected.values()) {
-			door.set( Room.Door.Type.REGULAR );
+			door.set( Door.Type.REGULAR );
 			//set door areas to be empty to help with create walls logic
 			Painter.drawInside(level, this, door, 2, Terrain.EMPTY_SP);
 		}

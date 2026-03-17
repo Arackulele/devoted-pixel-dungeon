@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SnowParticle;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.watabou.noosa.Image;
 
 public class FrostImbue extends FlavourBuff {
@@ -36,7 +36,7 @@ public class FrostImbue extends FlavourBuff {
 	public static final float DURATION	= 50f;
 	
 	public void proc(Char enemy){
-		affect(enemy, Chill.class, 3f);
+		Buff.affect(enemy, Chill.class, 3f);
 		enemy.sprite.emitter().burst( SnowParticle.FACTORY, 3 );
 	}
 	
@@ -63,8 +63,8 @@ public class FrostImbue extends FlavourBuff {
 	@Override
 	public boolean attachTo(Char target) {
 		if (super.attachTo(target)){
-			detach(target, Frost.class);
-			detach(target, Chill.class);
+			Buff.detach(target, Frost.class);
+			Buff.detach(target, Chill.class);
 			return true;
 		} else {
 			return false;

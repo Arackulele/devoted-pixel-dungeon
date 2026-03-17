@@ -138,14 +138,14 @@ public class Bomb extends Item {
 
 	@Override
 	public boolean doPickUp(Hero hero, int pos) {
-		if (subBomb) return false;
-        //We dont want the player duplicating infused bombs
-        if (isInfused && fuse != null) return false;
-		if (fuse != null) {
-			GLog.w( Messages.get(this, "snuff_fuse") );
-			fuse = null;
-		}
-		return super.doPickUp(hero, pos);
+		    if (subBomb) return false;
+            //We dont want the player duplicating infused bombs
+            if (isInfused && fuse != null) return false;
+            if (fuse != null) {
+                GLog.w( Messages.get(this, "snuff_fuse") );
+                fuse = null;
+            }
+            return super.doPickUp(hero, pos);
 	}
 
 	public void explode(int cell){
@@ -314,57 +314,60 @@ public class Bomb extends Item {
 	//used to track the death from friendly magic badge, if an explosion was conjured by magic
 	public static class ConjuredBomb extends Bomb{};
 
-	public static class Fuse extends Actor{
+    public static class Fuse extends Actor{
 
-		{
-			actPriority = BLOB_PRIO+1; //after hero, before other actors
-		}
+        {
+            actPriority = BLOB_PRIO+1; //after hero, before other actors
+        }
 
-		protected Bomb bomb;
+        protected Bomb bomb;
 
-		public Fuse ignite(Bomb bomb){
-			this.bomb = bomb;
-			return this;
-		}
+        public Fuse ignite(Bomb bomb){
+            this.bomb = bomb;
+            return this;
+        }
 
-		@Override
-		protected boolean act() {
+        @Override
+        protected boolean act() {
 
-			//something caused our bomb to explode early, or be defused. Do nothing.
-			if (bomb.fuse != this){
-				Actor.remove( this );
-				return true;
-			}
+            //something caused our bomb to explode early, or be defused. Do nothing.
+            if (bomb.fuse != this){
+                snuff();
+                return true;
+            }
 
-			//look for our bomb, remove it from its heap, and blow it up.
-			for (Heap heap : Dungeon.level.heaps.valueList()) {
-				if (heap.items.contains(bomb)) {
+            //look for our bomb, remove it from its heap, and blow it up.
+            for (Heap heap : Dungeon.level.heaps.valueList()) {
+                if (heap.items.contains(bomb)) {
 
-					trigger(heap);
-					return true;
-				}
-			}
+                    trigger(heap);
+                    return true;
+                }
+            }
 
-			//can't find our bomb, something must have removed it, do nothing.
-			bomb.fuse = null;
-			Actor.remove( this );
-			return true;
-		}
+            //can't find our bomb, something must have removed it, do nothing.
+            bomb.fuse = null;
+            snuff();
+            return true;
+        }
 
-		protected void trigger(Heap heap){
-			heap.remove(bomb);
-			Catalog.countUse(bomb.getClass());
-			bomb.explode(heap.pos);
-			Actor.remove(this);
-		}
+        protected void trigger(Heap heap){
+            heap.remove(bomb);
+            Catalog.countUse(bomb.getClass());
+            bomb.explode(heap.pos);
+            snuff();
+        }
 
-		public boolean freeze(){
-			bomb.fuse = null;
-			Actor.remove(this);
-			return true;
-		}
-	}
+        public boolean freeze(){
+            bomb.fuse = null;
+            snuff();
+            return true;
+        }
 
+        public void snuff(){
+            Actor.remove( this );
+        }
+    }
 
 	public static class DoubleBomb extends Bomb{
 

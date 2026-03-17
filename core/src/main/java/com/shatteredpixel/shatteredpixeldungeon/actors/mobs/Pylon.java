@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,21 +22,21 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Electricity;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.PylonSprite;
-import com.shatteredpixel.shatteredpixeldungeon.Challenges;
-import com.shatteredpixel.shatteredpixeldungeon.Statistics;
-import com.shatteredpixel.shatteredpixeldungeon.levels.CavesBossLevel;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Lightning;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CavesBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.PylonSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -55,15 +55,15 @@ public class Pylon extends Mob {
 
 		maxLvl = -2;
 
-		properties.add(Char.Property.MINIBOSS);
-		properties.add(Char.Property.BOSS_MINION);
-		properties.add(Char.Property.INORGANIC);
-		properties.add(Char.Property.ELECTRIC);
-		properties.add(Char.Property.IMMOVABLE);
-		properties.add(Char.Property.STATIC);
+		properties.add(Property.MINIBOSS);
+		properties.add(Property.BOSS_MINION);
+		properties.add(Property.INORGANIC);
+		properties.add(Property.ELECTRIC);
+		properties.add(Property.IMMOVABLE);
+		properties.add(Property.STATIC);
 
 		state = PASSIVE;
-		alignment = Char.Alignment.NEUTRAL;
+		alignment = Alignment.NEUTRAL;
 	}
 
 	private int targetNeighbor = Random.Int(8);
@@ -87,8 +87,8 @@ public class Pylon extends Mob {
 		enemySeen = enemy != null && enemy.isAlive() && fieldOfView[enemy.pos] && enemy.invisible <= 0;
 		//end of char/mob logic
 
-		if (alignment == Char.Alignment.NEUTRAL){
-			spend(Actor.TICK);
+		if (alignment == Alignment.NEUTRAL){
+			spend(TICK);
 			return true;
 		}
 
@@ -127,7 +127,7 @@ public class Pylon extends Mob {
 
 		targetNeighbor = (targetNeighbor+1)%8;
 
-		spend(Actor.TICK);
+		spend(TICK);
 
 		return true;
 	}
@@ -149,7 +149,7 @@ public class Pylon extends Mob {
 	}
 
 	public void activate(){
-		alignment = Char.Alignment.ENEMY;
+		alignment = Alignment.ENEMY;
 		state = HUNTING; //so allies know to attack it
 		((PylonSprite) sprite).activate();
 	}
@@ -157,7 +157,7 @@ public class Pylon extends Mob {
 	@Override
 	public CharSprite sprite() {
 		PylonSprite p = (PylonSprite) super.sprite();
-		if (alignment != Char.Alignment.NEUTRAL) p.activate();
+		if (alignment != Alignment.NEUTRAL) p.activate();
 		return p;
 	}
 
@@ -168,7 +168,7 @@ public class Pylon extends Mob {
 
 	@Override
 	public String description() {
-		if (alignment == Char.Alignment.NEUTRAL){
+		if (alignment == Alignment.NEUTRAL){
 			return Messages.get(this, "desc_inactive");
 		} else {
 			return Messages.get(this, "desc_active");
@@ -183,7 +183,7 @@ public class Pylon extends Mob {
 	@Override
 	public boolean add(Buff buff) {
 		//immune to all buffs/debuffs when inactive
-		if (alignment != Char.Alignment.NEUTRAL) {
+		if (alignment != Alignment.NEUTRAL) {
 			return super.add(buff);
 		}
 		return false;
@@ -192,7 +192,7 @@ public class Pylon extends Mob {
 	@Override
 	public boolean isInvulnerable(Class effect) {
 		//immune to damage when inactive
-		return alignment == Char.Alignment.NEUTRAL || super.isInvulnerable(effect);
+		return alignment == Alignment.NEUTRAL || super.isInvulnerable(effect);
 	}
 
 	@Override
@@ -228,7 +228,7 @@ public class Pylon extends Mob {
 
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
-		alignment = bundle.getEnum(ALIGNMENT, Char.Alignment.class);
+		alignment = bundle.getEnum(ALIGNMENT, Alignment.class);
 		super.restoreFromBundle(bundle);
 		targetNeighbor = bundle.getInt(TARGET_NEIGHBOUR);
 	}

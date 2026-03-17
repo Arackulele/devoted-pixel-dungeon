@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,16 +43,7 @@ public class DungeonTerrainTilemap extends DungeonTilemap {
 		int visual = DungeonTileSheet.directVisuals.get(tile, -1);
 		if (visual != -1) return DungeonTileSheet.getVisualWithAlts(visual, pos);
 
-		if (tile == Terrain.WATER
-		&& pos + PathFinder.CIRCLE4[0] > 0
-		&& pos + PathFinder.CIRCLE4[1] > 0
-		&& pos + PathFinder.CIRCLE4[2] > 0
-		&& pos + PathFinder.CIRCLE4[3] > 0
-		&& pos + PathFinder.CIRCLE4[0] < map.length
-		&& pos + PathFinder.CIRCLE4[1] < map.length
-		&& pos + PathFinder.CIRCLE4[2] < map.length
-		&& pos + PathFinder.CIRCLE4[3] < map.length
-		) {
+		if (tile == Terrain.WATER) {
 			return DungeonTileSheet.stitchWaterTile(
 					map[pos + PathFinder.CIRCLE4[0]],
 					map[pos + PathFinder.CIRCLE4[1]],
@@ -90,10 +81,6 @@ public class DungeonTerrainTilemap extends DungeonTilemap {
 			} else if (tile == Terrain.MINE_BOULDER) {
 				return DungeonTileSheet.getVisualWithAlts(
 						DungeonTileSheet.RAISED_MINE_BOULDER,
-						pos);
-			} else if (tile == Terrain.MAGMA_TILE) {
-				return DungeonTileSheet.getVisualWithAlts(
-						DungeonTileSheet.RAISED_MAGMA_TILE,
 						pos);
 			} else if (tile == Terrain.ALCHEMY) {
 				return DungeonTileSheet.RAISED_ALCHEMY_POT;

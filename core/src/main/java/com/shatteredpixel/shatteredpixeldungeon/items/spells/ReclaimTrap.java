@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,17 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.spells;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.MetalShard;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -62,7 +63,7 @@ public class ReclaimTrap extends TargetedSpell {
 		ArrayList<String> actions = super.actions(hero);
 		//prevents exploits, pre-v3.0.0
 		if (storedTrap != null){
-			actions.remove(Item.AC_DROP);
+			actions.remove(AC_DROP);
 			actions.remove(AC_THROW);
 		}
 		return actions;
@@ -82,7 +83,6 @@ public class ReclaimTrap extends TargetedSpell {
 			}
 		}
 		if (storedTrap == null) {
-			quantity++; //storing a trap doesn't consume the spell
 			Trap t = Dungeon.level.traps.get(bolt.collisionPos);
 			if (t != null && t.active && t.visible) {
 				t.disarm(); //even disarms traps that normally wouldn't be
@@ -95,6 +95,11 @@ public class ReclaimTrap extends TargetedSpell {
 			} else {
 				GLog.w(Messages.get(this, "no_trap"));
 			}
+
+			//spell is not consumed, so doesn't count as a full use
+			Invisibility.dispel();
+			curUser.spendAndNext( timeToCast() );
+
 		} else {
 			
 			Trap t = Reflection.newInstance(storedTrap);
@@ -103,6 +108,8 @@ public class ReclaimTrap extends TargetedSpell {
 			t.reclaimed = true;
 			Bestiary.countEncounter(t.getClass());
 			t.activate();
+
+			onSpellused();
 			
 		}
 	}

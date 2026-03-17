@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,14 +52,14 @@ public class PrismaticImage extends NPC {
 		HP = HT = 10;
 		defenseSkill = 1;
 		
-		alignment = Char.Alignment.ALLY;
+		alignment = Alignment.ALLY;
 		intelligentAlly = true;
 		state = HUNTING;
 		
 		WANDERING = new Wandering();
 		
 		//before other mobs
-		actPriority = Actor.MOB_PRIO + 1;
+		actPriority = MOB_PRIO + 1;
 	}
 	
 	private Hero hero;
@@ -76,7 +76,7 @@ public class PrismaticImage extends NPC {
 			
 			if (deathTimer > 0) {
 				sprite.alpha((deathTimer + 3) / 8f);
-				spend(Actor.TICK);
+				spend(TICK);
 			} else {
 				destroy();
 				sprite.die();

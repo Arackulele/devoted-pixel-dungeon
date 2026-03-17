@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,34 +22,15 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Electricity;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
-import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.Challenges;
-import com.shatteredpixel.shatteredpixeldungeon.Statistics;
-import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.TengusMask;
-import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
-import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
-import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
-import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.TenguSprite;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
@@ -65,9 +46,28 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Lightning;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.TengusMask;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.TenguSprite;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BossHealthBar;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
@@ -93,7 +93,7 @@ public class Tengu extends Mob {
 		
 		HUNTING = new Hunting();
 		
-		properties.add(Char.Property.BOSS);
+		properties.add(Property.BOSS);
 		
 		viewDistance = 12;
 	}
@@ -400,29 +400,31 @@ public class Tengu extends Mob {
 				
 			} else {
 
-				//Try to switch targets to another enemy that is closer
-				//unless we have already done that and still can't attack them, then move on.
-				if (!recursing) {
-					Char oldEnemy = enemy;
-					enemy = null;
-					enemy = chooseEnemy();
-					if (enemy != null && enemy != oldEnemy) {
-						recursing = true;
-						boolean result = act(enemyInFOV, justAlerted);
-						recursing = false;
-						return result;
-					}
-				}
-				
-				//attempt to use an ability, even if enemy can't be decided
-				if (canUseAbility()){
-					return useAbility();
-				}
-				
-				spend( Actor.TICK );
-				return true;
-				
+				return handleUnreachableTarget(enemyInFOV, justAlerted);
 			}
+		}
+
+		@Override
+		protected boolean handleUnreachableTarget(boolean enemyInFOV, boolean justAlerted) {
+			Char oldEnemy = enemy;
+			enemy = null;
+			enemy = chooseEnemy();
+			if (enemy != null && enemy != oldEnemy) {
+				recursing = true;
+				boolean result = act(enemyInFOV, justAlerted);
+				recursing = false;
+				return result;
+			}
+
+			//attempt to use an ability, even if enemy can't be decided
+			//Tengu is always hunting, so we don't lose enemy in this case
+			if (canUseAbility()){
+				return useAbility();
+			}
+
+			spend( TICK );
+			return true;
+
 		}
 	}
 	
@@ -541,13 +543,13 @@ public class Tengu extends Mob {
 			if (targetAbilityUses() - abilitiesUsed >= 4) {
 				//spend no time
 			} else {
-				spend(Actor.TICK);
+				spend(TICK);
 			}
 		} else {
 			if (targetAbilityUses() - abilitiesUsed >= 4) {
-				spend(Actor.TICK);
+				spend(TICK);
 			} else {
-				spend(2 * Actor.TICK);
+				spend(2 * TICK);
 			}
 		}
 		
@@ -664,7 +666,7 @@ public class Tengu extends Mob {
 			}
 			
 			timer--;
-			spend(Actor.TICK);
+			spend(TICK);
 			return true;
 		}
 
@@ -719,7 +721,7 @@ public class Tengu extends Mob {
 			}
 			
 			@Override
-			public void onThrow(int cell) {
+			protected void onThrow(int cell) {
 				super.onThrow(cell);
 				if (throwingChar != null){
 					Buff.append(throwingChar, BombAbility.class).bombPos = cell;
@@ -800,7 +802,7 @@ public class Tengu extends Mob {
 				}
 			}
 			
-			spend(Actor.TICK);
+			spend(TICK);
 			return true;
 		}
 		
@@ -1006,7 +1008,7 @@ public class Tengu extends Mob {
 				spreadblob();
 			}
 			
-			spend(Actor.TICK);
+			spend(TICK);
 			return true;
 		}
 		
@@ -1115,12 +1117,15 @@ public class Tengu extends Mob {
 			@Override
 			protected void onThrow(int cell) {
 				super.onThrow(cell);
+				ShockerAbility buff;
 				if (throwingChar != null){
-					Buff.append(throwingChar, ShockerAbility.class).shockerPos = cell;
+					buff = Buff.append(throwingChar, ShockerAbility.class);
 					throwingChar = null;
 				} else {
-					Buff.append(curUser, ShockerAbility.class).shockerPos = cell;
+					buff = Buff.append(curUser, ShockerAbility.class);
 				}
+				buff.shockerPos = cell;
+				buff.spendToWhole(); //to ensure its aligned with blob logic
 			}
 			
 			@Override

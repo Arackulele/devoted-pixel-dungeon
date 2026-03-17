@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Bestiary;
 
@@ -33,7 +31,7 @@ public abstract class NPC extends Mob {
 		HP = HT = 1;
 		EXP = 0;
 
-		alignment = Char.Alignment.NEUTRAL;
+		alignment = Alignment.NEUTRAL;
 		state = PASSIVE;
 	}
 
@@ -48,23 +46,6 @@ public abstract class NPC extends Mob {
 
 	@Override
 	public void beckon( int cell ) {
-	}
-
-	@Override
-	public void damage(int dmg, Object src) {
-		if (Dungeon.hero.hasTalent(Talent.TAG_TEAM))
-		{
-			int amnt = 0;
-			for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-				if (mob.alignment == Char.Alignment.ALLY) {
-					amnt++;
-				}
-			}
-
-			if (amnt < 2) dmg *= (0.9 - (Dungeon.hero.pointsInTalent(Talent.TAG_TEAM)  * 0.05));
-
-		}
-		super.damage(dmg, src);
 	}
 	
 }

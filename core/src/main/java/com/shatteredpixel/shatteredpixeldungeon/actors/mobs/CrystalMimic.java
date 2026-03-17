@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,24 +22,24 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.MimicSprite;
-import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
-import com.shatteredpixel.shatteredpixeldungeon.items.Honeypot;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
+import com.shatteredpixel.shatteredpixeldungeon.items.Honeypot;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.MimicTooth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.MimicSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
@@ -57,7 +57,7 @@ public class CrystalMimic extends Mimic {
 
 	@Override
 	public String name() {
-		if (alignment == Char.Alignment.NEUTRAL){
+		if (alignment == Alignment.NEUTRAL){
 			return Messages.get(Heap.class, "crystal_chest");
 		} else {
 			return super.name();
@@ -66,7 +66,7 @@ public class CrystalMimic extends Mimic {
 
 	@Override
 	public String description() {
-		if (alignment == Char.Alignment.NEUTRAL){
+		if (alignment == Alignment.NEUTRAL){
 			String desc = null;
 			for (Item i : items){
 				if (i instanceof Artifact){
@@ -95,10 +95,10 @@ public class CrystalMimic extends Mimic {
 	//does not deal bonus damage, steals instead. See attackProc
 	@Override
 	public int damageRoll() {
-		if (alignment == Char.Alignment.NEUTRAL) {
-			alignment = Char.Alignment.ENEMY;
+		if (alignment == Alignment.NEUTRAL) {
+			alignment = Alignment.ENEMY;
 			int dmg = super.damageRoll();
-			alignment = Char.Alignment.NEUTRAL;
+			alignment = Alignment.NEUTRAL;
 			return dmg;
 		} else {
 			return super.damageRoll();
@@ -109,7 +109,7 @@ public class CrystalMimic extends Mimic {
 		state = FLEEING;
 		if (sprite != null) sprite.idle();
 		//haste for 2 turns if attacking
-		if (alignment == Char.Alignment.NEUTRAL){
+		if (alignment == Alignment.NEUTRAL){
 			Buff.affect(this, Haste.class, 2f);
 		} else {
 			Buff.affect(this, Haste.class, 1f);
@@ -125,7 +125,7 @@ public class CrystalMimic extends Mimic {
 
 	@Override
 	public int attackProc(Char enemy, int damage) {
-		if (alignment == Char.Alignment.NEUTRAL && enemy == Dungeon.hero){
+		if (alignment == Alignment.NEUTRAL && enemy == Dungeon.hero){
 			steal( Dungeon.hero );
 
 		} else {
@@ -140,7 +140,7 @@ public class CrystalMimic extends Mimic {
 				ScrollOfTeleportation.appear(enemy, Random.element(candidates));
 			}
 
-			if (alignment == Char.Alignment.ENEMY) state = FLEEING;
+			if (alignment == Alignment.ENEMY) state = FLEEING;
 		}
 		return super.attackProc(enemy, damage);
 	}
@@ -198,7 +198,7 @@ public class CrystalMimic extends Mimic {
 		protected void nowhereToRun() {
 			super.nowhereToRun();
 			if (state == HUNTING){
-				spend(-Actor.TICK); //crystal mimics are fast!
+				spend(-TICK); //crystal mimics are fast!
 			}
 		}
 	}

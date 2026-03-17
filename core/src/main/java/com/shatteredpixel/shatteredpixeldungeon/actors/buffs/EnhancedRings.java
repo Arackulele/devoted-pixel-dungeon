@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
-import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
 
 public class EnhancedRings extends FlavourBuff {
@@ -61,7 +61,7 @@ public class EnhancedRings extends FlavourBuff {
 
 	@Override
 	public float iconFadePercent() {
-		float max = 3* Dungeon.hero.pointsInTalent(Talent.ENHANCED_RINGS);
+		float max = 3*Dungeon.hero.pointsInTalent(Talent.ENHANCED_RINGS);
 		return Math.max(0, (max-visualcooldown()) / max);
 	}
 

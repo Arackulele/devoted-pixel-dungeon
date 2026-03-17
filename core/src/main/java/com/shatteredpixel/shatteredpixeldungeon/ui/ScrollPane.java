@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,17 +180,17 @@ public class ScrollPane extends Component {
 
 		@Override
 		protected void onPointerUp( PointerEvent event ) {
-			if (dragging) {
-
+			if (event == curEvent && dragging) {
 				dragging = false;
 				thumb.am = THUMB_ALPHA;
-
-			} else {
-
-				PointF p = content.camera.screenToCamera( (int) event.current.x, (int) event.current.y );
-				ScrollPane.this.onClick( p.x, p.y );
-
+				curEvent = null; //cancel here so onClick is skipped
 			}
+		}
+
+		@Override
+		protected void onClick(PointerEvent event) {
+			PointF p = content.camera.screenToCamera((int) event.current.x, (int) event.current.y);
+			ScrollPane.this.onClick(p.x, p.y);
 		}
 
 		private boolean dragging = false;

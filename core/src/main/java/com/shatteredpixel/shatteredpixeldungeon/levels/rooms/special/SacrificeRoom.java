@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
@@ -48,7 +47,7 @@ public class SacrificeRoom extends SpecialRoom {
 		Painter.fill( level, this, 1, Terrain.CHASM );
 
 		Point c = center();
-		Room.Door door = entrance();
+		Door door = entrance();
 		if (door.x == left || door.x == right) {
 			if (door.y == c.y) c.y += Random.Int(2) == 0 ? -1 : +1;
 			Point p = Painter.drawInside( level, this, door, Math.abs( door.x - c.x ) - 2, Terrain.EMPTY_SP );
@@ -79,10 +78,10 @@ public class SacrificeRoom extends SpecialRoom {
 
 		Blob.seed( level.pointToCell(c), 6 + Dungeon.depth * 4, SacrificialFire.class, level ).setPrize(prize(level));
 
-		door.set( Room.Door.Type.EMPTY );
+		door.set( Door.Type.EMPTY );
 	}
 
-	public static Item prize(Level level ) {
+	public static Item prize( Level level ) {
 
 		//1 floor set higher than normal
 		Weapon prize = Generator.randomWeapon( (Dungeon.depth / 5) + 1);

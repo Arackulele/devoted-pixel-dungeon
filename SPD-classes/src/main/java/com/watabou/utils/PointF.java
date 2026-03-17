@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,6 +148,10 @@ public class PointF {
 	}
 
 	public static float angle( PointF start, PointF end ) {
+		return (float)Math.atan2( end.y - start.y, end.x - start.x );
+	}
+
+	public static float angle( Point start, Point end ) {
 		return (float)Math.atan2( end.y - start.y, end.x - start.x );
 	}
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +34,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Crossbow;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Blindweed;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Earthroot;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Fadeleaf;
@@ -51,6 +47,9 @@ import com.shatteredpixel.shatteredpixeldungeon.plants.Starflower;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Stormvine;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Sungrass;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
@@ -111,7 +110,7 @@ public abstract class TippedDart extends Dart {
 						if (!new Dart().quantity(1).collect()) Dungeon.level.drop(new Dart().quantity(1), hero.pos).sprite.drop();
 
 						//reset durability if there are darts left in the stack
-						durability = MissileWeapon.MAX_DURABILITY;
+						durability = MAX_DURABILITY;
 						
 						hero.spend( 1f );
 						hero.busy();
@@ -189,7 +188,7 @@ public abstract class TippedDart extends Dart {
 				}
 				targetPos = -1;
 			}
-			int p = Item.curUser == null ? Dungeon.hero.pos : Item.curUser.pos;
+			int p = curUser == null ? Dungeon.hero.pos : curUser.pos;
 			for (Char ch : Actor.chars()) {
 				if (ch instanceof WandOfRegrowth.Lotus) {
 					WandOfRegrowth.Lotus l = (WandOfRegrowth.Lotus) ch;
@@ -201,7 +200,7 @@ public abstract class TippedDart extends Dart {
 			use *= (1f - lotusPreserve);
 		}
 
-		float usages = Math.round(MissileWeapon.MAX_DURABILITY/use);
+		float usages = Math.round(MAX_DURABILITY/use);
 
 		//grants 3+lvl extra uses with charged shot
 		if (bow != null && Dungeon.hero != null && Dungeon.hero.buff(Crossbow.ChargedShot.class) != null){
@@ -212,7 +211,7 @@ public abstract class TippedDart extends Dart {
 		if (usages >= 100f) return 0;
 
 		//add a tiny amount to account for rounding error for calculations like 1/3
-		return (MissileWeapon.MAX_DURABILITY/usages) + 0.001f;
+		return (MAX_DURABILITY/usages) + 0.001f;
 	}
 	
 	@Override

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,22 +27,23 @@ import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.News;
-import com.shatteredpixel.shatteredpixeldungeon.windows.IconTitle;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndTitledMessage;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.NewsArticle;
-import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.TitleBackground;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.windows.IconTitle;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndTitledMessage;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.ui.Component;
+import com.watabou.utils.RectF;
 
 import java.util.ArrayList;
 
@@ -61,34 +62,37 @@ public class NewsScene extends PixelScene {
 
 		int w = Camera.main.width;
 		int h = Camera.main.height;
+		RectF insets = getCommonInsets();
 
-		int fullWidth = landscape() ? 202 : 100;
-		int left = (w - fullWidth)/2;
+		TitleBackground BG = new TitleBackground(w, h);
+		add(BG);
 
-		Archs archs = new Archs();
-		archs.setSize(w, h);
-		add(archs);
+		w -= insets.left + insets.right;
+		h -= insets.top + insets.bottom;
+
+		int fullWidth = PixelScene.landscape() ? 202 : 100;
+		int left = (int)insets.left + (w - fullWidth)/2;
 
 		ExitButton btnExit = new ExitButton();
-		btnExit.setPos(w - btnExit.width(), 0);
+		btnExit.setPos(insets.left + w - btnExit.width(), insets.top);
 		add(btnExit);
 
 		IconTitle title = new IconTitle( Icons.NEWS.get(), Messages.get(this, "title"));
 		title.setSize(200, 0);
 		title.setPos(
-				(w - title.reqWidth()) / 2f,
-				(20 - title.height()) / 2f
+				insets.left + (w - title.reqWidth()) / 2f,
+				insets.top + (20 - title.height()) / 2f
 		);
 		align(title);
 		add(title);
 
-		float top = 18;
+		float top = 18 + insets.top;
 
 		displayingNoArticles = !News.articlesAvailable();
 		if (displayingNoArticles || Messages.lang() != Languages.ENGLISH) {
 
 			Component newsInfo = new NewsInfo();
-			newsInfo.setRect(left, 20, fullWidth, 0);
+			newsInfo.setRect(left, top, fullWidth, 0);
 			add(newsInfo);
 
 			top = newsInfo.bottom();
@@ -98,16 +102,16 @@ public class NewsScene extends PixelScene {
 		if (!displayingNoArticles) {
 			ArrayList<NewsArticle> articles = News.articles();
 
-			float articleSpace = h - top - 2;
+			float articleSpace = h - top - 2 + insets.top;
 			int rows = articles.size();
-			if (landscape()){
+			if (PixelScene.landscape()){
 				rows /= 2;
 			}
 			rows++;
 
 			while ((articleSpace) / (BTN_HEIGHT+0.5f) < rows) {
 				articles.remove(articles.size() - 1);
-				if (landscape()) {
+				if (PixelScene.landscape()) {
 					articles.remove(articles.size() - 1);
 				}
 				rows--;
@@ -127,7 +131,7 @@ public class NewsScene extends PixelScene {
 				}
 				align(b);
 				add(b);
-				if (!landscape()) {
+				if (!PixelScene.landscape()) {
 					top += BTN_HEIGHT;
 				} else {
 					if (rightCol){
@@ -221,7 +225,7 @@ public class NewsScene extends PixelScene {
 
 			if (message.startsWith("\n\n")) message = message.replaceFirst("\n\n", "");
 			
-			text = renderTextBlock(message, 6);
+			text = PixelScene.renderTextBlock(message, 6);
 			text.hardlight(CharSprite.WARNING);
 			add(text);
 		}
@@ -269,7 +273,7 @@ public class NewsScene extends PixelScene {
 			}
 
 			date = new BitmapText( News.parseArticleDate(article), pixelFont);
-			date.scale.set(align(0.5f));
+			date.scale.set(PixelScene.align(0.5f));
 			date.hardlight( 0x888888 );
 			date.measure();
 			add(date);

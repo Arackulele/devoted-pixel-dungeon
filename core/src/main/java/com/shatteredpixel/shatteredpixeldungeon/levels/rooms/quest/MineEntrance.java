@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.quest;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
@@ -32,7 +33,6 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.CaveRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.Tilemap;
 import com.watabou.utils.GameMath;
@@ -112,19 +112,19 @@ public class MineEntrance extends CaveRoom {
 
 			//connections to non-secret rooms have a 9/10 chance to become empty, otherwise wall
 			for (Room n : connected.keySet()){
-				if (!(n instanceof SecretRoom) && connected.get(n).type == Room.Door.Type.REGULAR){
+				if (!(n instanceof SecretRoom) && connected.get(n).type == Door.Type.REGULAR){
 					if (Random.Int(10) == 0){
-						connected.get(n).set(Room.Door.Type.EMPTY);
+						connected.get(n).set(Door.Type.EMPTY);
 					} else {
-						connected.get(n).set(Room.Door.Type.WALL);
+						connected.get(n).set(Door.Type.WALL);
 					}
 					connected.get(n).lockTypeChanges(true);
 				}
 			}
 
-			ArrayList<Room.Door> doors = new ArrayList<>();
-			for (Room.Door d : connected.values()){
-				if (d.type == Room.Door.Type.WALL){
+			ArrayList<Door> doors = new ArrayList<>();
+			for (Door d : connected.values()){
+				if (d.type == Door.Type.WALL){
 					doors.add(d);
 				}
 			}
@@ -133,7 +133,7 @@ public class MineEntrance extends CaveRoom {
 				int cell = level.pointToCell(p);
 				if (level.distance(cell, entrance) > 1 && level.map[cell] == Terrain.EMPTY){
 					float dist = 1000;
-					for (Room.Door d : doors){
+					for (Door d : doors){
 						dist = Math.min(dist, Point.distance(p, d));
 					}
 					dist = GameMath.gate(1f, dist-0.5f, 5f);

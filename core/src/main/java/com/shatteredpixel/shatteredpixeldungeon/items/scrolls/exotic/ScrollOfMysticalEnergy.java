@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
@@ -39,16 +38,16 @@ public class ScrollOfMysticalEnergy extends ExoticScroll {
 	@Override
 	public void doRead() {
 
-		detach(Item.curUser.belongings.backpack);
+		detach(curUser.belongings.backpack);
 		//append buff
-		Buff.affect(Item.curUser, ArtifactRecharge.class).set( 30 ).ignoreHornOfPlenty = false;
+		Buff.affect(curUser, ArtifactRecharge.class).set( 30 ).ignoreHornOfPlenty = false;
 
 		Sample.INSTANCE.play( Assets.Sounds.READ );
 		Sample.INSTANCE.play( Assets.Sounds.CHARGEUP );
 		
-		SpellSprite.show( Item.curUser, SpellSprite.CHARGE, 0, 1, 1 );
+		SpellSprite.show( curUser, SpellSprite.CHARGE, 0, 1, 1 );
 		identify();
-		ScrollOfRecharging.charge(Item.curUser);
+		ScrollOfRecharging.charge(curUser);
 		
 		readAnimation();
 	}

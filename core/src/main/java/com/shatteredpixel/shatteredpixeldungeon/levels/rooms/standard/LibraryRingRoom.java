@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ public class LibraryRingRoom extends StandardRoom {
 			Painter.fill(level, c.x, c.y-4, 2, 10, Terrain.EMPTY);
 		}
 
-		for (Door door : connected.values()) {
+		for (Room.Door door : connected.values()) {
 			door.set( Room.Door.Type.REGULAR );
 			Painter.drawInside(level, this, door, 2, Terrain.EMPTY);
 		}

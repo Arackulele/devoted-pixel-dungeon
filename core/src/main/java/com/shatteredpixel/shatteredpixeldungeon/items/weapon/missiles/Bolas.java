@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,13 @@ public class Bolas extends MissileWeapon {
 		tier = 3;
 		baseUses = 5;
 	}
-	
+
+	@Override
+	public int min(int lvl) {
+		return  2 * (tier-1) +                  //4 base, down from 6
+				0*lvl;                          //0 scaling, down from 1
+	}
+
 	@Override
 	public int max(int lvl) {
 		return  3 * tier +                      //9 base, down from 15
@@ -45,7 +51,7 @@ public class Bolas extends MissileWeapon {
 	}
 	
 	@Override
-	public int proc(Char attacker, Char defender, int damage ) {
+	public int proc( Char attacker, Char defender, int damage ) {
 		Buff.prolong( defender, Cripple.class, Cripple.DURATION/2 );
 		return super.proc( attacker, defender, damage );
 	}

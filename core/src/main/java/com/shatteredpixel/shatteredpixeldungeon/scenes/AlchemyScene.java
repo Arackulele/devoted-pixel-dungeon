@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,15 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Chrome;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
+import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.EnergyCrystal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -30,21 +38,13 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.AlchemistsToolkit;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrinketCatalyst;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.Chrome;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
-import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
-import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
@@ -79,6 +79,7 @@ import com.watabou.noosa.SkinnedBlock;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.ui.Component;
+import com.watabou.utils.RectF;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -120,9 +121,13 @@ public class AlchemyScene extends PixelScene {
 	@Override
 	public void create() {
 		super.create();
-		
+
+		int w = Camera.main.width;
+		int h = Camera.main.height;
+		RectF insets = getCommonInsets();
+
 		water = new SkinnedBlock(
-				Camera.main.width, Camera.main.height,
+				w, h,
 				Dungeon.level.waterTex() ){
 			
 			@Override
@@ -143,10 +148,13 @@ public class AlchemyScene extends PixelScene {
 		
 		Image im = new Image(TextureCache.createGradient(0x66000000, 0x88000000, 0xAA000000, 0xCC000000, 0xFF000000));
 		im.angle = 90;
-		im.x = Camera.main.width;
-		im.scale.x = Camera.main.height/5f;
-		im.scale.y = Camera.main.width;
+		im.x = w;
+		im.scale.x = h/5f;
+		im.scale.y = w;
 		add(im);
+
+		w -= insets.left + insets.right;
+		h -= insets.top + insets.bottom;
 
 		ExitButton btnExit = new ExitButton(){
 			@Override
@@ -154,7 +162,7 @@ public class AlchemyScene extends PixelScene {
 				Game.switchScene(GameScene.class);
 			}
 		};
-		btnExit.setPos( Camera.main.width - btnExit.width(), 0 );
+		btnExit.setPos( insets.left + w - btnExit.width(), insets.top );
 		add( btnExit );
 
 		bubbleEmitter = new Emitter();
@@ -166,30 +174,30 @@ public class AlchemyScene extends PixelScene {
 		IconTitle title = new IconTitle(Icons.ALCHEMY.get(), Messages.get(this, "title") );
 		title.setSize(200, 0);
 		title.setPos(
-				(Camera.main.width - title.reqWidth()) / 2f,
-				(20 - title.height()) / 2f
+				insets.left + (w - title.reqWidth()) / 2f,
+				insets.top + (20 - title.height()) / 2f
 		);
 		align(title);
 		add(title);
 		
-		int w = Math.min(50 + Camera.main.width/2, 150);
-		int left = (Camera.main.width - w)/2;
+		int pw = Math.min(50 + w/2, 150);
+		int left = (int)(insets.left) + (w - pw)/2;
 
-		centerW = left + w/2;
+		centerW = left + pw/2;
 
-		int pos = (Camera.main.height - 120)/2;
+		int pos = (int)(insets.top) + (h - 120)/2;
 
 		if (splitAlchGuide &&
-				Camera.main.width >= 300 &&
-				Camera.main.height >= MIN_HEIGHT_FULL){
-			w = Math.min(150, Camera.main.width/2);
-			left = (Camera.main.width/2 - w);
-			centerW = left + w/2;
+				w >= 300 &&
+				h >= PixelScene.MIN_HEIGHT_FULL){
+			pw = Math.min(150, w/2);
+			left = (w/2 - pw);
+			centerW = left + pw/2;
 
 			NinePatch guideBG = Chrome.get(Chrome.Type.TOAST);
 			guideBG.size(126 + guideBG.marginHor(), Math.min(Camera.main.height - 18, 191 + guideBG.marginVer()));
-			guideBG.y = Math.max(17, (Camera.main.height - guideBG.height())/2f);
-			guideBG.x = Camera.main.width - left - guideBG.width();
+			guideBG.y = Math.max(17, insets.top + (h - guideBG.height())/2f);
+			guideBG.x = insets.left + w - left - guideBG.width();
 			add(guideBG);
 
 			alchGuide = new WndJournal.AlchemyTab();
@@ -203,10 +211,10 @@ public class AlchemyScene extends PixelScene {
 			splitAlchGuide = false;
 		}
 		
-		RenderedTextBlock desc = renderTextBlock(6);
-		desc.maxWidth(w);
+		RenderedTextBlock desc = PixelScene.renderTextBlock(6);
+		desc.maxWidth(pw);
 		desc.text( Messages.get(AlchemyScene.class, "text") );
-		desc.setPos(left + (w - desc.width())/2, pos);
+		desc.setPos(left + (pw - desc.width())/2, pos);
 		add(desc);
 		
 		pos += desc.height() + 6;
@@ -383,8 +391,8 @@ public class AlchemyScene extends PixelScene {
 
 			if (i == 0){
 				//first ones are always visible
-				combines[i].setRect(left + (w-30)/2f, inputs[1].top()+5, 30, inputs[1].height()-10);
-				outputs[i].setRect(left + w - BTN_SIZE - 10, inputs[1].top(), BTN_SIZE, BTN_SIZE);
+				combines[i].setRect(left + (pw-30)/2f, inputs[1].top()+5, 30, inputs[1].height()-10);
+				outputs[i].setRect(left + pw - BTN_SIZE - 10, inputs[1].top(), BTN_SIZE, BTN_SIZE);
 			} else {
 				combines[i].visible = false;
 				outputs[i].visible = false;
@@ -403,7 +411,7 @@ public class AlchemyScene extends PixelScene {
 
 		if (Camera.main.height >= 280){
 			//last elements get centered even with a split alch guide UI, as long as there's enough height
-			centerW = Camera.main.width/2;
+			centerW = (int)(insets.left) + w/2;
 		}
 
 		bubbleEmitter.pos(0,
@@ -415,7 +423,7 @@ public class AlchemyScene extends PixelScene {
 		lowerBubbles.pos(0,
 				pos,
 				2*centerW,
-				Math.max(0, Camera.main.height-pos));
+				Math.max(0, h-pos));
 		lowerBubbles.pour(Speck.factory( Speck.BUBBLE ), 0.1f );
 
 		String energyText = Messages.get(AlchemyScene.class, "energy") + " " + Dungeon.energy;
@@ -423,10 +431,10 @@ public class AlchemyScene extends PixelScene {
 			energyText += "+" + toolkit.availableEnergy();
 		}
 
-		energyLeft = renderTextBlock(energyText, 9);
+		energyLeft = PixelScene.renderTextBlock(energyText, 9);
 		energyLeft.setPos(
 				centerW - energyLeft.width()/2,
-				Camera.main.height - 8 - energyLeft.height()
+				insets.top + h - 8 - energyLeft.height()
 		);
 		energyLeft.hardlight(0x44CCFF);
 		add(energyLeft);
@@ -482,7 +490,7 @@ public class AlchemyScene extends PixelScene {
 			@Override
 			protected void onClick() {
 				super.onClick();
-				if (Camera.main.width >= 300 && Camera.main.height >= MIN_HEIGHT_FULL){
+				if (Camera.main.width >= 300 && Camera.main.height >= PixelScene.MIN_HEIGHT_FULL){
 					splitAlchGuide = !splitAlchGuide;
 					ShatteredPixelDungeon.seamlessResetScene();
 				} else {
@@ -698,7 +706,7 @@ public class AlchemyScene extends PixelScene {
 			energyLeft.text(energyText);
 			energyLeft.setPos(
 					centerW - energyLeft.width()/2,
-					Camera.main.height - 8 - energyLeft.height()
+					energyLeft.top()
 			);
 
 			energyIcon.x = energyLeft.left() - energyIcon.width();
@@ -874,7 +882,7 @@ public class AlchemyScene extends PixelScene {
 		energyLeft.text(energyText);
 		energyLeft.setPos(
 				centerW - energyLeft.width()/2,
-				Camera.main.height - 8 - energyLeft.height()
+				energyLeft.top()
 		);
 
 		energyIcon.x = energyLeft.left() - energyIcon.width();
@@ -1107,7 +1115,7 @@ public class AlchemyScene extends PixelScene {
 			button.icon(Icons.get(Icons.ARROW));
 			add(button);
 
-			costText = renderTextBlock(6);
+			costText = PixelScene.renderTextBlock(6);
 			add(costText);
 		}
 

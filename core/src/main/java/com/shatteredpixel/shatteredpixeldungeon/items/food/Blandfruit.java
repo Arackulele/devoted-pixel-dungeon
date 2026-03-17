@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,20 +21,11 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.food;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
-import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Recipe;
-import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfFrost;
@@ -48,6 +39,15 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfParalyticG
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfPurity;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfToxicGas;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Plant.Seed;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Reflection;
 
@@ -94,7 +94,7 @@ public class Blandfruit extends Food {
 	}
 
 	@Override
-	public void execute(Hero hero, String action ) {
+	public void execute( Hero hero, String action ) {
 
 		if (action.equals( Potion.AC_CHOOSE )){
 
@@ -159,7 +159,7 @@ public class Blandfruit extends Food {
 		return 20 * quantity;
 	}
 
-	public Item cook(Plant.Seed seed){
+	public Item cook(Seed seed){
 		return imbuePotion(Reflection.newInstance(Potion.SeedToPotion.types.get(seed.getClass())));
 	}
 
@@ -244,10 +244,10 @@ public class Blandfruit extends Food {
 			if (ingredients.size() != 2) return false;
 			
 			if (ingredients.get(0) instanceof Blandfruit){
-				if (!(ingredients.get(1) instanceof Plant.Seed)){
+				if (!(ingredients.get(1) instanceof Seed)){
 					return false;
 				}
-			} else if (ingredients.get(0) instanceof Plant.Seed){
+			} else if (ingredients.get(0) instanceof Seed){
 				if (ingredients.get(1) instanceof Blandfruit){
 					Item temp = ingredients.get(0);
 					ingredients.set(0, ingredients.get(1));
@@ -260,7 +260,7 @@ public class Blandfruit extends Food {
 			}
 			
 			Blandfruit fruit = (Blandfruit) ingredients.get(0);
-			Plant.Seed seed = (Plant.Seed) ingredients.get(1);
+			Seed seed = (Seed) ingredients.get(1);
 			
 			if (fruit.quantity() >= 1 && fruit.potionAttrib == null
 				&& seed.quantity() >= 1){
@@ -284,14 +284,14 @@ public class Blandfruit extends Food {
 			ingredients.get(1).quantity(ingredients.get(1).quantity() - 1);
 			
 			
-			return new Blandfruit().cook((Plant.Seed) ingredients.get(1));
+			return new Blandfruit().cook((Seed) ingredients.get(1));
 		}
 		
 		@Override
 		public Item sampleOutput(ArrayList<Item> ingredients) {
 			if (!testIngredients(ingredients)) return null;
 			
-			return new Blandfruit().cook((Plant.Seed) ingredients.get(1));
+			return new Blandfruit().cook((Seed) ingredients.get(1));
 		}
 	}
 

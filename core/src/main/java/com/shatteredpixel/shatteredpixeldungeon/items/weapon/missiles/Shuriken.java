@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
@@ -49,9 +48,9 @@ public class Shuriken extends MissileWeapon {
 	@Override
 	protected void onThrow(int cell) {
 		super.onThrow(cell);
-		if (Item.curUser.buff(ShurikenInstantTracker.class) == null) {
+		if (curUser.buff(ShurikenInstantTracker.class) == null) {
 			//1 less turn as the attack will be instant
-			FlavourBuff.affect(Item.curUser, ShurikenInstantTracker.class, ShurikenInstantTracker.DURATION-1);
+			FlavourBuff.affect(curUser, ShurikenInstantTracker.class, ShurikenInstantTracker.DURATION-1);
 		}
 	}
 

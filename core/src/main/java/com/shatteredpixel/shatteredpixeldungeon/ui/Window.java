@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.effects.ShadowBox;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.watabou.input.KeyBindings;
 import com.watabou.input.KeyEvent;
 import com.watabou.input.PointerEvent;
@@ -33,7 +33,9 @@ import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.PointerArea;
+import com.watabou.utils.PlatformSupport;
 import com.watabou.utils.Point;
+import com.watabou.utils.RectF;
 import com.watabou.utils.Signal;
 
 public class Window extends Group implements Signal.Listener<KeyEvent> {
@@ -52,9 +54,8 @@ public class Window extends Group implements Signal.Listener<KeyEvent> {
 	public static final int TITLE_COLOR = 0xFFFF44;
 	public static final int SHPX_COLOR = 0x33BB33;
     public static final int DEVO_COLOR = 0xc42b3b;
-
-
-    public Window() {
+	
+	public Window() {
 		this( 0, 0, Chrome.get( Chrome.Type.WINDOW ) );
 	}
 	
@@ -96,13 +97,17 @@ public class Window extends Group implements Signal.Listener<KeyEvent> {
 			width - chrome.x + chrome.marginRight(),
 			height - chrome.y + chrome.marginBottom() );
 		add( chrome );
+
+		RectF insets = Game.platform.getSafeInsets(PlatformSupport.INSET_BLK);
+		int screenW = (int)(Game.width - insets.left - insets.right);
+		int screenH = (int)(Game.height - insets.top - insets.bottom);
 		
 		camera = new Camera( 0, 0,
 			(int)chrome.width,
 			(int)chrome.height,
 			PixelScene.defaultZoom );
-		camera.x = (int)(Game.width - camera.width * camera.zoom) / 2;
-		camera.y = (int)(Game.height - camera.height * camera.zoom) / 2;
+		camera.x = (int)(insets.left + (screenW - camera.width * camera.zoom) / 2);
+		camera.y = (int)(insets.top + (screenH - camera.height * camera.zoom) / 2);
 		camera.y -= yOffset * camera.zoom;
 		camera.scroll.set( chrome.x, chrome.y );
 		Camera.add( camera );
@@ -125,10 +130,16 @@ public class Window extends Group implements Signal.Listener<KeyEvent> {
 		
 		camera.resize( (int)chrome.width, (int)chrome.height );
 
-		camera.x = (int)(Game.width - camera.screenWidth()) / 2;
+		RectF insets = Game.platform.getSafeInsets(PlatformSupport.INSET_BLK);
+		int screenW = (int)(Game.width - insets.left - insets.right);
+		int screenH = (int)(Game.height - insets.top - insets.bottom);
+
+		camera.x = (int)(screenW - camera.screenWidth()) / 2;
+		camera.x += insets.left;
 		camera.x += xOffset * camera.zoom;
 
-		camera.y = (int)(Game.height - camera.screenHeight()) / 2;
+		camera.y = (int)(screenH - camera.screenHeight()) / 2;
+		camera.y += insets.top;
 		camera.y += yOffset * camera.zoom;
 
 		shadow.boxRect( camera.x / camera.zoom, camera.y / camera.zoom, chrome.width(), chrome.height );
@@ -163,17 +174,21 @@ public class Window extends Group implements Signal.Listener<KeyEvent> {
 		Camera sceneCam = PixelScene.uiCamera.visible ? PixelScene.uiCamera : Camera.main;
 
 		int newXOfs = xOffset;
-		if (x < margin){
-			newXOfs += margin - x;
-		} else if (x + camera.width > sceneCam.width - margin){
-			newXOfs += (sceneCam.width - margin) - (x + camera.width);
+		if (newXOfs != 0) {
+			if (x < margin) {
+				newXOfs += margin - x;
+			} else if (x + camera.width > sceneCam.width - margin) {
+				newXOfs += (sceneCam.width - margin) - (x + camera.width);
+			}
 		}
 
 		int newYOfs = yOffset;
-		if (y < margin){
-			newYOfs += margin - y;
-		} else if (y + camera.height > sceneCam.height - margin){
-			newYOfs += (sceneCam.height - margin) - (y + camera.height);
+		if (newYOfs != 0) {
+			if (y < margin) {
+				newYOfs += margin - y;
+			} else if (y + camera.height > sceneCam.height - margin) {
+				newYOfs += (sceneCam.height - margin) - (y + camera.height);
+			}
 		}
 
 		offset(newXOfs, newYOfs);

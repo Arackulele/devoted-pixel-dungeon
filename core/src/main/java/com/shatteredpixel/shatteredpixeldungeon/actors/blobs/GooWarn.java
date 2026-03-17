@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.blobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BlobEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -31,11 +30,11 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.GooSprite;
 public class GooWarn extends Blob {
 
 	//cosmetic blob, previously used for Goo's pump up attack (that's now handled by Goo's sprite)
-	// but is still used as a visual indicator for Arcane bombs
+	// as of v3.3.4 it's not longer used by arcane bomb either
 
 	{
 		//this one needs to act just before the Goo
-		actPriority = Actor.MOB_PRIO + 1;
+		actPriority = MOB_PRIO + 1;
 	}
 
 	protected int pos;
@@ -47,7 +46,7 @@ public class GooWarn extends Blob {
 
 		for (int i = area.left; i < area.right; i++){
 			for (int j = area.top; j < area.bottom; j++){
-				cell = i + j* Dungeon.level.width();
+				cell = i + j*Dungeon.level.width();
 				off[cell] = cur[cell] > 0 ? cur[cell] - 1 : 0;
 
 				if (off[cell] > 0) {

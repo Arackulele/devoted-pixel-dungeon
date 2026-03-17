@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,8 +65,6 @@ public class Chains extends Group {
 
 		//base of 200ms, plus 50ms per tile travelled
 		duration = distance/320f + 0.2f;
-
-        if (type == Effects.Type.VOID_DOTS) duration /= 2;
 
 		rotation = (float)(Math.atan2( dy, dx ) * A) + 90f;
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,16 +88,20 @@ public class Emitter extends Group {
 	}
 
 	public void start( Factory factory, float interval, int quantity ) {
+		//by default the delay is random, up to the interval
+		startDelayed( factory, interval, quantity, Random.Float(interval));
+	}
 
+	public void startDelayed( Factory factory, float interval, int quantity, float delay ) {
 		this.factory = factory;
 		this.lightMode = factory.lightMode();
-		
+
 		this.interval = interval;
 		this.quantity = quantity;
-		
+
 		count = 0;
-		time = Random.Float( interval );
-		
+		time = interval - delay;
+
 		on = true;
 		started = true;
 	}

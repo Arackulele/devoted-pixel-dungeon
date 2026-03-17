@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -276,7 +276,7 @@ public class LastLevel extends Level {
 		public Tilemap create() {
 			Tilemap v = super.create();
 
-			int candlesStart = AMULET_POS - 3 - 3* Dungeon.level.width();
+			int candlesStart = AMULET_POS - 3 - 3*Dungeon.level.width();
 
 			int cell = tileX + tileY * Dungeon.level.width();
 			int[] map = Dungeon.level.map;

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ public class Blacksmith extends NPC {
 	{
 		spriteClass = BlacksmithSprite.class;
 
-		properties.add(Char.Property.IMMOVABLE);
+		properties.add(Property.IMMOVABLE);
 	}
 
 	@Override
@@ -96,7 +96,6 @@ public class Blacksmith extends NPC {
 				case HUNTRESS:  msg1 += Messages.get(Blacksmith.this, "intro_quest_huntress"); break;
 				case DUELIST:   msg1 += Messages.get(Blacksmith.this, "intro_quest_duelist"); break;
 				case CLERIC:    msg1 += Messages.get(Blacksmith.this, "intro_quest_cleric"); break;
-				case ZEALOT:    msg1 += Messages.get(Blacksmith.this, "intro_quest_zealot"); break;
 			}
 
 			msg1 += "\n\n" + Messages.get(Blacksmith.this, "intro_quest_start");
@@ -180,7 +179,7 @@ public class Blacksmith extends NPC {
 
 	@Override
 	public int defenseSkill( Char enemy ) {
-		return Char.INFINITE_EVASION;
+		return INFINITE_EVASION;
 	}
 	
 	@Override
@@ -236,7 +235,7 @@ public class Blacksmith extends NPC {
 			completed	= false;
 
 			favor       = 0;
-			pickaxe     = new Pickaxe().identify();
+			pickaxe     = new Pickaxe().identify(false);
 			freePickaxe = false;
 			reforges    = 0;
 			hardens     = 0;
@@ -352,7 +351,7 @@ public class Blacksmith extends NPC {
 			}
 		}
 		
-		public static ArrayList<Room> spawn(ArrayList<Room> rooms ) {
+		public static ArrayList<Room> spawn( ArrayList<Room> rooms ) {
 			if (!spawned && Dungeon.depth > 11 && Random.Int( 15 - Dungeon.depth ) == 0) {
 				
 				rooms.add(new BlacksmithRoom());

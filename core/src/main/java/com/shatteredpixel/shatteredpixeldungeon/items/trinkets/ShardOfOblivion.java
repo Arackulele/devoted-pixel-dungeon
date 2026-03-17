@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,23 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.trinkets;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Identification;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 
@@ -77,8 +77,8 @@ public class ShardOfOblivion extends Trinket {
 	@Override
 	public void execute(Hero hero, String action) {
 		if (action.equals(AC_IDENTIFY)){
-			Item.curUser = hero;
-			Item.curItem = this;
+			curUser = hero;
+			curItem = this;
 			GameScene.selectItem(identifySelector);
 		} else {
 			super.execute(hero, action);
@@ -105,17 +105,17 @@ public class ShardOfOblivion extends Trinket {
 			boolean ready = false;
 			if (item instanceof Weapon){
 				ready = ((Weapon) item).readyToIdentify();
-				if (item.isEquipped(Item.curUser) && Item.curUser.pointsInTalent(Talent.ADVENTURERS_INTUITION) == 2){
+				if (item.isEquipped(curUser) && curUser.pointsInTalent(Talent.ADVENTURERS_INTUITION) == 2){
 					ready = true;
 				}
 			} else if (item instanceof Armor){
 				ready = ((Armor) item).readyToIdentify();
-				if (item.isEquipped(Item.curUser) && Item.curUser.pointsInTalent(Talent.VETERANS_INTUITION) == 2){
+				if (item.isEquipped(curUser) && curUser.pointsInTalent(Talent.VETERANS_INTUITION) == 2){
 					ready = true;
 				}
 			} else if (item instanceof Ring){
 				ready = ((Ring) item).readyToIdentify();
-				if (item.isEquipped(Item.curUser) && Item.curUser.pointsInTalent(Talent.THIEFS_INTUITION) == 2){
+				if (item.isEquipped(curUser) && curUser.pointsInTalent(Talent.THIEFS_INTUITION) == 2){
 					ready = true;
 				}
 			} else if (item instanceof Wand){
@@ -125,9 +125,9 @@ public class ShardOfOblivion extends Trinket {
 			if (ready){
 				item.identify();
 				Badges.validateItemLevelAquired(item);
-				Item.curUser.sprite.operate(Item.curUser.pos);
+				curUser.sprite.operate(curUser.pos);
 				Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
-				Item.curUser.sprite.parent.add( new Identification( Item.curUser.sprite.center().offset( 0, -16 ) ) );
+				curUser.sprite.parent.add( new Identification( curUser.sprite.center().offset( 0, -16 ) ) );
 				GLog.p(Messages.get(ShardOfOblivion.class, "identify"));
 			} else {
 				GLog.w(Messages.get(ShardOfOblivion.class, "identify_not_yet"));
@@ -139,7 +139,7 @@ public class ShardOfOblivion extends Trinket {
 		return trinketLevel(ShardOfOblivion.class) >= 0;
 	}
 
-	public static class WandUseTracker extends FlavourBuff {
+	public static class WandUseTracker extends FlavourBuff{
 
 		{
 			type = buffType.POSITIVE;

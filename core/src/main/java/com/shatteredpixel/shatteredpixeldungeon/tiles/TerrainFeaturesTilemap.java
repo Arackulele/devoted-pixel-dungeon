@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,18 @@ package com.shatteredpixel.shatteredpixeldungeon.tiles;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.levels.*;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CitadelBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CitadelLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ColdhouseBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ColdhouseLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ForgeBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ForgeLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.GardenLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.LastShopLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.levels.VoidBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.VoidLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
-import com.shatteredpixel.shatteredpixeldungeon.levels.*;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.tweeners.ScaleTweener;
@@ -68,62 +77,62 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 
 		int stage = (Dungeon.depth-1)/5;
 		if (Dungeon.depth == 21 && Dungeon.level instanceof LastShopLevel) stage--;
-		if (Dungeon.level instanceof ColdhouseLevel || Dungeon.level instanceof ColdhouseBossLevel) {
-			if (tile == Terrain.HIGH_GRASS) {
-				return 9 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.FURROWED_GRASS) {
-				return 11 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.GRASS) {
-				return 13 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			}
-		}
-		else if (Dungeon.level instanceof ForgeLevel || Dungeon.level instanceof ForgeBossLevel) {
-			if (tile == Terrain.HIGH_GRASS) {
-				return 9 + 16 * 8 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.FURROWED_GRASS) {
-				return 11 + 16 * 8 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.GRASS) {
-				return 13 + 16 * 8 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			}
-		}
-		else if (Dungeon.level instanceof GardenLevel) {
-			if (tile == Terrain.HIGH_GRASS) {
-				return 9 + 16 * 20 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.FURROWED_GRASS) {
-				return 11 + 16 * 20 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.GRASS) {
-				return 13 + 16 * 20 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			}
-		}
-		else if (Dungeon.level instanceof CitadelLevel || Dungeon.level instanceof CitadelBossLevel) {
-			if (tile == Terrain.HIGH_GRASS) {
-				return 9 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.FURROWED_GRASS) {
-				return 11 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.GRASS) {
-				return 13 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			}
-		}
-		else if (Dungeon.level instanceof VoidLevel || Dungeon.level instanceof VoidBossLevel) {
-			if (tile == Terrain.HIGH_GRASS) {
-				return 9 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.FURROWED_GRASS) {
-				return 11 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.GRASS) {
-				return 13 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			}
-		}
-		else {
-			if (tile == Terrain.HIGH_GRASS) {
-				return 9 + 16 * stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.FURROWED_GRASS) {
-				return 11 + 16 * stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			} else if (tile == Terrain.GRASS) {
-				return 13 + 16 * stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
-			}
-		}
-		if (tile == Terrain.EMBERS) {
-			return 9 * (16 * 5) + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+        if (Dungeon.level instanceof ColdhouseLevel || Dungeon.level instanceof ColdhouseBossLevel) {
+            if (tile == Terrain.HIGH_GRASS) {
+                return 9 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.FURROWED_GRASS) {
+                return 11 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.GRASS) {
+                return 13 + 16 * 6 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            }
+        }
+        else if (Dungeon.level instanceof ForgeLevel || Dungeon.level instanceof ForgeBossLevel) {
+            if (tile == Terrain.HIGH_GRASS) {
+                return 9 + 16 * 8 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.FURROWED_GRASS) {
+                return 11 + 16 * 8 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.GRASS) {
+                return 13 + 16 * 8 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            }
+        }
+        else if (Dungeon.level instanceof GardenLevel) {
+            if (tile == Terrain.HIGH_GRASS) {
+                return 9 + 16 * 20 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.FURROWED_GRASS) {
+                return 11 + 16 * 20 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.GRASS) {
+                return 13 + 16 * 20 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            }
+        }
+        else if (Dungeon.level instanceof CitadelLevel || Dungeon.level instanceof CitadelBossLevel) {
+            if (tile == Terrain.HIGH_GRASS) {
+                return 9 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.FURROWED_GRASS) {
+                return 11 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.GRASS) {
+                return 13 + 16 * 9 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            }
+        }
+        else if (Dungeon.level instanceof VoidLevel || Dungeon.level instanceof VoidBossLevel) {
+            if (tile == Terrain.HIGH_GRASS) {
+                return 9 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.FURROWED_GRASS) {
+                return 11 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.GRASS) {
+                return 13 + 16 * 10 + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            }
+        }
+        else {
+            if (tile == Terrain.HIGH_GRASS) {
+                return 9 + 16 * stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.FURROWED_GRASS) {
+                return 11 + 16 * stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            } else if (tile == Terrain.GRASS) {
+                return 13 + 16 * stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+            }
+        }
+        if (tile == Terrain.EMBERS) {
+			return 9 + (16*5) + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 		}
 
 		return -1;
@@ -166,7 +175,7 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 		
 		plant.origin.set( 8, 12 );
 		plant.scale.set( 0 );
-		plant.point( tileToWorld( pos ) );
+		plant.point( DungeonTilemap.tileToWorld( pos ) );
 
 		parent.add( plant );
 

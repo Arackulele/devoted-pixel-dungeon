@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,8 @@ package com.shatteredpixel.shatteredpixeldungeon.effects;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.ui.TalentIcon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.TalentIcon;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Component;
@@ -51,7 +51,7 @@ public class Transmuting extends Component {
 	private float duration;
 	private float passed;
 
-	public Transmuting(Item oldItem, Item newItem ){
+	public Transmuting( Item oldItem, Item newItem ){
 		oldSprite = new ItemSprite(oldItem);
 		oldSprite.originToCenter();
 		add(oldSprite);
@@ -67,7 +67,7 @@ public class Transmuting extends Component {
 		passed = 0;
 	}
 
-	public Transmuting(Talent oldTalent, Talent newTalent ){
+	public Transmuting( Talent oldTalent, Talent newTalent ){
 		oldSprite = new TalentIcon(oldTalent);
 		oldSprite.originToCenter();
 		add(oldSprite);

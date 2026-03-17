@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Random;
 
 public class PoolRoom extends SpecialRoom {
@@ -54,8 +53,8 @@ public class PoolRoom extends SpecialRoom {
 		Painter.fill( level, this, Terrain.WALL );
 		Painter.fill( level, this, 1, Terrain.WATER );
 		
-		Room.Door door = entrance();
-		door.set( Room.Door.Type.REGULAR );
+		Door door = entrance();
+		door.set( Door.Type.REGULAR );
 
 		int x = -1;
 		int y = -1;
@@ -100,7 +99,7 @@ public class PoolRoom extends SpecialRoom {
 		}
 	}
 	
-	private static Item prize(Level level ) {
+	private static Item prize( Level level ) {
 
 		Item prize;
 

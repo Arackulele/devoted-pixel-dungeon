@@ -62,826 +62,848 @@ import java.nio.Buffer;
 import java.util.HashSet;
 
 public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip.Listener {
-	
-	// Color constants for floating text
-	public static final int DEFAULT		= 0xFFFFFF;
-	public static final int POSITIVE	= 0x00FF00;
-	public static final int NEGATIVE	= 0xFF0000;
-	public static final int WARNING		= 0xFF8800;
-	public static final int NEUTRAL		= 0xFFFF00;
-	
-	public static final float DEFAULT_MOVE_INTERVAL = 0.1f;
-	private static float moveInterval = DEFAULT_MOVE_INTERVAL;
-	private static final float FLASH_INTERVAL	= 0.05f;
 
-	//the amount the sprite is raised from flat when viewed in a raised perspective
-	protected float perspectiveRaise    = 6 / 16f; //6 pixels
+    // Color constants for floating text
+    public static final int DEFAULT		= 0xFFFFFF;
+    public static final int POSITIVE	= 0x00FF00;
+    public static final int NEGATIVE	= 0xFF0000;
+    public static final int WARNING		= 0xFF8800;
+    public static final int NEUTRAL		= 0xFFFF00;
 
-	//the width and height of the shadow are a percentage of sprite size
-	//offset is the number of pixels the shadow is moved down or up (handy for some animations)
-	protected boolean renderShadow  = false;
-	protected float shadowWidth     = 1.2f;
-	protected float shadowHeight    = 0.25f;
-	protected float shadowOffset    = 0.25f;
+    public static final float DEFAULT_MOVE_INTERVAL = 0.1f;
+    private static float moveInterval = DEFAULT_MOVE_INTERVAL;
+    private static final float FLASH_INTERVAL	= 0.05f;
 
-	public enum State {
-		BURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED, MARKED, HEALING, SHIELDED, ELDRITCHSHIELDED, HEARTS, GLOWING, AURA
-	}
-	
-	protected Animation idle;
-	protected Animation run;
-	protected Animation attack;
-	protected Animation operate;
-	protected Animation zap;
-	protected Animation die;
-	
-	protected Callback animCallback;
-	
-	protected PosTweener motion;
-	
-	protected Emitter burning;
-	protected Emitter chilled;
-	protected Emitter marked;
-	protected Emitter levitation;
-	protected Emitter healing;
-	protected Emitter hearts;
-	
-	protected IceBlock iceBlock;
-	protected DarkBlock darkBlock;
-	protected GlowBlock glowBlock;
-	protected TorchHalo light;
-	protected ShieldHalo shield;
-	protected AlphaTweener invisible;
-	protected Flare aura;
-	
-	protected EmoIcon emo;
-	protected CharHealthIndicator health;
+    //the amount the sprite is raised from flat when viewed in a raised perspective
+    protected float perspectiveRaise    = 6 / 16f; //6 pixels
 
-	private Tweener jumpTweener;
-	private Callback jumpCallback;
+    //the width and height of the shadow are a percentage of sprite size
+    //offset is the number of pixels the shadow is moved down or up (handy for some animations)
+    protected boolean renderShadow  = false;
+    protected float shadowWidth     = 1.2f;
+    protected float shadowHeight    = 0.25f;
+    protected float shadowOffset    = 0.25f;
 
-	protected float flashTime = 0;
-	
-	protected boolean sleeping = false;
+    public enum State {
+        BURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED, MARKED, HEALING, SHIELDED, ELDRITCHSHIELDED, HEARTS, GLOWING, AURA
+    }
 
-	public Char ch;
+    protected Animation idle;
+    protected Animation run;
+    protected Animation attack;
+    protected Animation operate;
+    protected Animation zap;
+    protected Animation die;
 
-	//used to prevent the actor associated with this sprite from acting until movement completes
-	public volatile boolean isMoving = false;
-	
-	public CharSprite() {
-		super();
-		listener = this;
-	}
-	
-	@Override
-	public void play(Animation anim) {
-		//Shouldn't interrupt the dieing animation
-		if (curAnim == null || curAnim != die) {
-			super.play(anim);
-		}
+    protected Callback animCallback;
 
-		if (Dungeon.depth == 25 && ch != null && ch.HT == 1 && !(ch instanceof Wraith)){
-			brightness(0.0f);
-			alpha(0.8f);
-		}
-	}
-	
-	//intended to be used for placing a character in the game world
-	public void link( Char ch ) {
-		linkVisuals( ch );
-		
-		this.ch = ch;
-		ch.sprite = this;
-		
-		place( ch.pos );
-		turnTo( ch.pos, Random.Int( Dungeon.level.length() ) );
-		renderShadow = true;
-		
-		if (ch != Dungeon.hero) {
-			if (health == null) {
-				health = new CharHealthIndicator(ch);
-			} else {
-				health.target(ch);
-			}
-		}
+    protected PosTweener motion;
 
-		ch.updateSpriteState();
+    protected Emitter burning;
+    protected Emitter chilled;
+    protected Emitter marked;
+    protected Emitter levitation;
+    protected Emitter healing;
+    protected Emitter hearts;
 
-	}
+    protected IceBlock iceBlock;
+    protected DarkBlock darkBlock;
+    protected GlowBlock glowBlock;
+    protected TorchHalo light;
+    protected ShieldHalo shield;
+    protected AlphaTweener invisible;
+    protected Flare aura;
 
-	@Override
-	public void destroy() {
-		super.destroy();
-		if (ch != null && ch.sprite == this){
-			ch.sprite = null;
-		}
-	}
+    protected EmoIcon emo;
+    protected CharHealthIndicator health;
 
-	//used for just updating a sprite based on a given character, not linking them or placing in the game
-	public void linkVisuals( Char ch ){
-		//do nothin by default
-	}
-	
-	public PointF worldToCamera( int cell ) {
-		
-		final int csize = DungeonTilemap.SIZE;
-		
-		return new PointF(
-			PixelScene.align(Camera.main, ((cell % Dungeon.level.width()) + 0.5f) * csize - width() * 0.5f),
-			PixelScene.align(Camera.main, ((cell / Dungeon.level.width()) + 1.0f) * csize - height() - csize * perspectiveRaise)
-		);
-	}
-	
-	public void place( int cell ) {
-		point( worldToCamera( cell ) );
-	}
-	
-	public void showStatus( int color, String text, Object... args ) {
-		showStatusWithIcon(color, text, FloatingText.NO_ICON, args);
-	}
+    private Tweener jumpTweener;
+    private Callback jumpCallback;
 
-	public void showStatusWithIcon( int color, String text, int icon, Object... args ) {
-		if (visible) {
-			if (args.length > 0) {
-				text = Messages.format( text, args );
-			}
-			float x = destinationCenter().x;
-			float y = destinationCenter().y - height()/2f;
-			int pos = DungeonTilemap.worldToTile(x, y + height(), Dungeon.level.width());
-			if (ch != null) {
-				FloatingText.show( x, y, pos, text, color, icon, true );
-			} else {
-				FloatingText.show( x, y, -1, text, color, icon, true );
-			}
-		}
-	}
-	
-	public void idle() {
-		play(idle);
-	}
-	
-	public void move( int from, int to ) {
-		turnTo( from , to );
+    protected float flashTime = 0;
 
-		play( run );
-		
-		motion = new PosTweener( this, worldToCamera( to ), moveInterval );
-		motion.listener = this;
-		parent.add( motion );
+    protected boolean sleeping = false;
 
-		isMoving = true;
-		
-		if (visible && Dungeon.level.water[from] && !ch.flying) {
-			GameScene.ripple( from );
-		}
+    public Char ch;
 
-	}
-	
-	public static void setMoveInterval( float interval){
-		moveInterval = interval;
-	}
-	
-	//returns where the center of this sprite will be after it completes any motion in progress
-	public PointF destinationCenter(){
-		PosTweener motion = this.motion;
-		if (motion != null && motion.elapsed >= 0){
-			return new PointF(motion.end.x + width()/2f, motion.end.y + height()/2f);
-		} else {
-			return center();
-		}
-	}
-	
-	public void interruptMotion() {
-		if (motion != null) {
-			motion.stop(false);
-		}
-	}
-	
-	public void attack( int cell ) {
-		attack( cell, null );
-	}
-	
-	public synchronized void attack( int cell, Callback callback ) {
-		animCallback = callback;
-		turnTo( ch.pos, cell );
-		play( attack );
-	}
-	
-	public void operate( int cell ) {
-		operate( cell, null );
-	}
-	
-	public synchronized void operate( int cell, Callback callback ) {
-		animCallback = callback;
-		turnTo( ch.pos, cell );
-		play( operate );
-	}
-	
-	public void zap( int cell ) {
-		zap( cell, null );
-	}
-	
-	public synchronized void zap( int cell, Callback callback ) {
-		animCallback = callback;
-		turnTo( ch.pos, cell );
-		play( zap );
-	}
-	
-	public void turnTo( int from, int to ) {
-		int fx = from % Dungeon.level.width();
-		int tx = to % Dungeon.level.width();
-		if (tx > fx) {
-			flipHorizontal = false;
-		} else if (tx < fx) {
-			flipHorizontal = true;
-		}
-	}
+    //used to prevent the actor associated with this sprite from acting until movement completes
+    public volatile boolean isMoving = false;
 
-	public void jump( int from, int to, Callback callback ) {
-		float distance = Math.max( 1f, Dungeon.level.trueDistance( from, to ));
-		jump( from, to, distance * 2, distance * 0.1f, callback );
-	}
+    public CharSprite() {
+        super();
+        listener = this;
+    }
 
-	public void jump( int from, int to, float height, float duration,  Callback callback ) {
-		jumpCallback = callback;
+    @Override
+    public void play(Animation anim) {
+        //Shouldn't interrupt the dieing animation
+        if (curAnim == null || curAnim != die) {
+            super.play(anim);
+        }
 
-		jumpTweener = new JumpTweener( this, worldToCamera( to ), height, duration );
-		jumpTweener.listener = this;
-		parent.add( jumpTweener );
+        if (Dungeon.depth == 25 && ch != null && ch.HT == 1 && !(ch instanceof Wraith)){
+            brightness(0.0f);
+            alpha(0.8f);
+        }
+    }
 
-		turnTo( from, to );
-	}
+    //intended to be used for placing a character in the game world
+    public void link( Char ch ) {
+        linkVisuals( ch );
 
-	public void die() {
-		sleeping = false;
-		processStateRemoval( State.PARALYSED );
-		play( die );
+        this.ch = ch;
+        ch.sprite = this;
 
-		hideEmo();
-		
-		if (health != null){
-			health.killAndErase();
-		}
-	}
-	
-	public Emitter emitter() {
-		Emitter emitter = GameScene.emitter();
-		if (emitter != null) emitter.pos( this );
-		return emitter;
-	}
-	
-	public Emitter centerEmitter() {
-		Emitter emitter = GameScene.emitter();
-		if (emitter != null) emitter.pos( center() );
-		return emitter;
-	}
-	
-	public Emitter bottomEmitter() {
-		Emitter emitter = GameScene.emitter();
-		if (emitter != null) emitter.pos( x, y + height, width, 0 );
-		return emitter;
-	}
-	
-	public void burst( final int color, int n ) {
-		if (visible) {
-			Splash.at( center(), color, n );
-		}
-	}
-	
-	public void bloodBurstA( PointF from, int damage ) {
-		if (visible) {
-			PointF c = center();
-			int n = (int)Math.min( 9 * Math.sqrt( (double)damage / ch.HT ), 9 );
-			Splash.at( c, PointF.angle( from, c ), 3.1415926f / 2, blood(), n );
-		}
-	}
+        place( ch.pos );
+        turnTo( ch.pos, Random.Int( Dungeon.level.length() ) );
+        renderShadow = true;
 
-	public int blood() {
-		return 0xFFBB0000;
-	}
-	
-	public void flash() {
-		ra = ba = ga = 1f;
-		flashTime = FLASH_INTERVAL;
-	}
+        if (ch != Dungeon.hero) {
+            if (health == null) {
+                health = new CharHealthIndicator(ch);
+            } else {
+                health.target(ch);
+            }
+        }
 
-	private final HashSet<State> stateAdditions = new HashSet<>();
+        ch.updateSpriteState();
 
-	public void add( State state ) {
-		//instant as it just changes an animation property that will get read later
-		if (state == State.PARALYSED){
-			paused = true;
-		} else {
-			synchronized (State.class) {
-				stateRemovals.remove(state);
-				stateAdditions.add(state);
-			}
-		}
-	}
+    }
 
-	private int auraColor = 0;
-	private int auraRays = 0;
+    @Override
+    public void destroy() {
+        super.destroy();
+        if (ch != null && ch.sprite == this){
+            ch.sprite = null;
+        }
+    }
 
-	//Aura needs color and ray count data too
-	public void aura( int color, int nRays ){
-		add(State.AURA);
-		auraColor = color;
-		auraRays = nRays;
-	}
+    //used for just updating a sprite based on a given character, not linking them or placing in the game
+    public void linkVisuals( Char ch ){
+        //do nothin by default
+    }
 
-	protected synchronized void processStateAddition( State state ) {
-		switch (state) {
-			case BURNING:
-				if (burning != null) burning.on = false;
-				burning = emitter();
-				burning.pour(FlameParticle.FACTORY, 0.06f);
-				if (visible) {
-					Sample.INSTANCE.play(Assets.Sounds.BURNING);
-				}
-				break;
-			case LEVITATING:
-				if (levitation != null) levitation.on = false;
-				levitation = emitter();
-				levitation.pour(Speck.factory(Speck.JET), 0.02f);
-				break;
-			case INVISIBLE:
-				if (invisible != null) invisible.killAndErase();
-				invisible = new AlphaTweener(this, 0.4f, 0.4f);
-				if (parent != null) {
-					parent.add(invisible);
-				} else
-					alpha(0.4f);
-				break;
-			case PARALYSED:
-				paused = true;
-				break;
-			case FROZEN:
-				if (iceBlock != null) iceBlock.killAndErase();
-				iceBlock = IceBlock.freeze(this);
-				break;
-			case ILLUMINATED:
-				if (light != null) light.putOut();
-				GameScene.effect(light = new TorchHalo(this));
-				break;
-			case CHILLED:
-				if (chilled != null) chilled.on = false;
-				chilled = emitter();
-				chilled.pour(SnowParticle.FACTORY, 0.1f);
-				break;
-			case DARKENED:
-				if (darkBlock != null) darkBlock.killAndErase();
-				darkBlock = DarkBlock.darken(this);
-				break;
-			case MARKED:
-				if (marked != null) marked.on = false;
-				marked = emitter();
-				marked.pour(ShadowParticle.UP, 0.1f);
-				break;
-			case HEALING:
-				if (healing != null) healing.on = false;
-				healing = emitter();
-				healing.pour(Speck.factory(Speck.HEALING), 0.5f);
-				break;
-			case SHIELDED:
-				if (shield != null) shield.killAndErase();
-				GameScene.effect(shield = new ShieldHalo(this, 0xBBAACC));
-				break;
+    public PointF worldToCamera( int cell ) {
+
+        final int csize = DungeonTilemap.SIZE;
+
+        return new PointF(
+                PixelScene.align(Camera.main, ((cell % Dungeon.level.width()) + 0.5f) * csize - width() * 0.5f),
+                PixelScene.align(Camera.main, ((cell / Dungeon.level.width()) + 1.0f) * csize - height() - csize * perspectiveRaise)
+        );
+    }
+
+    public void place( int cell ) {
+        point( worldToCamera( cell ) );
+    }
+
+    public void showStatus( int color, String text, Object... args ) {
+        showStatusWithIcon(color, text, FloatingText.NO_ICON, args);
+    }
+
+    public void showStatusWithIcon( int color, String text, int icon, Object... args ) {
+        if (visible) {
+            if (args.length > 0) {
+                text = Messages.format( text, args );
+            }
+            float x = destinationCenter().x;
+            float y = destinationCenter().y - height()/2f;
+            int pos = DungeonTilemap.worldToTile(x, y + height(), Dungeon.level.width());
+            if (ch != null) {
+                FloatingText.show( x, y, pos, text, color, icon, true );
+            } else {
+                FloatingText.show( x, y, -1, text, color, icon, true );
+            }
+        }
+    }
+
+    public void idle() {
+        play(idle);
+    }
+
+    public void move( int from, int to ) {
+        turnTo( from , to );
+
+        play( run );
+
+        motion = new PosTweener( this, worldToCamera( to ), moveInterval );
+        motion.listener = this;
+        parent.add( motion );
+
+        isMoving = true;
+
+        if (visible && Dungeon.level.water[from] && !ch.flying) {
+            GameScene.ripple( from );
+        }
+
+    }
+
+    public static void setMoveInterval( float interval){
+        moveInterval = interval;
+    }
+
+    //returns where the center of this sprite will be after it completes any motion in progress
+    public PointF destinationCenter(){
+        PosTweener motion = this.motion;
+        if (motion != null && motion.elapsed >= 0){
+            return new PointF(motion.end.x + width()/2f, motion.end.y + height()/2f);
+        } else {
+            return center();
+        }
+    }
+
+    public void interruptMotion() {
+        if (motion != null) {
+            motion.stop(false);
+        }
+    }
+
+    public void attack( int cell ) {
+        attack( cell, null );
+    }
+
+    public synchronized void attack( int cell, Callback callback ) {
+        animCallback = callback;
+        turnTo( ch.pos, cell );
+        play( attack );
+    }
+
+    public void operate( int cell ) {
+        operate( cell, null );
+    }
+
+    public synchronized void operate( int cell, Callback callback ) {
+        animCallback = callback;
+        turnTo( ch.pos, cell );
+        play( operate );
+    }
+
+    public void zap( int cell ) {
+        zap( cell, null );
+    }
+
+    public synchronized void zap( int cell, Callback callback ) {
+        animCallback = callback;
+        turnTo( ch.pos, cell );
+        play( zap );
+    }
+
+    public void turnTo( int from, int to ) {
+        int fx = from % Dungeon.level.width();
+        int tx = to % Dungeon.level.width();
+        if (tx > fx) {
+            flipHorizontal = false;
+        } else if (tx < fx) {
+            flipHorizontal = true;
+        }
+    }
+
+    public void jump( int from, int to, Callback callback ) {
+        float distance = Math.max( 1f, Dungeon.level.trueDistance( from, to ));
+        jump( from, to, distance * 2, distance * 0.1f, callback );
+    }
+
+    public void jump( int from, int to, float height, float duration,  Callback callback ) {
+        jumpCallback = callback;
+
+        jumpTweener = new JumpTweener( this, worldToCamera( to ), height, duration );
+        jumpTweener.listener = this;
+        parent.add( jumpTweener );
+
+        turnTo( from, to );
+    }
+
+    public void die() {
+        sleeping = false;
+        processStateRemoval( State.PARALYSED );
+        play( die );
+
+        hideEmo();
+
+        if (health != null){
+            health.killAndErase();
+        }
+    }
+
+    public Emitter emitter() {
+        Emitter emitter = GameScene.emitter();
+        if (emitter != null) emitter.pos( this );
+        return emitter;
+    }
+
+    public Emitter centerEmitter() {
+        Emitter emitter = GameScene.emitter();
+        if (emitter != null) emitter.pos( center() );
+        return emitter;
+    }
+
+    public Emitter bottomEmitter() {
+        Emitter emitter = GameScene.emitter();
+        if (emitter != null) emitter.pos( x, y + height, width, 0 );
+        return emitter;
+    }
+
+    public void burst( final int color, int n ) {
+        if (visible) {
+            Splash.at( center(), color, n );
+        }
+    }
+
+    public void bloodBurstA( PointF from, int damage ) {
+        if (visible) {
+            PointF c = center();
+            int n = (int)Math.min( 9 * Math.sqrt( (double)damage / ch.HT ), 9 );
+            Splash.at( c, PointF.angle( from, c ), 3.1415926f / 2, blood(), n );
+        }
+    }
+
+    public int blood() {
+        return 0xFFBB0000;
+    }
+
+    public void flash() {
+        ra = ba = ga = 1f;
+        flashTime = FLASH_INTERVAL;
+    }
+
+    private final HashSet<State> stateAdditions = new HashSet<>();
+
+    public void add( State state ) {
+        //instant as it just changes an animation property that will get read later
+        if (state == State.PARALYSED){
+            paused = true;
+        } else {
+            synchronized (State.class) {
+                stateRemovals.remove(state);
+                stateAdditions.add(state);
+            }
+        }
+    }
+
+    private int auraColor = 0;
+    private int auraRays = 0;
+
+    //Aura needs color and ray count data too
+    public void aura( int color, int nRays ){
+        add(State.AURA);
+        auraColor = color;
+        auraRays = nRays;
+    }
+
+    protected synchronized void processStateAddition( State state ) {
+        switch (state) {
+            case BURNING:
+                if (burning != null) burning.on = false;
+                burning = emitter();
+                burning.pour(FlameParticle.FACTORY, 0.06f);
+                if (visible) {
+                    Sample.INSTANCE.play(Assets.Sounds.BURNING);
+                }
+                break;
+            case LEVITATING:
+                if (levitation != null) levitation.on = false;
+                levitation = emitter();
+                levitation.pour(Speck.factory(Speck.JET), 0.02f);
+                break;
+            case INVISIBLE:
+                if (invisible != null) invisible.killAndErase();
+                invisible = new AlphaTweener(this, 0.4f, 0.4f);
+                if (parent != null) {
+                    parent.add(invisible);
+                } else
+                    alpha(0.4f);
+                break;
+            case PARALYSED:
+                paused = true;
+                break;
+            case FROZEN:
+                if (iceBlock != null) iceBlock.killAndErase();
+                iceBlock = IceBlock.freeze(this);
+                break;
+            case ILLUMINATED:
+                if (light != null) light.putOut();
+                GameScene.effect(light = new TorchHalo(this));
+                break;
+            case CHILLED:
+                if (chilled != null) chilled.on = false;
+                chilled = emitter();
+                chilled.pour(SnowParticle.FACTORY, 0.1f);
+                break;
+            case DARKENED:
+                if (darkBlock != null) darkBlock.killAndErase();
+                darkBlock = DarkBlock.darken(this);
+                break;
+            case MARKED:
+                if (marked != null) marked.on = false;
+                marked = emitter();
+                marked.pour(ShadowParticle.UP, 0.1f);
+                break;
+            case HEALING:
+                if (healing != null) healing.on = false;
+                healing = emitter();
+                healing.pour(Speck.factory(Speck.HEALING), 0.5f);
+                break;
+            case SHIELDED:
+                if (shield != null) shield.killAndErase();
+                GameScene.effect(shield = new ShieldHalo(this, 0xBBAACC));
+                break;
             case ELDRITCHSHIELDED:
                 if (shield != null) shield.killAndErase();
                 GameScene.effect(shield = new ShieldHalo(this, 0xa10081));
                 break;
-			case HEARTS:
-				if (hearts != null) hearts.on = false;
-				hearts = emitter();
-				hearts.pour(Speck.factory(Speck.HEART), 0.5f);
-				break;
-			case GLOWING:
-				if (glowBlock != null) glowBlock.killAndErase();
-				glowBlock = GlowBlock.lighten(this);
-				break;
-			case AURA:
-				if (aura != null)   aura.killAndErase();
-				float size = Math.max(width(), height());
-				size = Math.max(size+4, 16);
-				aura = new Flare(auraRays, size);
-				aura.angularSpeed = 90;
-				aura.color(auraColor, true);
-				aura.visible = visible;
+            case HEARTS:
+                if (hearts != null) hearts.on = false;
+                hearts = emitter();
+                hearts.pour(Speck.factory(Speck.HEART), 0.5f);
+                break;
+            case GLOWING:
+                if (glowBlock != null) glowBlock.killAndErase();
+                glowBlock = GlowBlock.lighten(this);
+                break;
+            case AURA:
+                if (aura != null)   aura.killAndErase();
+                float size = Math.max(width(), height());
+                size = Math.max(size+4, 16);
+                aura = new Flare(auraRays, size);
+                aura.angularSpeed = 90;
+                aura.color(auraColor, true);
+                aura.visible = visible;
 
-				if (parent != null) {
-					aura.show(this, 0);
-				}
-				break;
-		}
-	}
+                if (parent != null) {
+                    aura.show(this, 0);
+                }
+                break;
+        }
+    }
 
-	private final HashSet<State> stateRemovals = new HashSet<>();
+    private final HashSet<State> stateRemovals = new HashSet<>();
 
-	public void remove( State state ) {
-		//instant as it just changes an animation property that will get read later
-		if (state == State.PARALYSED){
-			paused = false;
-		} else {
-			synchronized (State.class) {
-				stateAdditions.remove(state);
-				stateRemovals.add(state);
-			}
-		}
-	}
+    public void remove( State state ) {
+        //instant as it just changes an animation property that will get read later
+        if (state == State.PARALYSED){
+            paused = false;
+        } else {
+            synchronized (State.class) {
+                stateAdditions.remove(state);
+                stateRemovals.add(state);
+            }
+        }
+    }
 
-	public void clearAura(){
-		remove(State.AURA);
-	}
+    public void clearAura(){
+        remove(State.AURA);
+    }
 
-	protected synchronized void processStateRemoval( State state ) {
-		switch (state) {
-			case BURNING:
-				if (burning != null) {
-					burning.on = false;
-					burning = null;
-				}
-				break;
-			case LEVITATING:
-				if (levitation != null) {
-					levitation.on = false;
-					levitation = null;
-				}
-				break;
-			case INVISIBLE:
-				if (invisible != null) {
-					invisible.killAndErase();
-					invisible = null;
-				}
-				alpha(1f);
-				break;
-			case PARALYSED:
-				paused = false;
-				break;
-			case FROZEN:
-				if (iceBlock != null) {
-					iceBlock.melt();
-					iceBlock = null;
-				}
-				break;
-			case ILLUMINATED:
-				if (light != null) {
-					light.putOut();
-					light = null;
-				}
-				break;
-			case CHILLED:
-				if (chilled != null) {
-					chilled.on = false;
-					chilled = null;
-				}
-				break;
-			case DARKENED:
-				if (darkBlock != null) {
-					darkBlock.lighten();
-					darkBlock = null;
-				}
-				break;
-			case MARKED:
-				if (marked != null) {
-					marked.on = false;
-					marked = null;
-				}
-				break;
-			case HEALING:
-				if (healing != null) {
-					healing.on = false;
-					healing = null;
-				}
-				break;
-			case SHIELDED:
+    protected synchronized void processStateRemoval( State state ) {
+        switch (state) {
+            case BURNING:
+                if (burning != null) {
+                    burning.on = false;
+                    burning = null;
+                }
+                break;
+            case LEVITATING:
+                if (levitation != null) {
+                    levitation.on = false;
+                    levitation = null;
+                }
+                break;
+            case INVISIBLE:
+                if (invisible != null) {
+                    invisible.killAndErase();
+                    invisible = null;
+                }
+                alpha(1f);
+                break;
+            case PARALYSED:
+                paused = false;
+                break;
+            case FROZEN:
+                if (iceBlock != null) {
+                    iceBlock.melt();
+                    iceBlock = null;
+                }
+                break;
+            case ILLUMINATED:
+                if (light != null) {
+                    light.putOut();
+                    light = null;
+                }
+                break;
+            case CHILLED:
+                if (chilled != null) {
+                    chilled.on = false;
+                    chilled = null;
+                }
+                break;
+            case DARKENED:
+                if (darkBlock != null) {
+                    darkBlock.lighten();
+                    darkBlock = null;
+                }
+                break;
+            case MARKED:
+                if (marked != null) {
+                    marked.on = false;
+                    marked = null;
+                }
+                break;
+            case HEALING:
+                if (healing != null) {
+                    healing.on = false;
+                    healing = null;
+                }
+                break;
+            case SHIELDED:
             case ELDRITCHSHIELDED:
                 if (shield != null) {
-					shield.putOut();
-				}
-				break;
+                    shield.putOut();
+                }
+                break;
             case HEARTS:
-				if (hearts != null) {
-					hearts.on = false;
-					hearts = null;
-				}
-				break;
-			case GLOWING:
-				if (glowBlock != null){
-					glowBlock.darken();
-					glowBlock = null;
-				}
-				break;
-			case AURA:
-				if (aura != null){
-					aura.killAndErase();
-					aura = null;
-				}
-				break;
-		}
-	}
-	
-	@Override
-	public void update() {
-		if (paused && ch != null && curAnim != null && !curAnim.looped && !finished){
-			listener.onComplete(curAnim);
-			finished = true;
-		}
-		
-		super.update();
-		
-		if (flashTime > 0 && (flashTime -= Game.elapsed) <= 0) {
-			resetColor();
-		}
+                if (hearts != null) {
+                    hearts.on = false;
+                    hearts = null;
+                }
+                break;
+            case GLOWING:
+                if (glowBlock != null){
+                    glowBlock.darken();
+                    glowBlock = null;
+                }
+                break;
+            case AURA:
+                if (aura != null){
+                    aura.killAndErase();
+                    aura = null;
+                }
+                break;
+        }
+    }
 
-		synchronized (State.class) {
-			for (State s : stateAdditions) {
-				processStateAddition(s);
-			}
-			stateAdditions.clear();
-			for (State s : stateRemovals) {
-				processStateRemoval(s);
-			}
-			stateRemovals.clear();
-		}
+    @Override
+    public void update() {
+        if (paused && ch != null && curAnim != null && !curAnim.looped && !finished){
+            listener.onComplete(curAnim);
+            finished = true;
+        }
 
-		if (burning != null) {
-			burning.visible = visible;
-		}
-		if (levitation != null) {
-			levitation.visible = visible;
-		}
-		if (iceBlock != null) {
-			iceBlock.visible = visible;
-		}
-		if (light != null) {
-			light.visible = visible;
-		}
-		if (chilled != null) {
-			chilled.visible = visible;
-		}
-		if (darkBlock != null) {
-			darkBlock.visible = visible;
-		}
-		if (marked != null) {
-			marked.visible = visible;
-		}
-		if (healing != null) {
-			healing.visible = visible;
-		}
-		if (hearts != null) {
-			hearts.visible = visible;
-		}
-		//shield fx updates its own visibility
-		if (aura != null) {
-			if (aura.parent == null) {
-				aura.show(this, 0);
-			}
-			aura.visible = visible;
-			aura.point(center());
-		}
-		if (glowBlock != null){
-			glowBlock.visible =visible;
-		}
+        super.update();
 
-		if (sleeping) {
-			showSleep();
-		} else {
-			hideSleep();
-		}
-		synchronized (EmoIcon.class) {
-			if (emo != null && emo.alive) {
-				emo.visible = visible;
-			}
-		}
-	}
-	
-	@Override
-	public void resetColor() {
-		super.resetColor();
-		if (invisible != null){
-			alpha(0.4f);
-		}
-		//This is scuffed, but a way to select for specifically summoned enemies on this depth
-		if (Dungeon.depth == 25 && ch != null && ch.HT == 1 && !(ch instanceof Wraith)){
-			brightness(0.0f);
-			alpha(0.8f);
-		}
+        if (flashTime > 0 && (flashTime -= Game.elapsed) <= 0) {
+            resetColor();
+        }
 
-	}
-	
-	public void showSleep() {
-		synchronized (EmoIcon.class) {
-			if (!(emo instanceof EmoIcon.Sleep)) {
-				if (emo != null) {
-					emo.killAndErase();
-				}
-				emo = new EmoIcon.Sleep(this);
-				emo.visible = visible;
-			}
-		}
-		idle();
-	}
-	
-	public void hideSleep() {
-		synchronized (EmoIcon.class) {
-			if (emo instanceof EmoIcon.Sleep) {
-				emo.killAndErase();
-				emo = null;
-			}
-		}
-	}
-	
-	public void showAlert() {
-		synchronized (EmoIcon.class) {
-			if (!(emo instanceof EmoIcon.Alert)) {
-				if (emo != null) {
-					emo.killAndErase();
-				}
-				emo = new EmoIcon.Alert(this);
-				emo.visible = visible;
-			}
-		}
-	}
-	
-	public void hideAlert() {
-		synchronized (EmoIcon.class) {
-			if (emo instanceof EmoIcon.Alert) {
-				emo.killAndErase();
-				emo = null;
-			}
-		}
-	}
-	
-	public void showLost() {
-		synchronized (EmoIcon.class) {
-			if (!(emo instanceof EmoIcon.Lost)) {
-				if (emo != null) {
-					emo.killAndErase();
-				}
-				emo = new EmoIcon.Lost(this);
-				emo.visible = visible;
-			}
-		}
-	}
-	
-	public void hideLost() {
-		synchronized (EmoIcon.class) {
-			if (emo instanceof EmoIcon.Lost) {
-				emo.killAndErase();
-				emo = null;
-			}
-		}
-	}
+        synchronized (State.class) {
+            for (State s : stateAdditions) {
+                processStateAddition(s);
+            }
+            stateAdditions.clear();
+            for (State s : stateRemovals) {
+                processStateRemoval(s);
+            }
+            stateRemovals.clear();
+        }
 
-	public void hideEmo(){
-		synchronized (EmoIcon.class) {
-			if (emo != null) {
-				emo.killAndErase();
-				emo = null;
-			}
-		}
-	}
-	
-	@Override
-	public void kill() {
-		super.kill();
-		
-		hideEmo();
-		
-		for( State s : State.values()){
-			processStateRemoval(s);
-		}
-		
-		if (health != null){
-			health.killAndErase();
-		}
-	}
+        if (burning != null) {
+            burning.visible = visible;
+        }
+        if (levitation != null) {
+            levitation.visible = visible;
+        }
+        if (iceBlock != null) {
+            iceBlock.visible = visible;
+        }
+        if (light != null) {
+            light.visible = visible;
+        }
+        if (chilled != null) {
+            chilled.visible = visible;
+        }
+        if (darkBlock != null) {
+            darkBlock.visible = visible;
+        }
+        if (marked != null) {
+            marked.visible = visible;
+        }
+        if (healing != null) {
+            healing.visible = visible;
+        }
+        if (hearts != null) {
+            hearts.visible = visible;
+        }
+        //shield fx updates its own visibility
+        if (aura != null) {
+            if (aura.parent == null) {
+                aura.show(this, 0);
+            }
+            aura.visible = visible;
+            aura.point(center());
+        }
+        if (glowBlock != null){
+            glowBlock.visible =visible;
+        }
 
-	private float[] shadowMatrix = new float[16];
+        if (sleeping) {
+            showSleep();
+        } else {
+            hideSleep();
+        }
+        synchronized (EmoIcon.class) {
+            if (emo != null && emo.alive) {
+                emo.visible = visible;
+            }
+        }
+    }
 
-	@Override
-	protected void updateMatrix() {
-		super.updateMatrix();
-		Matrix.copy(matrix, shadowMatrix);
-		Matrix.translate(shadowMatrix,
-				(width * (1f - shadowWidth)) / 2f,
-				(height * (1f - shadowHeight)) + shadowOffset);
-		Matrix.scale(shadowMatrix, shadowWidth, shadowHeight);
-	}
+    @Override
+    public void resetColor() {
+        super.resetColor();
+        if (invisible != null){
+            alpha(0.4f);
+        }
+        //This is scuffed, but a way to select for specifically summoned enemies on this depth
+        if (Dungeon.depth == 25 && ch != null && ch.HT == 1 && !(ch instanceof Wraith)){
+            brightness(0.0f);
+            alpha(0.8f);
+        }
 
-	@Override
-	public void draw() {
-		if (texture == null || (!dirty && buffer == null))
-			return;
+    }
 
-		if (renderShadow) {
-			if (dirty) {
-				((Buffer)verticesBuffer).position(0);
-				verticesBuffer.put(vertices);
-				if (buffer == null)
-					buffer = new Vertexbuffer(verticesBuffer);
-				else
-					buffer.updateVertices(verticesBuffer);
-				dirty = false;
-			}
+    public void showSleep() {
+        synchronized (EmoIcon.class) {
+            if (!(emo instanceof EmoIcon.Sleep)) {
+                if (emo != null) {
+                    emo.killAndErase();
+                }
+                emo = new EmoIcon.Sleep(this);
+                emo.visible = visible;
+            }
+        }
+        idle();
+    }
 
-			NoosaScript script = script();
+    public void hideSleep() {
+        synchronized (EmoIcon.class) {
+            if (emo instanceof EmoIcon.Sleep) {
+                emo.killAndErase();
+                emo = null;
+            }
+        }
+    }
 
-			texture.bind();
+    public void showAlert() {
+        synchronized (EmoIcon.class) {
+            if (!(emo instanceof EmoIcon.Alert)) {
+                if (emo != null) {
+                    emo.killAndErase();
+                }
+                emo = new EmoIcon.Alert(this);
+                emo.visible = visible;
+            }
+        }
+    }
 
-			script.camera(camera());
+    public void hideAlert() {
+        synchronized (EmoIcon.class) {
+            if (emo instanceof EmoIcon.Alert) {
+                emo.killAndErase();
+                emo = null;
+            }
+        }
+    }
 
-			updateMatrix();
+    public void showInvestigate() {
+        synchronized (EmoIcon.class) {
+            if (!(emo instanceof EmoIcon.Investigate)) {
+                if (emo != null) {
+                    emo.killAndErase();
+                }
+                emo = new EmoIcon.Investigate(this);
+                emo.visible = visible;
+            }
+        }
+    }
 
-			script.uModel.valueM4(shadowMatrix);
-			script.lighting(
-					0, 0, 0, am * .6f,
-					0, 0, 0, aa * .6f);
+    public void hideInvestigate() {
+        synchronized (EmoIcon.class) {
+            if (emo instanceof EmoIcon.Investigate) {
+                emo.killAndErase();
+                emo = null;
+            }
+        }
+    }
 
-			script.drawQuad(buffer);
-		}
 
-		super.draw();
+    public void showLost() {
+        synchronized (EmoIcon.class) {
+            if (!(emo instanceof EmoIcon.Lost)) {
+                if (emo != null) {
+                    emo.killAndErase();
+                }
+                emo = new EmoIcon.Lost(this);
+                emo.visible = visible;
+            }
+        }
+    }
 
-	}
+    public void hideLost() {
+        synchronized (EmoIcon.class) {
+            if (emo instanceof EmoIcon.Lost) {
+                emo.killAndErase();
+                emo = null;
+            }
+        }
+    }
 
-	@Override
-	public void onComplete( Tweener tweener ) {
-		if (tweener == jumpTweener) {
+    public void hideEmo(){
+        synchronized (EmoIcon.class) {
+            if (emo != null) {
+                emo.killAndErase();
+                emo = null;
+            }
+        }
+    }
 
-			if (visible && Dungeon.level.water[ch.pos] && !ch.flying) {
-				GameScene.ripple( ch.pos );
-			}
-			if (jumpCallback != null) {
-				jumpCallback.call();
-			}
-			GameScene.sortMobSprites();
+    @Override
+    public void kill() {
+        super.kill();
 
-		} else if (tweener == motion) {
+        hideEmo();
 
-			synchronized (this) {
-				isMoving = false;
+        for( State s : State.values()){
+            processStateRemoval(s);
+        }
 
-				motion.killAndErase();
-				motion = null;
-				ch.onMotionComplete();
+        if (health != null){
+            health.killAndErase();
+        }
+    }
 
-				GameScene.sortMobSprites();
-				notifyAll();
-			}
+    private float[] shadowMatrix = new float[16];
 
-		}
-	}
+    @Override
+    protected void updateMatrix() {
+        super.updateMatrix();
+        Matrix.copy(matrix, shadowMatrix);
+        Matrix.translate(shadowMatrix,
+                (width * (1f - shadowWidth)) / 2f,
+                (height * (1f - shadowHeight)) + shadowOffset);
+        Matrix.scale(shadowMatrix, shadowWidth, shadowHeight);
+    }
 
-	@Override
-	public synchronized void onComplete( Animation anim ) {
-		
-		if (animCallback != null) {
-			Callback executing = animCallback;
-			animCallback = null;
-			executing.call();
-		} else {
-			
-			if (anim == attack) {
-				
-				idle();
-				ch.onAttackComplete();
-				
-			} else if (anim == operate) {
-				
-				idle();
-				ch.onOperateComplete();
-				
-			}
-			
-		}
-	}
+    @Override
+    public void draw() {
+        if (texture == null || (!dirty && buffer == null))
+            return;
 
-	private static class JumpTweener extends Tweener {
+        if (renderShadow) {
+            if (dirty) {
+                ((Buffer)verticesBuffer).position(0);
+                verticesBuffer.put(vertices);
+                if (buffer == null)
+                    buffer = new Vertexbuffer(verticesBuffer);
+                else
+                    buffer.updateVertices(verticesBuffer);
+                dirty = false;
+            }
 
-		public CharSprite visual;
+            NoosaScript script = script();
 
-		public PointF start;
-		public PointF end;
+            texture.bind();
 
-		public float height;
+            script.camera(camera());
 
-		public JumpTweener( CharSprite visual, PointF pos, float height, float time ) {
-			super( visual, time );
+            updateMatrix();
 
-			this.visual = visual;
-			start = visual.point();
-			end = pos;
+            script.uModel.valueM4(shadowMatrix);
+            script.lighting(
+                    0, 0, 0, am * .6f,
+                    0, 0, 0, aa * .6f);
 
-			this.height = height;
-		}
+            script.drawQuad(buffer);
+        }
 
-		@Override
-		protected void updateValues( float progress ) {
-			float hVal = -height * 4 * progress * (1 - progress);
-			visual.point( PointF.inter( start, end, progress ).offset( 0, hVal ) );
-			visual.shadowOffset = 0.25f - hVal*0.8f;
-		}
-	}
+        super.draw();
+
+    }
+
+    @Override
+    public void onComplete( Tweener tweener ) {
+        if (tweener == jumpTweener) {
+
+            if (visible && Dungeon.level.water[ch.pos] && !ch.flying) {
+                GameScene.ripple( ch.pos );
+            }
+            if (jumpCallback != null) {
+                jumpCallback.call();
+            }
+            GameScene.sortMobSprites();
+
+        } else if (tweener == motion) {
+
+            synchronized (this) {
+                isMoving = false;
+
+                motion.killAndErase();
+                motion = null;
+                ch.onMotionComplete();
+
+                GameScene.sortMobSprites();
+                notifyAll();
+            }
+
+        }
+    }
+
+    @Override
+    public synchronized void onComplete( Animation anim ) {
+
+        if (animCallback != null) {
+            Callback executing = animCallback;
+            animCallback = null;
+            executing.call();
+        } else {
+
+            if (anim == attack) {
+
+                idle();
+                ch.onAttackComplete();
+
+            } else if (anim == operate) {
+
+                idle();
+                ch.onOperateComplete();
+
+            }
+
+        }
+    }
+
+    private static class JumpTweener extends Tweener {
+
+        public CharSprite visual;
+
+        public PointF start;
+        public PointF end;
+
+        public float height;
+
+        public JumpTweener( CharSprite visual, PointF pos, float height, float time ) {
+            super( visual, time );
+
+            this.visual = visual;
+            start = visual.point();
+            end = pos;
+
+            this.height = height;
+        }
+
+        @Override
+        protected void updateValues( float progress ) {
+            float hVal = -height * 4 * progress * (1 - progress);
+            visual.point( PointF.inter( start, end, progress ).offset( 0, hVal ) );
+            visual.shadowOffset = 0.25f - hVal*0.8f;
+        }
+    }
 }

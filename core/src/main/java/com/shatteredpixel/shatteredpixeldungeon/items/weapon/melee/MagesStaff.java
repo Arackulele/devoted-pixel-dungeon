@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,17 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
-import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfCorrosion;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfCorruption;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -45,13 +51,6 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfCorrosion;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfCorruption;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.particles.PixelParticle;
@@ -139,7 +138,7 @@ public class MagesStaff extends MeleeWeapon {
 
 		if (action.equals(AC_IMBUE)) {
 
-			Item.curUser = hero;
+			curUser = hero;
 			GameScene.selectItem(itemSelector);
 
 		} else if (action.equals(AC_ZAP)){
@@ -260,9 +259,9 @@ public class MagesStaff extends MeleeWeapon {
 		}
 
 		if (wand.cursed && (!this.cursed || !this.hasCurseEnchant())){
-			EquipableItem.equipCursed(Dungeon.hero);
+			equipCursed(Dungeon.hero);
 			this.cursed = this.cursedKnown = true;
-			enchant(Weapon.Enchantment.randomCurse());
+			enchant(Enchantment.randomCurse());
 		}
 
 		//This is necessary to reset any particles.
@@ -270,9 +269,9 @@ public class MagesStaff extends MeleeWeapon {
 		int slot = Dungeon.quickslot.getSlot(this);
 		if (slot != -1){
 			Dungeon.quickslot.clearSlot(slot);
-			Item.updateQuickslot();
+			updateQuickslot();
 			Dungeon.quickslot.setSlot( slot, this );
-			Item.updateQuickslot();
+			updateQuickslot();
 		}
 		
 		Badges.validateItemLevelAquired(this);
@@ -325,7 +324,7 @@ public class MagesStaff extends MeleeWeapon {
 			//gives the wand one additional max charge
 			wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
 			wand.curCharges = Math.min(curCharges + (levelled ? 1 : 0), wand.maxCharges);
-			Item.updateQuickslot();
+			updateQuickslot();
 		}
 	}
 
@@ -395,7 +394,7 @@ public class MagesStaff extends MeleeWeapon {
 	}
 	
 	@Override
-	public Weapon enchant(Weapon.Enchantment ench) {
+	public Weapon enchant(Enchantment ench) {
 		if (curseInfusionBonus && (ench == null || !ench.curse())){
 			curseInfusionBonus = false;
 			updateWand(false);
@@ -474,17 +473,17 @@ public class MagesStaff extends MeleeWeapon {
 
 		private void applyWand(Wand wand){
 			Sample.INSTANCE.play(Assets.Sounds.BURNING);
-			Item.curUser.sprite.emitter().burst( ElmoParticle.FACTORY, 12 );
-			Item.evoke(Item.curUser);
+			curUser.sprite.emitter().burst( ElmoParticle.FACTORY, 12 );
+			evoke(curUser);
 
 			Dungeon.quickslot.clearItem(wand);
 
-			wand.detach(Item.curUser.belongings.backpack);
+			wand.detach(curUser.belongings.backpack);
 
 			GLog.p( Messages.get(MagesStaff.class, "imbue", wand.name()));
-			imbueWand( wand, Item.curUser );
+			imbueWand( wand, curUser );
 
-			Item.updateQuickslot();
+			updateQuickslot();
 		}
 	};
 

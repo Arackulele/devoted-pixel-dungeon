@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -33,21 +30,24 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
+import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
-import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Rotberry;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
@@ -188,7 +188,7 @@ public class TimekeepersHourglass extends Artifact {
 			if (charge >= chargeCap){
 				partialCharge = 0;
 			}
-			Item.updateQuickslot();
+			updateQuickslot();
 		}
 	}
 
@@ -271,11 +271,11 @@ public class TimekeepersHourglass extends Artifact {
 					}
 				}
 			} else if (cursed && Random.Int(10) == 0)
-				((Hero) target).spend( Actor.TICK );
+				((Hero) target).spend( TICK );
 
-			Item.updateQuickslot();
+			updateQuickslot();
 
-			spend( Actor.TICK );
+			spend( TICK );
 
 			return true;
 		}
@@ -284,8 +284,8 @@ public class TimekeepersHourglass extends Artifact {
 	public class timeStasis extends ArtifactBuff {
 		
 		{
-			type = Buff.buffType.POSITIVE;
-			actPriority = Actor.BUFF_PRIO-3; //acts after all other buffs, so they are prevented
+			type = buffType.POSITIVE;
+			actPriority = BUFF_PRIO-3; //acts after all other buffs, so they are prevented
 		}
 
 		@Override
@@ -311,7 +311,7 @@ public class TimekeepersHourglass extends Artifact {
 				target.paralysed++;
 				target.next();
 
-				Item.updateQuickslot();
+				updateQuickslot();
 
 				if (Dungeon.hero != null) {
 					Dungeon.observe();
@@ -351,7 +351,7 @@ public class TimekeepersHourglass extends Artifact {
 	public class timeFreeze extends ArtifactBuff {
 		
 		{
-			type = Buff.buffType.POSITIVE;
+			type = buffType.POSITIVE;
 		}
 
 		float turnsToCost = 2f;
@@ -367,7 +367,7 @@ public class TimekeepersHourglass extends Artifact {
 				charge --;
 			}
 
-			Item.updateQuickslot();
+			updateQuickslot();
 
 			if (charge < 0 || charge == 0 && turnsToCost <= 0){
 				charge = 0;
@@ -424,7 +424,7 @@ public class TimekeepersHourglass extends Artifact {
 
 		@Override
 		public void detach(){
-			Item.updateQuickslot();
+			updateQuickslot();
 			super.detach();
 			activeBuff = null;
 			triggerPresses();
@@ -518,7 +518,7 @@ public class TimekeepersHourglass extends Artifact {
 				else
 					GLog.i( Messages.get(this, "levelup") );
 				GameScene.pickUp(this, pos);
-				hero.spendAndNext(TIME_TO_PICK_UP);
+				hero.spendAndNext(pickupDelay());
 				return true;
 			} else {
 				GLog.w( Messages.get(this, "no_hourglass") );

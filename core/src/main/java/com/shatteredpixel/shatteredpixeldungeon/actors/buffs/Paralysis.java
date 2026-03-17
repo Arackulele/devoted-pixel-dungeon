@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,11 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
-import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -53,7 +52,7 @@ public class Paralysis extends FlavourBuff {
 		if (target == null) return;
 		ParalysisResist resist = target.buff(ParalysisResist.class);
 		if (resist == null){
-			resist = affect(target, ParalysisResist.class);
+			resist = Buff.affect(target, ParalysisResist.class);
 		}
 		resist.damage += damage;
 		if (Random.NormalIntRange(0, resist.damage) >= Random.NormalIntRange(0, target.HP)){
@@ -99,9 +98,9 @@ public class Paralysis extends FlavourBuff {
 		public boolean act() {
 			if (target.buff(Paralysis.class) == null) {
 				damage -= Math.ceil(damage / 10f);
-				if (damage >= 0) detach();
+				if (damage <= 0) detach();
 			}
-			spend(Actor.TICK);
+			spend(TICK);
 			return true;
 		}
 		
@@ -110,13 +109,13 @@ public class Paralysis extends FlavourBuff {
 		@Override
 		public void storeInBundle(Bundle bundle) {
 			super.storeInBundle(bundle);
-			damage = bundle.getInt(DAMAGE);
+			bundle.put( DAMAGE, damage );
 		}
 		
 		@Override
 		public void restoreFromBundle(Bundle bundle) {
 			super.restoreFromBundle(bundle);
-			bundle.put( DAMAGE, damage );
+			damage = bundle.getInt(DAMAGE);
 		}
 	}
 }

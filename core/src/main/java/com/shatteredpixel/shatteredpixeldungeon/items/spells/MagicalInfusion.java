@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,22 +22,23 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.spells;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.Badges;
-import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndUpgrade;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
@@ -64,28 +65,33 @@ public class MagicalInfusion extends InventorySpell {
 	}
 
 	public void reShowSelector(){
-		Item.curItem = this;
+		curItem = this;
 		GameScene.selectItem(itemSelector);
 	}
 
+	public WndBag.ItemSelector getSelector(){
+		curItem = this;
+		return itemSelector;
+	}
+
 	public void useAnimation(){
-		Item.curUser.spend(1f);
-		Item.curUser.busy();
-		(Item.curUser.sprite).operate(Item.curUser.pos);
+		curUser.spend(1f);
+		curUser.busy();
+		(curUser.sprite).operate(curUser.pos);
 
 		Sample.INSTANCE.play(Assets.Sounds.READ);
 		Invisibility.dispel();
 
-		Catalog.countUse(Item.curItem.getClass());
-		if (Random.Float() < ((Spell) Item.curItem).talentChance) {
-			Talent.onScrollUsed(Item.curUser, Item.curUser.pos, ((Spell) Item.curItem).talentFactor, getClass());
+		Catalog.countUse(curItem.getClass());
+		if (Random.Float() < ((Spell) curItem).talentChance) {
+			Talent.onScrollUsed(curUser, curUser.pos, ((Spell) curItem).talentFactor, getClass());
 		}
 	}
 
 	public Item upgradeItem( Item item ){
-		ScrollOfUpgrade.upgrade(Item.curUser);
+		ScrollOfUpgrade.upgrade(curUser);
 
-		Degrade.detach( Item.curUser, Degrade.class );
+		Degrade.detach( curUser, Degrade.class );
 
 		if (item instanceof Weapon && ((Weapon) item).enchantment != null) {
 			item = ((Weapon) item).upgrade(true);

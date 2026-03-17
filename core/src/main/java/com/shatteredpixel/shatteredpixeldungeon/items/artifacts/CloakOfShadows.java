@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@ package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Preparation;
@@ -30,18 +32,15 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
@@ -190,13 +189,13 @@ public class CloakOfShadows extends Artifact {
 				partialCharge = 0;
 				charge = chargeCap;
 			}
-			Item.updateQuickslot();
+			updateQuickslot();
 		}
 	}
 
 	public void directCharge(int amount){
 		charge = Math.min(charge+amount, chargeCap);
-		Item.updateQuickslot();
+		updateQuickslot();
 	}
 	
 	@Override
@@ -259,9 +258,9 @@ public class CloakOfShadows extends Artifact {
 			if (cooldown > 0)
 				cooldown --;
 
-			Item.updateQuickslot();
+			updateQuickslot();
 
-			spend( Actor.TICK );
+			spend( TICK );
 
 			return true;
 		}
@@ -271,7 +270,7 @@ public class CloakOfShadows extends Artifact {
 	public class cloakStealth extends ArtifactBuff{
 		
 		{
-			type = Buff.buffType.POSITIVE;
+			type = buffType.POSITIVE;
 		}
 		
 		int turnsToCost = 0;
@@ -350,10 +349,10 @@ public class CloakOfShadows extends Artifact {
 					}
 					turnsToCost = 4;
 				}
-				Item.updateQuickslot();
+				updateQuickslot();
 			}
 
-			spend( Actor.TICK );
+			spend( TICK );
 
 			return true;
 		}
@@ -362,7 +361,7 @@ public class CloakOfShadows extends Artifact {
 			if (turnsToCost <= 0 && charge > 0){
 				charge--;
 			}
-			Item.updateQuickslot();
+			updateQuickslot();
 			detach();
 		}
 
@@ -378,7 +377,7 @@ public class CloakOfShadows extends Artifact {
 
 			if (target.invisible > 0)   target.invisible--;
 
-			Item.updateQuickslot();
+			updateQuickslot();
 			super.detach();
 		}
 		

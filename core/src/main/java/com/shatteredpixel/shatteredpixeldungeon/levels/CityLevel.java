@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,23 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AscensionChallenge;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.EscapeCrystal;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.LevelTransition;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.CityPainter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.BlazingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.CorrosionTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.CursingTrap;
@@ -47,12 +58,21 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.StormTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WarpingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WeakeningTrap;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.particles.PixelParticle;
+import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class CityLevel extends RegularLevel {
 
@@ -81,24 +101,24 @@ public class CityLevel extends RegularLevel {
 		//6 to 8, average 7
 		return 6+Random.chances(new float[]{1, 3, 1});
 	}
-	
+
 	@Override
 	protected int specialRooms(boolean forceMax) {
 		if (forceMax) return 3;
 		//2 to 3, average 2.33
 		return 2 + Random.chances(new float[]{2, 1});
 	}
-	
+
 	@Override
 	public String tilesTex() {
 		return Assets.Environment.TILES_CITY;
 	}
-	
+
 	@Override
 	public String waterTex() {
 		return Assets.Environment.WATER_CITY;
 	}
-	
+
 	@Override
 	protected Painter painter() {
 		return new CityPainter()
@@ -106,7 +126,7 @@ public class CityLevel extends RegularLevel {
 				.setGrass(feeling == Feeling.GRASS ? 0.80f : 0.20f, 3)
 				.setTraps(nTraps(), trapClasses(), trapChances());
 	}
-	
+
 	@Override
 	protected Class<?>[] trapClasses() {
 		return new Class[]{
@@ -122,12 +142,65 @@ public class CityLevel extends RegularLevel {
 				2, 2, 2, 2,
 				1, 1, 1, 1, 1, 1, 1, 1 };
 	}
-	
+
 	@Override
-	protected void createMobs() {
-		Imp.Quest.spawn( this );
-		
-		super.createMobs();
+	public boolean activateTransition(Hero hero, LevelTransition transition) {
+		if (transition.type == LevelTransition.Type.BRANCH_EXIT) {
+
+			if (hero.buff(AscensionChallenge.class) != null
+					|| hero.buff(LostInventory.class) != null){
+				return false;
+			}
+
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					GameScene.show( new WndOptions( Icons.SHPX.get(),
+							Messages.titleCase(Messages.get(CityLevel.class, "upcoming_quest_intro_title")),
+							Messages.get(CityLevel.class, "upcoming_quest_intro_body"),
+							Messages.get(CityLevel.class, "upcoming_quest_intro_yes"),
+							Messages.get(CityLevel.class, "upcoming_quest_intro_no")){
+						@Override
+						protected void onSelect(int index) {
+							if (index == 0){
+
+								//for full release this will remove any non revive persists buff, but for now just do item buffs
+								for (Buff b : hero.buffs()){
+									if (b instanceof Wand.Charger
+											|| b instanceof Artifact.ArtifactBuff
+											|| b instanceof Ring.RingBuff
+											//not melee charger, Duelist should retain her charge count
+											|| b instanceof ClassArmor.Charger){
+										b.detach();
+									}
+								}
+
+								//not ideal handler for a crash, should improve this
+								EscapeCrystal crystal = hero.belongings.getItem(EscapeCrystal.class);
+								if (crystal == null) {
+									crystal = new EscapeCrystal();
+									crystal.storeHeroBelongings(Dungeon.hero);
+									crystal.collect();
+								}
+								hero.belongings.armor = new ClothArmor();
+								hero.belongings.armor.identify();
+								hero.updateHT( false );
+								CityLevel.super.activateTransition(hero, transition);
+							}
+						}
+					} );
+				}
+			});
+			return false;
+
+		} else {
+			return super.activateTransition(hero, transition);
+		}
+	}
+
+	@Override
+	protected ArrayList<Room> initRooms() {
+		return Imp.Quest.spawn(super.initRooms());
 	}
 	
 	@Override

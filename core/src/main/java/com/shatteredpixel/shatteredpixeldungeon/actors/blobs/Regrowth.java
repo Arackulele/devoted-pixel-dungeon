@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,15 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.blobs;
 
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BlobEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 
 public class Regrowth extends Blob {
@@ -42,7 +42,7 @@ public class Regrowth extends Blob {
 			int cell;
 			for (int i = area.left; i < area.right; i++) {
 				for (int j = area.top; j < area.bottom; j++) {
-					cell = i + j* Dungeon.level.width();
+					cell = i + j*Dungeon.level.width();
 					if (off[cell] > 0) {
 						int c = Dungeon.level.map[cell];
 						int c1 = c;
@@ -63,7 +63,7 @@ public class Regrowth extends Blob {
 						if (ch != null
 								&& !ch.isImmune(this.getClass())
 								&& off[cell] > 1) {
-							Buff.prolong( ch, Roots.class, Actor.TICK );
+							Buff.prolong( ch, Roots.class, TICK );
 						}
 					}
 				}

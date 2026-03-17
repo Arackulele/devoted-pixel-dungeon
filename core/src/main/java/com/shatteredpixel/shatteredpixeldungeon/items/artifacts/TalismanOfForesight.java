@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -32,22 +29,24 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.ConeAOE;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfEnergy;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 
@@ -113,7 +112,7 @@ public class TalismanOfForesight extends Artifact {
 				partialCharge = 0;
 				GLog.p( Messages.get(TalismanOfForesight.class, "full_charge") );
 			}
-			Item.updateQuickslot();
+			updateQuickslot();
 		}
 	}
 
@@ -141,34 +140,34 @@ public class TalismanOfForesight extends Artifact {
 
 		@Override
 		public void onSelect(Integer target) {
-			if (target != null && target != Item.curUser.pos){
+			if (target != null && target != curUser.pos){
 
 				//enforces at least 2 tiles of distance
-				if (Dungeon.level.adjacent(target, Item.curUser.pos)){
-					target += (target - Item.curUser.pos);
+				if (Dungeon.level.adjacent(target, curUser.pos)){
+					target += (target - curUser.pos);
 				}
 
-				float dist = Dungeon.level.trueDistance(Item.curUser.pos, target);
+				float dist = Dungeon.level.trueDistance(curUser.pos, target);
 
 				if (dist >= 3 && dist > maxDist()){
-					Ballistica trajectory = new Ballistica(Item.curUser.pos, target, Ballistica.STOP_TARGET);
+					Ballistica trajectory = new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET);
 					int i = 0;
 					while (i < trajectory.path.size()
-							&& Dungeon.level.trueDistance(Item.curUser.pos, trajectory.path.get(i)) <= maxDist()){
+							&& Dungeon.level.trueDistance(curUser.pos, trajectory.path.get(i)) <= maxDist()){
 						target = trajectory.path.get(i);
 						i++;
 					}
-					dist = Dungeon.level.trueDistance(Item.curUser.pos, target);
+					dist = Dungeon.level.trueDistance(curUser.pos, target);
 				}
 
 				//starts at 200 degrees, loses 8% per tile of distance
 				float angle = Math.round(200*(float)Math.pow(0.92, dist));
-				ConeAOE cone = new ConeAOE(new Ballistica(Item.curUser.pos, target, Ballistica.STOP_TARGET), angle);
+				ConeAOE cone = new ConeAOE(new Ballistica(curUser.pos, target, Ballistica.STOP_TARGET), angle);
 
 				int earnedExp = 0;
 				boolean noticed = false;
 				for (int cell : cone.cells){
-					GameScene.effectOverFog(new CheckedCell( cell, Item.curUser.pos ));
+					GameScene.effectOverFog(new CheckedCell( cell, curUser.pos ));
 					if (Dungeon.level.discoverable[cell] && !(Dungeon.level.mapped[cell] || Dungeon.level.visited[cell])){
 						Dungeon.level.mapped[cell] = true;
 						earnedExp++;
@@ -191,19 +190,19 @@ public class TalismanOfForesight extends Artifact {
 					Char ch = Actor.findChar(cell);
 					if (ch != null
 							&& (ch.alignment != Char.Alignment.NEUTRAL || ch instanceof Mimic)
-							&& ch.alignment != Item.curUser.alignment){
-						Buff.append(Item.curUser, CharAwareness.class, 5 + 2*level()).charID = ch.id();
+							&& ch.alignment != curUser.alignment){
+						Buff.append(curUser, CharAwareness.class, 5 + 2*level()).charID = ch.id();
 
 						artifactProc(ch, visiblyUpgraded(), (int)(3 + dist*1.08f));
 
-						if (!Item.curUser.fieldOfView[ch.pos]){
+						if (!curUser.fieldOfView[ch.pos]){
 							earnedExp += 10;
 						}
 					}
 
 					Heap h = Dungeon.level.heaps.get(cell);
 					if (h != null){
-						Buff.append(Item.curUser, HeapAwareness.class, 5 + 2*level()).pos = h.pos;
+						Buff.append(curUser, HeapAwareness.class, 5 + 2*level()).pos = h.pos;
 
 						if (!h.seen){
 							earnedExp += 10;
@@ -219,7 +218,7 @@ public class TalismanOfForesight extends Artifact {
 					Catalog.countUse(TalismanOfForesight.class);
 					GLog.p( Messages.get(TalismanOfForesight.class, "levelup") );
 				}
-				Item.updateQuickslot();
+				updateQuickslot();
 
 				//5 charge at 2 tiles, up to 30 charge at 25 tiles
 				charge -= 3 + dist*1.08f;
@@ -232,15 +231,15 @@ public class TalismanOfForesight extends Artifact {
 					charge++;
 					partialCharge--;
 				}
-				Invisibility.dispel(Item.curUser);
+				Invisibility.dispel(curUser);
 				Talent.onArtifactUsed(Dungeon.hero);
-				Item.updateQuickslot();
+				updateQuickslot();
 				Dungeon.observe();
 				Dungeon.hero.checkVisibleMobs();
 				GameScene.updateFog();
 
-				Item.curUser.sprite.zap(target);
-				Item.curUser.spendAndNext(Actor.TICK);
+				curUser.sprite.zap(target);
+				curUser.spendAndNext(Actor.TICK);
 				Sample.INSTANCE.play(Assets.Sounds.SCAN);
 				if (noticed) Sample.INSTANCE.play(Assets.Sounds.SECRET);
 
@@ -274,7 +273,7 @@ public class TalismanOfForesight extends Artifact {
 
 		@Override
 		public boolean act() {
-			spend( Actor.TICK );
+			spend( TICK );
 
 			checkAwareness();
 
@@ -294,7 +293,7 @@ public class TalismanOfForesight extends Artifact {
 						partialCharge = 0;
 						GLog.p(Messages.get(TalismanOfForesight.class, "full_charge"));
 					}
-					Item.updateQuickslot();
+					updateQuickslot();
 				}
 			}
 
@@ -356,7 +355,7 @@ public class TalismanOfForesight extends Artifact {
 		public void charge(int boost){
 			if (!cursed && target.buff(MagicImmune.class) == null) {
 				charge = Math.min((charge + boost), chargeCap);
-				Item.updateQuickslot();
+				updateQuickslot();
 			}
 		}
 

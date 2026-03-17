@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,17 +22,17 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 
 public class Crossbow extends MeleeWeapon {
 	
@@ -86,7 +86,10 @@ public class Crossbow extends MeleeWeapon {
 		int dmg = super.proc(attacker, defender, damage);
 
 		//stronger elastic effect
-		if (attacker.buff(ChargedShot.class) != null && !(curItem instanceof Dart)){
+		if (attacker == Dungeon.hero
+				&& Dungeon.hero.buff(ChargedShot.class) != null
+				//not proccing from a dart
+				&& Dungeon.hero.belongings.attackingWeapon() == this){
 			//trace a ballistica to our target (which will also extend past them
 			Ballistica trajectory = new Ballistica(attacker.pos, defender.pos, Ballistica.STOP_TARGET);
 			//trim it to just be the part that goes past them
@@ -107,6 +110,32 @@ public class Crossbow extends MeleeWeapon {
 	public int max(int lvl) {
 		return  4*(tier+1) +    //20 base, down from 25
 				lvl*(tier);     //+4 per level, down from +5
+	}
+
+	public int dartMin(){
+		return dartMin(buffedLvl());
+	}
+
+	public int dartMin(int lvl){
+		return  4 +     //4 base, up from dart base of 1
+				lvl;    //+1 per level
+	}
+
+	public int dartMax(){
+		return dartMax(buffedLvl());
+	}
+
+	public int dartMax(int lvl){
+		return  12 +    //12 base, up from dart base of 2
+				3*lvl;  //+3 per crossbow level
+	}
+
+	public String statsInfo(){
+		if (isIdentified()){
+			return Messages.get(this, "stats_desc", dartMin(), dartMax());
+		} else {
+			return Messages.get(this, "typical_stats_desc", dartMin(0), dartMax(0));
+		}
 	}
 
 	@Override

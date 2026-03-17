@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,14 +21,13 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
-import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.ToxicGas;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
@@ -82,8 +81,8 @@ public class ToxicImbue extends Buff {
 			GameScene.add(Blob.seed(target.pos, centerVolume, ToxicGas.class));
 		}
 
-		spend(Actor.TICK);
-		left -= Actor.TICK;
+		spend(TICK);
+		left -= TICK;
 		if (left <= -5){
 			detach();
 		}
@@ -124,7 +123,7 @@ public class ToxicImbue extends Buff {
 	@Override
 	public boolean attachTo(Char target) {
 		if (super.attachTo(target)){
-			detach(target, Poison.class);
+			Buff.detach(target, Poison.class);
 			return true;
 		} else {
 			return false;

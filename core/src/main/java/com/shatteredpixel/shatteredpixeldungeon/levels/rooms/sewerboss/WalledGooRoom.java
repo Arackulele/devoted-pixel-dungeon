@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Goo;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.watabou.utils.Point;
 
 public class WalledGooRoom extends GooBossRoom {
@@ -51,8 +50,8 @@ public class WalledGooRoom extends GooBossRoom {
 		Painter.fill(level, right-1-pillarW, bottom-2, pillarW, 1, Terrain.WALL);
 		Painter.fill(level, right-2, bottom-1-pillarH, 1, pillarH, Terrain.WALL);
 		
-		for (Room.Door door : connected.values()) {
-			door.set(Room.Door.Type.REGULAR);
+		for (Door door : connected.values()) {
+			door.set(Door.Type.REGULAR);
 		}
 		
 		Painter.fill( level, left + width()/2 - 1, top + height()/2 - 2, 2 + width()%2, 4 + height()%2, Terrain.WATER);

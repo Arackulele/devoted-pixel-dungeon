@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,25 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.GreaterHaste;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MonkEnergy;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.HolyWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
-import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -45,15 +52,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.GreaterHaste;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MonkEnergy;
-import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Sample;
@@ -111,7 +109,7 @@ public class MeleeWeapon extends Weapon {
 				if (hero.hasTalent(Talent.SWIFT_EQUIP)){
 					if (hero.buff(Talent.SwiftEquipCooldown.class) == null
 						|| hero.buff(Talent.SwiftEquipCooldown.class).hasSecondUse()){
-						execute(hero, EquipableItem.AC_EQUIP);
+						execute(hero, AC_EQUIP);
 					} else if (hero.heroClass == HeroClass.DUELIST) {
 						GLog.w(Messages.get(this, "ability_need_equip"));
 					}
@@ -128,7 +126,7 @@ public class MeleeWeapon extends Weapon {
 
 				if (targetingPrompt() == null){
 					duelistAbility(hero, hero.pos);
-					Item.updateQuickslot();
+					updateQuickslot();
 				} else {
 					usesTargeting = useTargeting();
 					GameScene.selectCell(new CellSelector.Listener() {
@@ -136,7 +134,7 @@ public class MeleeWeapon extends Weapon {
 						public void onSelect(Integer cell) {
 							if (cell != null) {
 								duelistAbility(hero, cell);
-								Item.updateQuickslot();
+								updateQuickslot();
 							}
 						}
 
@@ -186,7 +184,7 @@ public class MeleeWeapon extends Weapon {
 			hero.sprite.showStatusWithIcon(CharSprite.POSITIVE, Integer.toString(shieldAmt), FloatingText.SHIELDING);
 		}
 
-		Item.updateQuickslot();
+		updateQuickslot();
 	}
 
 	protected void afterAbilityUsed( Hero hero ){
@@ -261,10 +259,6 @@ public class MeleeWeapon extends Weapon {
 
 	public int STRReq(int lvl){
 		int req = STRReq(tier, lvl);
-		if (GildDegrade){
-			req = STRReq(tier, 0);
-			req++;
-		}
 		if (masteryPotionBonus){
 			req -= 2;
 		}
@@ -454,7 +448,7 @@ public class MeleeWeapon extends Weapon {
 				if (partialCharge >= 1){
 					charges++;
 					partialCharge--;
-					Item.updateQuickslot();
+					updateQuickslot();
 				}
 			} else {
 				partialCharge = 0;
@@ -464,7 +458,7 @@ public class MeleeWeapon extends Weapon {
 				ActionIndicator.setAction(this);
 			}
 
-			spend(Actor.TICK);
+			spend(TICK);
 			return true;
 		}
 
@@ -501,7 +495,7 @@ public class MeleeWeapon extends Weapon {
 					partialCharge = 0;
 					charges = chargeCap();
 				}
-				Item.updateQuickslot();
+				updateQuickslot();
 			}
 		}
 

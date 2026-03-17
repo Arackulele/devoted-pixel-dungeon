@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.potions.brews;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 
@@ -39,12 +38,12 @@ public abstract class Brew extends Potion {
 
 	@Override
 	public String defaultAction() {
-		return Item.AC_THROW;
+		return AC_THROW;
 	}
 	
 	@Override
 	public void doThrow(Hero hero) {
-		GameScene.selectCell(Item.thrower);
+		GameScene.selectCell(thrower);
 	}
 	
 	@Override

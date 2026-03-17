@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,9 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Patch;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.connection.ConnectionRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.StandardRoom;
-import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.connection.ConnectionRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Graph;
@@ -258,16 +258,17 @@ public abstract class RegularPainter extends Painter {
 						d.type = Room.Door.Type.UNLOCKED;
 					}
 
-					//entrance doors on floor 1 are hidden during tutorial
-					//entrance doors on floor 2 are hidden if the player hasn't picked up 2nd guidebook page
-					if (r.isEntrance() || n.isEntrance()){
-						if ((Dungeon.depth == 1 && SPDSettings.intro())
+				}
+
+				//unlocked entrance doors on floor 1 are hidden during tutorial
+				//unlocked entrance doors on floor 2 are hidden if the player hasn't picked up 2nd guidebook page
+				if (d.type == Room.Door.Type.UNLOCKED && (r.isEntrance() || n.isEntrance())){
+					if ((Dungeon.depth == 1 && SPDSettings.intro())
 							|| (Dungeon.depth == 2 && !Document.ADVENTURERS_GUIDE.isPageFound(Document.GUIDE_SEARCHING))) {
-							d.type = Room.Door.Type.HIDDEN;
-						}
+						d.type = Room.Door.Type.HIDDEN;
 					}
 				}
-				
+
 				switch (d.type) {
 					case EMPTY:
 						l.map[door] = Terrain.EMPTY;

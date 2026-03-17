@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2025 Evan Debenham
+ * Copyright (C) 2014-2026 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,23 +22,23 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.MimicSprite;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.MimicTooth;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.MimicSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
@@ -55,12 +55,12 @@ public class Mimic extends Mob {
 	{
 		spriteClass = MimicSprite.class;
 
-		properties.add(Char.Property.DEMONIC);
+		properties.add(Property.DEMONIC);
 
 		EXP = 0;
 		
 		//mimics are neutral when hidden
-		alignment = Char.Alignment.NEUTRAL;
+		alignment = Alignment.NEUTRAL;
 		state = PASSIVE;
 	}
 	
@@ -90,16 +90,16 @@ public class Mimic extends Mob {
 		adjustStats(level);
 		stealthy = bundle.getBoolean(STEALTHY);
 		super.restoreFromBundle(bundle);
-		if (state != PASSIVE && alignment == Char.Alignment.NEUTRAL){
-			alignment = Char.Alignment.ENEMY;
+		if (state != PASSIVE && alignment == Alignment.NEUTRAL){
+			alignment = Alignment.ENEMY;
 		}
 	}
 
 	@Override
 	public boolean add(Buff buff) {
 		if (super.add(buff)) {
-			if (buff.type == Buff.buffType.NEGATIVE && alignment == Char.Alignment.NEUTRAL) {
-				alignment = Char.Alignment.ENEMY;
+			if (buff.type == Buff.buffType.NEGATIVE && alignment == Alignment.NEUTRAL) {
+				alignment = Alignment.ENEMY;
 				stopHiding();
 				if (sprite != null) sprite.idle();
 			}
@@ -110,7 +110,7 @@ public class Mimic extends Mob {
 
 	@Override
 	public String name() {
-		if (alignment == Char.Alignment.NEUTRAL){
+		if (alignment == Alignment.NEUTRAL){
 			return Messages.get(Heap.class, "chest");
 		} else {
 			return super.name();
@@ -119,7 +119,7 @@ public class Mimic extends Mob {
 
 	@Override
 	public String description() {
-		if (alignment == Char.Alignment.NEUTRAL){
+		if (alignment == Alignment.NEUTRAL){
 			if (MimicTooth.stealthyMimics()){
 				return Messages.get(Heap.class, "chest_desc");
 			} else {
@@ -132,8 +132,8 @@ public class Mimic extends Mob {
 
 	@Override
 	protected boolean act() {
-		if (alignment == Char.Alignment.NEUTRAL && state != PASSIVE){
-			alignment = Char.Alignment.ENEMY;
+		if (alignment == Alignment.NEUTRAL && state != PASSIVE){
+			alignment = Alignment.ENEMY;
 			if (sprite != null) sprite.idle();
 			if (Dungeon.level.heroFOV[pos]) {
 				GLog.w(Messages.get(this, "reveal") );
@@ -147,13 +147,13 @@ public class Mimic extends Mob {
 	@Override
 	public CharSprite sprite() {
 		MimicSprite sprite = (MimicSprite) super.sprite();
-		if (alignment == Char.Alignment.NEUTRAL) sprite.hideMimic(this);
+		if (alignment == Alignment.NEUTRAL) sprite.hideMimic(this);
 		return sprite;
 	}
 
 	@Override
 	public boolean interact(Char c) {
-		if (alignment != Char.Alignment.NEUTRAL || c != Dungeon.hero){
+		if (alignment != Alignment.NEUTRAL || c != Dungeon.hero){
 			return super.interact(c);
 		}
 		stopHiding();
@@ -166,7 +166,7 @@ public class Mimic extends Mob {
 			return doAttack(Dungeon.hero);
 		} else {
 			sprite.idle();
-			alignment = Char.Alignment.ENEMY;
+			alignment = Alignment.ENEMY;
 			Dungeon.hero.spendAndNext(1f);
 			return true;
 		}
@@ -175,16 +175,17 @@ public class Mimic extends Mob {
 	@Override
 	public void onAttackComplete() {
 		super.onAttackComplete();
-		if (alignment == Char.Alignment.NEUTRAL){
-			alignment = Char.Alignment.ENEMY;
+		if (alignment == Alignment.NEUTRAL){
+			alignment = Alignment.ENEMY;
 			Dungeon.hero.spendAndNext(1f);
+			enemySeen = true;
 		}
 	}
 
 	@Override
 	public int defenseProc(Char enemy, int damage) {
 		if (state == PASSIVE){
-			alignment = Char.Alignment.ENEMY;
+			alignment = Alignment.ENEMY;
 			stopHiding();
 		}
 		return super.defenseProc(enemy, damage);
@@ -193,7 +194,7 @@ public class Mimic extends Mob {
 	@Override
 	public void damage(int dmg, Object src) {
 		if (state == PASSIVE){
-			alignment = Char.Alignment.ENEMY;
+			alignment = Alignment.ENEMY;
 			stopHiding();
 		}
 		super.damage(dmg, src);
@@ -202,7 +203,7 @@ public class Mimic extends Mob {
 	@Override
 	public void die(Object cause) {
 		if (state == PASSIVE){
-			alignment = Char.Alignment.ENEMY;
+			alignment = Alignment.ENEMY;
 			stopHiding();
 		}
 		super.die(cause);
@@ -227,7 +228,7 @@ public class Mimic extends Mob {
 
 	@Override
 	public int damageRoll() {
-		if (alignment == Char.Alignment.NEUTRAL){
+		if (alignment == Alignment.NEUTRAL){
 			return Random.NormalIntRange( 2 + 2*level, 2 + 2*level);
 		} else {
 			return Random.NormalIntRange( 1 + level, 2 + 2*level);
@@ -248,8 +249,8 @@ public class Mimic extends Mob {
 
 	@Override
 	public int attackSkill( Char target ) {
-		if (target != null && alignment == Char.Alignment.NEUTRAL && target.invisible <= 0){
-			return Char.INFINITE_ACCURACY;
+		if (target != null && alignment == Alignment.NEUTRAL && target.invisible <= 0){
+			return INFINITE_ACCURACY;
 		} else {
 			return 6 + level;
 		}
