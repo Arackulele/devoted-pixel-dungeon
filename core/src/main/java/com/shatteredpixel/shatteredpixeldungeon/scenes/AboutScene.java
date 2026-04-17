@@ -52,8 +52,8 @@ public class AboutScene extends PixelScene {
 
 		RectF insets = getCommonInsets();
 
-		TitleBackground BG = new TitleBackground( w, h );
-		add( BG );
+        TitleBackground BG = new TitleBackground( w, h );
+        add( BG );
 
 		//darkens the arches
 		add(new ColorBlock(w, h, 0x44000000));

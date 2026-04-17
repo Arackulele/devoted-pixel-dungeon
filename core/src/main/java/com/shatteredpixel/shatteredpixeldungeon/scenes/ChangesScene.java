@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.ui.TitleBackground;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.*;
 import com.shatteredpixel.shatteredpixeldungeon.windows.IconTitle;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
@@ -64,6 +65,9 @@ public class ChangesScene extends PixelScene {
 
 		int w = Camera.main.width;
 		int h = Camera.main.height;
+
+        TitleBackground BG = new TitleBackground( w, h );
+
 
 		IconTitle title = new IconTitle(Icons.CHANGES.get(), Messages.get(this, "title"));
 		title.setSize(200, 0);
@@ -233,9 +237,7 @@ public class ChangesScene extends PixelScene {
 		addToBack(btn2_X);
 
 
-		Archs archs = new Archs();
-		archs.setSize( Camera.main.width, Camera.main.height );
-		addToBack( archs );
+        addToBack( BG );
 
 		fadeIn();
 	}

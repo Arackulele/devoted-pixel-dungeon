@@ -675,14 +675,14 @@ public class BloodVial extends Artifact {
                         for (Mob mob: affectable ) {
                             if (howmany > 0)
                                 //not sure if i need to do a callback here, test this later
-                            CursedWand.cursedZap(temp,
-                                    Dungeon.hero,
-                                    new Ballistica(Dungeon.hero.pos, mob.pos, Ballistica.MAGIC_BOLT), new com.watabou.utils.Callback() {
-                                        @Override
-                                        public void call() {
-                                            WondrousResin.forcePositive = true;
-                                        }
-                                    });
+                                CursedWand.cursedZap(temp,
+                                        Dungeon.hero,
+                                        new Ballistica(Dungeon.hero.pos, mob.pos, Ballistica.MAGIC_BOLT), new com.watabou.utils.Callback() {
+                                            @Override
+                                            public void call() {
+                                                WondrousResin.forcePositive = true;
+                                            }
+                                        });
 
 
                         }

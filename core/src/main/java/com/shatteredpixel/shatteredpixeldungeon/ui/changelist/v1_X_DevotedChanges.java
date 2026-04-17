@@ -41,6 +41,7 @@ public class v1_X_DevotedChanges {
 
 	public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ){
 		add_Coming_Soon(changeInfos);
+        add_v1_0_0_Beta_8_Changes(changeInfos);
         add_v1_0_0_Beta_7_Changes(changeInfos);
         add_v1_0_0_Beta_Changes(changeInfos);
         add_v1_0_0_Changes(changeInfos);
@@ -53,7 +54,7 @@ public class v1_X_DevotedChanges {
 		changeInfos.add(changes);
 
 		changes.addButton( new ChangeButton(Icons.get(Icons.DEVO), "Overview and Release date",
-				"The 1.0.0 Version of Devoted PD will most likely release january of 2026. Outside of some stuff i will add until then, there will probably be some more betas to squash out bugs and make changes to the new content.\n" +
+				"The 1.0.0 Version of Devoted PD will most likely release sometime in 2026. Outside of some stuff i will add until then, there will probably be some more betas to squash out bugs and make changes to the new content.\n" +
 				"\n" +
 				"The current beta has not been extensively playtested and balanced, so any feedback is appreciated! Some things might feel too powerful or unfair, but they will be fixed before the full release\n" ));
 
@@ -86,6 +87,52 @@ public class v1_X_DevotedChanges {
 
 
 	}
+
+    public static void add_v1_0_0_Beta_8_Changes( ArrayList<ChangeInfo> changeInfos ) {
+
+        ChangeInfo changes = new ChangeInfo("Beta 8", true, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(Icons.get(Icons.INFO), "Shattered Version Update",
+                "Devoted PD is now based on version 3.3.7 of Shattered Pixel Dungeon\n" +
+                        "\n" +
+                        "All Items and features in this version of shattered are now also featured in devoted, including randomization features, the new artifact and the WIP city quest ( which will have a citadel variant once it is finished )"
+
+        ));
+
+        changes.addButton(new ChangeButton(Icons.get(Icons.CHALLENGE_COLOR), "New Challenge!",
+                "A 10th Challenge has been added to Devoted: Cursed Habitat\n" +
+                        "\n" +
+                        "Every Region has a unique special feature when playing with the new challenge enabled, and you will not be able to select your regions\n" ));
+
+        changes.addButton( new ChangeButton(Icons.get(Icons.MAGNIFY), "Visuals",
+                "There is a new WIP title screen for devoted that replaces the shattered title screen, made by yours truly\n" +
+                        "\n" +
+                        "-The foreground decorations are currently just recolors of those from shattered, this will most likely be changed in the future\n"));
+
+        changes.addButton( new ChangeButton(new Image(new DruidSprite()), "Artbook",
+                "A WIP version of the Artbook has been added to the title screen:\n" +
+                        "\n" +
+                        "-This currently only has some concept-art, and exists mostly as a proof of concept, more art will be added tot his before release\n" +
+                        "\n" +
+                        "-The credits screen has been updated as well\n"));
+
+        changes.addButton( new ChangeButton(Icons.get(Icons.AUDIO), "New music",
+                "Two boss fight tracks have been updated in this update\n" +
+                        "\n" +
+                        "The third and fourth alt-region boss soundtracks have been updated, once more these tracks have been composed dby Cevin-2006!\n"
+        ));
+
+
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                "-A crash in the final boss fights final phase\n" +
+                        "-Enemies dyding instantly upon entering the forge quests sub-floor\n" +
+                        "-Other bug fixes, mostly because of the version update to shattered 3.3.7\n"
+        ));
+
+
+    }
 
     public static void add_v1_0_0_Beta_7_Changes( ArrayList<ChangeInfo> changeInfos ) {
 

@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.TitleBackground;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.IconTitle;
 import com.watabou.input.PointerEvent;
@@ -79,9 +80,8 @@ public class ArtbookScene extends PixelScene {
 		int w = Camera.main.width;
 		int h = Camera.main.height;
 
-		Archs archs = new Archs();
-		archs.setSize( w, h );
-		add( archs );
+        TitleBackground BG = new TitleBackground( w, h );
+        add( BG );
 
 		//darkens the arches
 		add(new ColorBlock(w, h, 0x88000000));

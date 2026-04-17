@@ -866,6 +866,10 @@ public class Hero extends Char {
         if (Dungeon.isChallenged(Challenges.REGION_DIFFS) && Dungeon.currentRegion() == Dungeon.Region.HALLS) Buff.affect( this, Thirst.class );
         else Buff.detach(this, Thirst.class);
 
+        if (Dungeon.isChallenged(Challenges.REGION_DIFFS) && Dungeon.currentRegion() == Dungeon.Region.VOID) Buff.affect( this, Paranoia.class );
+        else Buff.detach(this, Paranoia.class);
+
+
         super.spend(time);
     }
 

@@ -102,6 +102,7 @@ public class DungeonTileSheet {
 		chasmStitcheable.put( Terrain.CUSTOM_DECO_EMPTY,CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.MINE_BOULDER, CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.MINE_CRYSTAL, CHASM_FLOOR );
+        chasmStitcheable.put( Terrain.MAGMA_TILE, CHASM_FLOOR );
 
 		//special floor
 		chasmStitcheable.put( Terrain.EMPTY_SP,     CHASM_FLOOR_SP );
@@ -146,7 +147,7 @@ public class DungeonTileSheet {
 			Terrain.BARRICADE, Terrain.HIGH_GRASS, Terrain.FURROWED_GRASS, Terrain.SECRET_TRAP,
 			Terrain.TRAP, Terrain.INACTIVE_TRAP, Terrain.EMPTY_DECO,
 			Terrain.CUSTOM_DECO, Terrain.WELL, Terrain.STATUE, Terrain.REGION_DECO, Terrain.ALCHEMY,
-			Terrain.CUSTOM_DECO_EMPTY, Terrain.MINE_CRYSTAL, Terrain.MINE_BOULDER,
+			Terrain.CUSTOM_DECO_EMPTY, Terrain.MINE_CRYSTAL, Terrain.MINE_BOULDER, Terrain.MAGMA_TILE,
 			Terrain.DOOR, Terrain.OPEN_DOOR, Terrain.LOCKED_DOOR, Terrain.HERO_LKD_DR, Terrain.CRYSTAL_DOOR
 	));
 
@@ -214,6 +215,10 @@ public class DungeonTileSheet {
 	public static final int FLAT_MINE_BOULDER         = FLAT_OTHER+12;
 	public static final int FLAT_MINE_BOULDER_ALT     = FLAT_OTHER+13;
 	public static final int FLAT_MINE_BOULDER_ALT_2   = FLAT_OTHER+14;
+
+
+    public static final int FLAT_MAGMA_TILE         = FLAT_MINE_BOULDER;
+    public static final int FLAT_MAGMA_TILE_ALT     = FLAT_MINE_BOULDER_ALT;
 
 	/**********************************************************************
 	 * Raised Tiles, Lower Layer
@@ -315,8 +320,12 @@ public class DungeonTileSheet {
 	public static final int RAISED_MINE_BOULDER_ALT = RAISED_OTHER+13;
 	public static final int RAISED_MINE_BOULDER_ALT_2=RAISED_OTHER+14;
 
+    public static final int RAISED_MAGMA_TILE     = RAISED_MINE_BOULDER;
+    public static final int RAISED_MAGMA_TILE_ALT = RAISED_MINE_BOULDER_ALT;
 
-	/**********************************************************************
+
+
+    /**********************************************************************
 	 * Raised Tiles, Upper Layer
 	 **********************************************************************/
 
@@ -460,6 +469,8 @@ public class DungeonTileSheet {
 
 		directFlatVisuals.put(Terrain.MINE_CRYSTAL,     FLAT_MINE_CRYSTAL);
 		directFlatVisuals.put(Terrain.MINE_BOULDER,     FLAT_MINE_BOULDER);
+
+        directFlatVisuals.put(Terrain.MAGMA_TILE,     FLAT_MAGMA_TILE);
 
 		directFlatVisuals.put(Terrain.SECRET_DOOR,      directFlatVisuals.get(Terrain.WALL));
 	}

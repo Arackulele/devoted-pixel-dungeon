@@ -209,10 +209,7 @@ public enum HeroClass {
 			RoyalSeal crw = new RoyalSeal();
 			crw.quantity(1).collect();
 
-
-
-
-            Dungeon.depth = 21;
+            Dungeon.depth = 20;
 			//Dungeon.branch = 1;
 
 		}
