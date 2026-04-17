@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
@@ -306,11 +308,11 @@ public class Dungeon {
     }
 
     public static Region currentRegion() {
-        if (depth <= 5)       return !seweralt ? Region.SEWERS : Region.GARDENS;
+        if (depth <= 5)       return !seweralt  ? Region.SEWERS : Region.GARDENS;
         else if (depth <= 10) return !prisonalt ? Region.PRISON : Region.COLDHOUSE;
-        else if (depth <= 15) return !cavealt ? Region.CAVES : Region.FORGE;
-        else if (depth <= 20) return !cityalt ? Region.METROPOLIS : Region.CITADEL;
-        else                  return !hallsalt ? Region.HALLS : Region.VOID;
+        else if (depth <= 15) return !cavealt   ? Region.CAVES : Region.FORGE;
+        else if (depth <= 20) return !cityalt   ? Region.METROPOLIS : Region.CITADEL;
+        else                  return !hallsalt  ? Region.HALLS : Region.VOID;
     }
 
     public static Level newLevel() {
@@ -322,7 +324,7 @@ public class Dungeon {
         if (branch == 0) {
             switch (depth) {
                 case 1:
-                    if (SPDSettings.regiontamper()==false) {
+                    if (SPDSettings.regiontamper()==false || isChallenged(Challenges.REGION_DIFFS)) {
                         sewersrandom = Random.Int(100);
                         prisonsrandom = Random.Int(100);
                         cavesrandom = Random.Int(100);

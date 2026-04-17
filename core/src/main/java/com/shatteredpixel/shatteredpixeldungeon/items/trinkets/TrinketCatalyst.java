@@ -235,7 +235,7 @@ public class TrinketCatalyst extends Item {
 
 								Statistics.itemsCrafted++;
 								Badges.validateItemsCrafted();
-
+                                Badges.unlock(Badges.Badge.UNLOCK_CLERIC);
 								try {
 									Dungeon.saveAll();
 								} catch (IOException e) {

@@ -103,7 +103,7 @@ public class TitleScene extends PixelScene {
 
 		RectF insets = getCommonInsets();
 
-		TitleBackground BG = new TitleBackground( w, h );
+        TitleBackground BG = new TitleBackground( w, h );
 		add( BG );
 
 		w -= insets.left + insets.right;

@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2026 Evan Debenham
+ * Copyright (C) 2014-2025 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,132 +27,134 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Healing;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Thirst;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.VialOfBlood;
-import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 
 public class Dewdrop extends Item {
-	
-	{
-		image = ItemSpriteSheet.DEWDROP;
-		
-		stackable = true;
-		dropsDownHeap = true;
-	}
-	
-	@Override
-	public boolean doPickUp(Hero hero, int pos) {
-		
-		Waterskin flask = hero.belongings.getItem( Waterskin.class );
-		Catalog.setSeen(getClass());
-		Statistics.itemTypesDiscovered.add(getClass());
-		
-		if (flask != null && !flask.isFull()){
 
-			flask.collectDew( this );
-			GameScene.pickUp( this, pos );
+    {
+        image = ItemSpriteSheet.DEWDROP;
 
-		} else {
+        stackable = true;
+        dropsDownHeap = true;
+    }
 
-			int terr = Dungeon.level.map[pos];
-			if (!consumeDew(1, hero, terr == Terrain.ENTRANCE || terr == Terrain.ENTRANCE_SP
-					|| terr == Terrain.EXIT || terr == Terrain.UNLOCKED_EXIT)){
-				return false;
-			} else {
-				Catalog.countUse(getClass());
-			}
-			
-		}
-		
-		Sample.INSTANCE.play( Assets.Sounds.DEWDROP );
-		hero.spendAndNext( pickupDelay() );
-		
-		return true;
-	}
+    @Override
+    public boolean doPickUp(Hero hero, int pos) {
 
-	public static boolean consumeDew(int quantity, Hero hero, boolean force){
-		//20 drops for a full heal
-		int effect = Math.round( hero.HT * 0.05f * quantity );
+        Waterskin flask = hero.belongings.getItem( Waterskin.class );
+        Catalog.setSeen(getClass());
+        Statistics.itemTypesDiscovered.add(getClass());
 
-		int heal = Math.min( hero.HT - hero.HP, effect );
+        if (flask != null && !flask.isFull()){
 
-		int shield = 0;
-		if (hero.hasTalent(Talent.SHIELDING_DEW)){
+            flask.collectDew( this );
+            GameScene.pickUp( this, pos );
 
-			//When vial is present, this allocates exactly as much of the effect as is needed
-			// to get to 100% HP, and the rest is then given as shielding (without the vial boost)
-			if (quantity > 1 && heal < effect && VialOfBlood.delayBurstHealing()){
-				heal = Math.round(heal/VialOfBlood.totalHealMultiplier());
-			}
+        } else {
 
-			shield = effect - heal;
+            int terr = Dungeon.level.map[pos];
+            if (!consumeDew(1, hero, terr == Terrain.ENTRANCE || terr == Terrain.ENTRANCE_SP
+                    || terr == Terrain.EXIT || terr == Terrain.UNLOCKED_EXIT)){
+                return false;
+            } else {
+                Catalog.countUse(getClass());
+            }
 
-			int maxShield = Math.round(hero.HT *0.2f*hero.pointsInTalent(Talent.SHIELDING_DEW));
-			int curShield = 0;
-			if (hero.buff(Barrier.class) != null) curShield = hero.buff(Barrier.class).shielding();
-			shield = Math.min(shield, maxShield-curShield);
-		}
+        }
 
-		if (heal > 0 || shield > 0) {
+        Sample.INSTANCE.play( Assets.Sounds.DEWDROP );
+        hero.spendAndNext( TIME_TO_PICK_UP );
 
-			if (heal > 0 && quantity > 1 && VialOfBlood.delayBurstHealing()){
-				Healing healing = Buff.affect(hero, Healing.class);
-				healing.setHeal(heal, 0, VialOfBlood.maxHealPerTurn());
-				healing.applyVialEffect();
-			} else {
-				hero.Heal(heal);
-				if (heal > 0){
-					hero.sprite.showStatusWithIcon( CharSprite.POSITIVE, Integer.toString(heal), FloatingText.HEALING);
-				}
-			}
+        return true;
+    }
 
-			if (shield > 0) {
-				Buff.affect(hero, Barrier.class).incShield(shield);
-				hero.sprite.showStatusWithIcon( CharSprite.POSITIVE, Integer.toString(shield), FloatingText.SHIELDING );
-			}
+    public static boolean consumeDew(int quantity, Hero hero, boolean force){
+        //20 drops for a full heal
+        int effect = Math.round( hero.HT * 0.05f * quantity );
 
-		} else if (!force) {
-			GLog.i( Messages.get(Dewdrop.class, "already_full") );
-			return false;
-		}
+        int heal = Math.min( hero.HT - hero.HP, effect );
+        Buff.affect(hero, Thirst.class).satisfy((Thirst.THIRSTY / 20) * quantity);
 
-		return true;
-	}
+        int shield = 0;
+        if (hero.hasTalent(Talent.SHIELDING_DEW)){
 
-	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
+            //When vial is present, this allocates exactly as much of the effect as is needed
+            // to get to 100% HP, and the rest is then given as shielding (without the vial boost)
+            if (quantity > 1 && heal < effect && VialOfBlood.delayBurstHealing()){
+                heal = Math.round(heal/VialOfBlood.totalHealMultiplier());
+            }
 
-	@Override
-	public boolean isIdentified() {
-		return true;
-	}
+            shield = effect - heal;
 
-	//max of one dew in a stack
+            int maxShield = Math.round(hero.HT *0.2f*hero.pointsInTalent(Talent.SHIELDING_DEW));
+            int curShield = 0;
+            if (hero.buff(Barrier.class) != null) curShield = hero.buff(Barrier.class).shielding();
+            shield = Math.min(shield, maxShield-curShield);
+        }
 
-	@Override
-	public Item merge( Item other ){
-		if (isSimilar( other )){
-			quantity = 1;
-			other.quantity = 0;
-		}
-		return this;
-	}
+        if (heal > 0 || shield > 0) {
 
-	@Override
-	public Item quantity(int value) {
-		quantity = Math.min( value, 1);
-		return this;
-	}
+            if (heal > 0 && quantity > 1 && VialOfBlood.delayBurstHealing()){
+                Healing healing = Buff.affect(hero, Healing.class);
+                healing.setHeal(heal, 0, VialOfBlood.maxHealPerTurn());
+                healing.applyVialEffect();
+            } else {
+                hero.Heal(heal);
+                if (heal > 0){
+                    hero.sprite.showStatusWithIcon( CharSprite.POSITIVE, Integer.toString(heal), FloatingText.HEALING);
+                }
+            }
+
+            if (shield > 0) {
+                Buff.affect(hero, Barrier.class).incShield(shield);
+                hero.sprite.showStatusWithIcon( CharSprite.POSITIVE, Integer.toString(shield), FloatingText.SHIELDING );
+            }
+
+        } else if (!force) {
+            GLog.i( Messages.get(Dewdrop.class, "already_full") );
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean isUpgradable() {
+        return false;
+    }
+
+    @Override
+    public boolean isIdentified() {
+        return true;
+    }
+
+    //max of one dew in a stack
+
+    @Override
+    public Item merge( Item other ){
+        if (isSimilar( other )){
+            quantity = 1;
+            other.quantity = 0;
+        }
+        return this;
+    }
+
+    @Override
+    public Item quantity(int value) {
+        quantity = Math.min( value, 1);
+        return this;
+    }
 
 }

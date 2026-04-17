@@ -391,7 +391,7 @@ public class Assets {
         public static final String FUNGAL_CORE = "sprites/fungal_core.png";
         public static final Object WISP = "sprites/wisp.png";
         public static final Object BLUEIMP = "sprites/imp.png";
-        public static final Object WASP = "sprites/Wasp.png";
+        public static final Object WASP = "sprites/wasp.png";
         public static final Object WRETCH = "sprites/wretch.png";
         public static final Object HOMONCULUS = "sprites/homonculus.png";
         public static final Object TOAD = "sprites/toad.png";

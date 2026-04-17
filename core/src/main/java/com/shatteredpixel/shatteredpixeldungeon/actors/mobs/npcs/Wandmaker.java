@@ -279,9 +279,13 @@ public class Wandmaker extends NPC {
 				type = node.getInt(TYPE);
 				
 				given = node.getBoolean( GIVEN );
-				
-				wand1 = (Wand)node.get( WAND1 );
-				wand2 = (Wand)node.get( WAND2 );
+
+
+                //This saving system is scuffed but im not fixing it
+                if (!Dungeon.prisonalt && (Item) node.get(WAND1) instanceof Wand) {
+                    wand1 = (Wand) node.get(WAND1);
+                    wand2 = (Wand) node.get(WAND2);
+                }
 
 				if (type == 2){
 					CeremonialCandle.ritualPos = node.getInt( RITUALPOS );

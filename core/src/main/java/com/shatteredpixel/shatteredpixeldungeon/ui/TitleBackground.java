@@ -39,7 +39,7 @@ import java.util.ArrayList;
 // back layers are dark, which works well on desktop but may be hard to see on mobile
 public class TitleBackground extends Component {
 
-	public static float SCROLL_SPEED	= 15f;
+	public static float SCROLL_SPEED	= 11f;
 
 	private float density = 1f;
 
@@ -276,6 +276,7 @@ public class TitleBackground extends Component {
 		updateMid2Layer(scale, shift);
 		shift *= 1.33f;
 		updateFrontSmallLayer(scale, shift);
+
 
 	}
 

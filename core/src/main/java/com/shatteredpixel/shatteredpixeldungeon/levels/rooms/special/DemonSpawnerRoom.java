@@ -3,7 +3,7 @@
  * Copyright (C) 2012-2015 Oleg Dolya
  *
  * Shattered Pixel Dungeon
- * Copyright (C) 2014-2026 Evan Debenham
+ * Copyright (C) 2014-2025 Evan Debenham
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,10 @@ package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DemonSpawner;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.EldritchBrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
@@ -34,91 +37,92 @@ import com.watabou.noosa.Tilemap;
 import com.watabou.utils.Point;
 
 public class DemonSpawnerRoom extends SpecialRoom {
-	@Override
-	public void paint(Level level) {
+    @Override
+    public void paint(Level level) {
 
-		Painter.fill( level, this, Terrain.WALL );
-		Painter.fill( level, this, 1, Terrain.EMPTY );
+        Painter.fill( level, this, Terrain.WALL );
+        Painter.fill( level, this, 1, Terrain.EMPTY );
 
-		Point c = center();
-		int cx = c.x;
-		int cy = c.y;
+        Point c = center();
+        int cx = c.x;
+        int cy = c.y;
 
-		Door door = entrance();
-		door.set(Door.Type.UNLOCKED); //cannot be hidden randomly under any circumstance
+        Door door = entrance();
+        door.set(Room.Door.Type.UNLOCKED);
 
-		DemonSpawner spawner = new DemonSpawner();
-		spawner.pos = cx + cy * level.width();
-		Statistics.spawnersAlive++;
-		spawner.spawnRecorded = true;
-		level.mobs.add( spawner );
+        Mob spawner;
+        if (!Dungeon.hallsalt) spawner = new DemonSpawner();
+        else spawner = new EldritchBrain();
+        spawner.pos = cx + cy * level.width();
+        level.mobs.add( spawner );
 
-		CustomFloor vis = new CustomFloor();
-		vis.setRect(left+1, top+1, width()-2, height()-2);
-		level.customTiles.add(vis);
+        CustomFloor vis = new CustomFloor();
+        vis.setRect(left+1, top+1, width()-2, height()-2);
+        level.customTiles.add(vis);
 
-	}
+    }
 
-	@Override
-	public boolean connect(Room room) {
-		//cannot connect to entrance, otherwise works normally
-		if (room.isExit())  return false;
-		else                return super.connect(room);
-	}
+    @Override
+    public boolean connect(Room room) {
+        //cannot connect to entrance, otherwise works normally
+        if (room.isExit())  return false;
+        else                return super.connect(room);
+    }
 
-	@Override
-	public boolean canPlaceTrap(Point p) {
-		return false;
-	}
+    @Override
+    public boolean canPlaceTrap(Point p) {
+        return false;
+    }
 
-	@Override
-	public boolean canPlaceWater(Point p) {
-		return false;
-	}
+    @Override
+    public boolean canPlaceWater(Point p) {
+        return false;
+    }
 
-	@Override
-	public boolean canPlaceGrass(Point p) {
-		return false;
-	}
+    @Override
+    public boolean canPlaceGrass(Point p) {
+        return false;
+    }
 
-	public static class CustomFloor extends CustomTilemap {
+    public static class CustomFloor extends CustomTilemap {
 
-		{
-			texture = Assets.Environment.HALLS_SP;
-		}
+        {
+            if (!Dungeon.hallsalt)texture = Assets.Environment.HALLS_SP;
+            else texture = Assets.Environment.VOID_SP;
+        }
 
-		@Override
-		public Tilemap create() {
-			Tilemap v = super.create();
-			int cell = tileX + tileY * Dungeon.level.width();
-			int[] map = Dungeon.level.map;
-			int[] data = new int[tileW*tileH];
-			for (int i = 0; i < data.length; i++){
-				if (i % tileW == 0){
-					cell = tileX + (tileY + i / tileW) * Dungeon.level.width();
-				}
+        @Override
+        public Tilemap create() {
+            Tilemap v = super.create();
+            int cell = tileX + tileY * Dungeon.level.width();
+            int[] map = Dungeon.level.map;
+            int[] data = new int[tileW*tileH];
+            for (int i = 0; i < data.length; i++){
+                if (i % tileW == 0){
+                    cell = tileX + (tileY + i / tileW) * Dungeon.level.width();
+                }
 
-				if (Dungeon.level.findMob(cell) instanceof DemonSpawner){
-					data[i-1] = 5 + 4*8;
-					data[i] = 6 + 4*8;
-					data[i+1] = 7 + 4*8;
-					i++;
-					cell++;
-				} else if (map[cell] == Terrain.EMPTY_DECO) {
-					if (Statistics.amuletObtained){
-						data[i] = 31;
-					} else {
-						data[i] = 27;
-					}
-				} else {
-					data[i] = 19;
-				}
+                if ( Dungeon.level.findMob(cell) != null && Char.hasProp(Dungeon.level.findMob(cell), Char.Property.MINIBOSS) ){
+                    data[i-1] = 5 + 4*8;
+                    data[i] = 6 + 4*8;
+                    data[i+1] = 7 + 4*8;
+                    i++;
+                    cell++;
+                } else if (map[cell] == Terrain.EMPTY_DECO) {
+                    if (Statistics.amuletObtained){
+                        data[i] = 31;
+                    } else {
+                        data[i] = 27;
+                    }
+                } else {
+                    data[i] = 19;
+                }
 
-				cell++;
-			}
-			v.map( data, tileW );
-			return v;
-		}
+                cell++;
+            }
+            v.map( data, tileW );
+            return v;
+        }
 
-	}
+    }
 }

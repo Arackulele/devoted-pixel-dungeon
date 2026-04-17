@@ -22,7 +22,11 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.spells;
 
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paranoia;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -62,8 +66,11 @@ public abstract class Spell extends Item {
 				GLog.w( Messages.get(this, "no_magic") );
 				return;
 			}
-			
-			onCast( hero );
+
+            if (Dungeon.isChallenged(Challenges.REGION_DIFFS) &&
+                    Dungeon.currentRegion() == Dungeon.Region.VOID) Buff.affect(Dungeon.hero, Paranoia.class).reduceInsanity((Paranoia.PARANOID/6) * energyVal());
+
+            onCast( hero );
 			
 		}
 	}

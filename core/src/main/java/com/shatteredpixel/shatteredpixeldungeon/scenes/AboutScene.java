@@ -21,9 +21,11 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TitleBackground;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -40,6 +42,11 @@ import com.watabou.utils.RectF;
 
 public class AboutScene extends PixelScene {
 
+    //fadeIn();
+    int count = 0;
+
+    IconButton secretbutton;
+
 	@Override
 	public void create() {
 		super.create();
@@ -52,8 +59,8 @@ public class AboutScene extends PixelScene {
 
 		RectF insets = getCommonInsets();
 
-		TitleBackground BG = new TitleBackground( w, h );
-		add( BG );
+        TitleBackground BG = new TitleBackground( w, h );
+        add( BG );
 
 		//darkens the arches
 		add(new ColorBlock(w, h, 0x44000000));
@@ -323,7 +330,29 @@ public class AboutScene extends PixelScene {
 		btnExit.setPos( Camera.main.width - btnExit.width() - ofs, ofs );
 		add( btnExit );
 
-		//fadeIn();
+
+
+         secretbutton = new IconButton(Icons.CHALLENGE_GREY.get()){
+            @Override
+            protected void onClick() {
+                count++;
+                if (count > 9) {
+
+                    secretbutton.icon(Icons.CHALLENGE_COLOR.get());
+                    Badges.unlock(Badges.Badge.VICTORY);
+                    Badges.unlock(Badges.Badge.UNLOCK_MAGE);
+                    Badges.unlock(Badges.Badge.UNLOCK_ROGUE);
+                    Badges.unlock(Badges.Badge.UNLOCK_HUNTRESS);
+                    Badges.unlock(Badges.Badge.UNLOCK_DUELIST);
+                    Badges.unlock(Badges.Badge.UNLOCK_CLERIC);
+                    Badges.unlock(Badges.Badge.UNLOCK_ZEALOT);
+                }
+            }
+
+        };
+        secretbutton.icon().originToCenter();
+        secretbutton.setRect(Camera.main.width-27, Camera.main.height-27, 20, 21);
+        add(secretbutton);
 	}
 	
 	@Override

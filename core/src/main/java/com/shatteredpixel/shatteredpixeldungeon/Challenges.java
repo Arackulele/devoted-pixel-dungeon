@@ -41,6 +41,7 @@ public class Challenges {
 
 
     public static final int MAX_VALUE           = 1023;
+    public static final int MAX_CHALS           = 10;
 
 	public static final String[] NAME_IDS = {
 			"champion_enemies",
@@ -67,7 +68,16 @@ public class Challenges {
 		return chCount;
 	}
 
-	public static boolean isItemBlocked( Item item ){
+    public static int activeChallenges(int mask){
+        int chCount = 0;
+        for (int ch : Challenges.MASKS){
+            if ((mask & ch) != 0) chCount++;
+        }
+        return chCount;
+    }
+
+
+    public static boolean isItemBlocked( Item item ){
 
 		if (Dungeon.isChallenged(NO_HERBALISM) && item instanceof Dewdrop){
 			return true;

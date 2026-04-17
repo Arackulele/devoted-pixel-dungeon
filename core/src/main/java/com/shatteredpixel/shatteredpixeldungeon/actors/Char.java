@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Barf;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Electricity;
@@ -1086,7 +1087,12 @@ public abstract class Char extends Actor {
 				((MobSprite) sprite).fall();
 			}
 		}
-	}
+
+        if (Dungeon.isChallenged(Challenges.REGION_DIFFS) &&
+                Dungeon.currentRegion() == Dungeon.Region.VOID &&
+                 Dungeon.hero != null && Dungeon.level.heroFOV[pos]) Buff.affect(Dungeon.hero, Paranoia.class).affectInsanity(40 + (HT *0.05f));
+
+    }
 
 	//we cache this info to prevent having to call buff(...) in isAlive.
 	//This is relevant because we call isAlive during drawing, which has both performance

@@ -75,12 +75,8 @@ public class SPDSettings extends GameSettings {
 
     //can return null because we need to directly handle the case of landscape not being set
     // as there are different defaults for different devices
-    public static Boolean landscape(){
-        if (contains(KEY_LANDSCAPE)){
-            return getBoolean(KEY_LANDSCAPE, false);
-        } else {
-            return null;
-        }
+    public static boolean landscape(){
+        return getBoolean(KEY_LANDSCAPE, false);
     }
 
     public static void powerSaver( boolean value ){

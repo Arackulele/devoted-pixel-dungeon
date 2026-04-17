@@ -223,6 +223,8 @@ public class ItemSprite extends MovieClip {
 				view( ItemSpriteSheet.LOCKED_CHEST, null ); break;
 			case CRYSTAL_CHEST:
 				view( ItemSpriteSheet.CRYSTAL_CHEST, null ); break;
+            case ICE:
+                view( ItemSpriteSheet.ICE, null ); break;
 			case TOMB:
 				view( ItemSpriteSheet.TOMB, null ); break;
 			case SKELETON:
