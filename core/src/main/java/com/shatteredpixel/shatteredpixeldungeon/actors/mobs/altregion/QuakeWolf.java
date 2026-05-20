@@ -227,11 +227,6 @@ public class QuakeWolf extends CragWolf {
 		return true;
 		}
 
-		@Override
-		public int icon() {
-			return BuffIndicator.SACRIFICE;
-		}
-
 	}
 
 }

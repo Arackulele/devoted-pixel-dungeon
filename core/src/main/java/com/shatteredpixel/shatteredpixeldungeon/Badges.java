@@ -1092,6 +1092,8 @@ public class Badges {
 		}
 	}
 
+    public static boolean hasVictory() { return isUnlocked(Badge.VICTORY) || isUnlocked(Badge.VICTORY_ALT); }
+
 	public static void validateRegionVictories(){
 		if (Dungeon.seweralt && Dungeon.prisonalt && Dungeon.cavealt && Dungeon.cityalt && Dungeon.hallsalt){
 			local.add( Badge.REGIONS_VICTORY_ALT );
@@ -1268,7 +1270,7 @@ public class Badges {
 	public static boolean isUnlocked( Badge badge ) {
 		return global.contains( badge );
 	}
-	
+
 	public static HashSet<Badge> allUnlocked(){
 		loadGlobal();
 		return new HashSet<>(global);

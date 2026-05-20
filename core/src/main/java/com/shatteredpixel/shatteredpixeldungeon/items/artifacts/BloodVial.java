@@ -21,8 +21,11 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.artifacts;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Freezing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeScreen;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.*;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -30,6 +33,22 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DwarfKing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.ArcaneRoot;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Berry;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Blandfruit;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.ChargrilledMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.CrystalApple;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.FrozenCarpaccio;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.LargeRadish;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.MeatPie;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.PhantomMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.StewedMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SupplyRation;
+import com.shatteredpixel.shatteredpixeldungeon.items.remains.BowFragment;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.*;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
@@ -40,10 +59,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.*;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
+import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.ExoticPotion;
@@ -57,10 +80,19 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.CursedWand;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.*;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.*;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
+import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
+import java.awt.Choice;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.ArrayList;
@@ -87,10 +119,9 @@ public class BloodVial extends Artifact {
     public static final String AC_DRINK = "DRINK";
     public static final String AC_STAB = "STAB";
     private int damage;
-        // private Demon demon = null;
-        // private FriendlyEye eye = null;
-
     public int bloodvialcooldown;
+    public int DevoteeCharges;
+
     @Override
     protected ArtifactBuff passiveBuff() {
         return new vialRecharge();
@@ -101,13 +132,18 @@ public class BloodVial extends Artifact {
     public String info() {
         String info = super.info();
 
-        Trinket ref = null;
-        if (Dungeon.hero != null) {
-            ref = Dungeon.hero.belongings.getItem(Trinket.class);
+        Item ref = null;
+        if (hero != null) {
+            ref = hero.lastEaten;
 
-        if (Dungeon.hero.subClass == HeroSubClass.DEVOTEE){
-            if (ref == null) info += "\n\n" + Messages.get(this, "no_trinket");
-            else info += "\n\n" + Messages.get(ref, "conjurer_desc");
+        if (hero.subClass == HeroSubClass.DEVOTEE){
+            if (ref == null || DevoteeCharges == 0) info += "\n\n" + Messages.get(this, "no_food");
+            else {
+                info += "\n\n" + Messages.get(this, "descability")  + "\n";
+                info += Messages.get(ref, "devotee");
+                info += "\n" + Messages.get(this, "devoteedesc", DevoteeCharges);
+
+            }
         }
         }
 
@@ -157,31 +193,12 @@ public class BloodVial extends Artifact {
 
     private int staling;
 
-    //Censer buffs are listed in order of severity for being selected
-    static ArrayList<Class<? extends Buff>> censerbuffs = new ArrayList<>();
-    static{
-        censerbuffs.add(Weakness.class);
-        censerbuffs.add(Weakness.class);
-        censerbuffs.add(Cripple.class);
-        censerbuffs.add(Blindness.class);
-
-        censerbuffs.add(Chill.class);
-        censerbuffs.add(Ooze.class);
-        censerbuffs.add(Roots.class);
-        censerbuffs.add(Burning.class);
-        censerbuffs.add(Poison.class);
-    };
-
-    Trap[] trapClasses = new Trap[]{
-            new ChillingTrap(),new ShockingTrap(),new ToxicTrap(),new WornDartTrap(),
-            new AlarmTrap(),new OozeTrap(),
-            new ConfusionTrap() ,new FlockTrap() ,new SummoningTrap() ,new TeleportationTrap() ,new GatewayTrap()
-    };
-
     public void charge()
     {
         charge++;
     }
+
+    @SuppressWarnings("SuspiciousIndentation")
     @Override
     public void execute( Hero hero, String action ) {
 
@@ -199,16 +216,6 @@ public class BloodVial extends Artifact {
                 else if (cursed) GLog.i(Messages.get(this, "cursed"));
                 else if (charge <= 0) GLog.i(Messages.get(this, "no_charge"));
                 else {
-
-                    ArrayList<Integer> spawnPoints = new ArrayList<>();
-                    for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
-                        int p = hero.pos + PathFinder.NEIGHBOURS8[i];
-                        if (Actor.findChar(p) == null && (Dungeon.level.passable[p] || Dungeon.level.avoid[p])) {
-                            spawnPoints.add(p);
-                        }
-                    }
-
-
                     hero.busy();
                     Sample.INSTANCE.play(Assets.Sounds.MELD);
                     Talent.onArtifactUsed(Dungeon.hero);
@@ -232,12 +239,12 @@ public class BloodVial extends Artifact {
                         }
                     }
 
-                    if (visible == false) staling++;
+                    if (!visible) staling++;
                     else staling = 0;
 
                     int variableamt = 4 + (staling * staling);
 
-                    if (anymobs == false) variableamt += 100;
+                    if (!anymobs) variableamt += 100;
 
                     bloodvialcooldown = (int) (variableamt + 0.6 + level());
 
@@ -267,8 +274,8 @@ public class BloodVial extends Artifact {
 
                         if (Dungeon.hero.hasTalent(Talent.NIHILISM))
                         {
-                            int reduction = 20 + Dungeon.hero.pointsInTalent((Talent.NIHILISM));
-                            reduction *= 0.01;
+                            int reduction = 2 + Dungeon.hero.pointsInTalent((Talent.NIHILISM));
+                            reduction *= (int) 0.1f;
                             damage -= damage * reduction;
                         }
 
@@ -293,406 +300,7 @@ public class BloodVial extends Artifact {
 
 
                 //Logic for Devotee Blast
-                if (hero.subClass == HeroSubClass.DEVOTEE && hero.buff(Wrath.class) != null && hero.buff(Wrath.class).cooldown() > 9) {
-
-
-                    Trinket ref = Dungeon.hero.belongings.getItem(Trinket.class);
-
-                    //no trinket: Deal damage proportional to wrath
-                    if (ref == null)
-                    {
-
-                        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-                            if (Dungeon.level.heroFOV[mob.pos]) {
-                                //deals 10%HT, plus half of wrath
-                                mob.damage(Math.round(mob.HT/10f + (int)hero.buff(Wrath.class).cooldown()/2), this);
-                            }
-                        }
-
-                    }
-                    //Chaotic Censer: Applies random debuffs to enemies, severity based on wrath
-                    if (ref instanceof ChaoticCenser) {
-                        ArrayList<Mob> affectable = new ArrayList<>();
-                        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-                            if (Dungeon.level.heroFOV[mob.pos]) {
-                                affectable.add(mob);
-                            }
-                        }
-
-                        com.watabou.utils.Random.shuffle(affectable);
-                        int howmany = (int)hero.buff(Wrath.class).cooldown() - 10;
-                        howmany = howmany / 10;
-                        howmany += 1;
-                        int selection = howmany / 5 + com.watabou.utils.Random.Int(-3, 3);
-
-                        selection = Math.max(1, selection);
-
-                        for (Mob mob: affectable ) {
-                            if (howmany > 0)
-                                Buff.affect(mob, censerbuffs.get(Math.min(selection, 8)));
-                        }
-                    }
-                    //Dimensional Sundial:
-                    if (ref instanceof DimensionalSundial) {
-
-                        Calendar cal = GregorianCalendar.getInstance();
-                        if (cal.get(Calendar.HOUR_OF_DAY) >= 20 || cal.get(Calendar.HOUR_OF_DAY) <= 7) {
-                            GameScene.add( Blob.seed( hero.pos, 50 + (int)hero.buff(Wrath.class).cooldown()*2, SmokeScreen.class ) );
-                        } else {
-                            Buff.prolong( hero, Bless.class, 1f + hero.buff(Wrath.class).cooldown()/4 );
-                        }
-
-
-                    }
-                    //Exotic Crystals:
-                    if (ref instanceof ExoticCrystals) {
-                        boolean givenitem = false;
-
-                        int trueWrath = (int)hero.buff(Wrath.class).cooldown() - 10;
-
-                        int StoneChance = 100 - trueWrath;
-                        int ScrollChance = 20 + trueWrath;
-                        int ExoticChance = 0;
-                        if (trueWrath >= 50) ExoticChance += trueWrath;
-                        if (trueWrath >= 100) ScrollChance = 0;
-
-                        int r = com.watabou.utils.Random.NormalIntRange(1, 100);
-                        if (r < StoneChance)
-                        {
-                            Item st = Generator.random( Generator.Category.SEED );
-                            Dungeon.level.drop(st, hero.pos).sprite.drop();
-                            givenitem = true;
-                        }
-                        r = com.watabou.utils.Random.NormalIntRange(1, 100);
-                        Item sc = Generator.random( Generator.Category.POTION );
-                        if (r < ScrollChance && !givenitem)
-                        {
-
-                            Dungeon.level.drop(sc, hero.pos).sprite.drop();
-                            givenitem = true;
-                        }
-                        r = com.watabou.utils.Random.NormalIntRange(1, 100);
-                        if (r < ExoticChance && !givenitem)
-                        {
-
-                            Item ex = Generator.random(ExoticPotion.regToExo.get(sc));
-                            Dungeon.level.drop(ex, hero.pos).sprite.drop();
-                            givenitem = true;
-                        }
-
-                        if (!givenitem)
-                        {
-                            Item st = Generator.random( Generator.Category.SEED );
-                            Dungeon.level.drop(st, hero.pos).sprite.drop();
-                            givenitem = true;
-                        }
-
-                    }
-                    //Petrified Seed: Stuns adjacent enemies for a specified amount of time based on wrath
-                    if (ref instanceof PetrifiedSeed) {
-
-                        ArrayList<Integer> validtiles = new ArrayList<>();
-                        ArrayList<Mob> validmobs = new ArrayList<>();
-                        for (int i : PathFinder.NEIGHBOURS9){
-                            validtiles.add(hero.pos+i);
-                        }
-
-                        for (int validtile : validtiles) {
-                            Char ch = Actor.findChar(validtile);
-                            if (ch != null && ch.alignment == Char.Alignment.ENEMY) {
-                                Buff.prolong(ch, Paralysis.class, (int)(hero.buff(Wrath.class).cooldown()/3) + 1);
-                            }
-                        }
-
-                    }
-                    //Eye of Newt: Shoots a deathgaze at random enemy in sight, damage is based on wrath amount
-                    //ToDo: Maybe it shouldnt just shoot a wand of disint
-                    if (ref instanceof EyeOfNewt) {
-                        ArrayList<Mob> affectable = new ArrayList<>();
-
-                        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-                            if (Dungeon.level.heroFOV[mob.pos]) {
-                                affectable.add(mob);
-                            }
-                        }
-                        if (affectable.size() > 0)
-                        {
-                            com.watabou.utils.Random.shuffle(affectable);
-                            WandOfDisintegration disint = new WandOfDisintegration();
-                            disint.level((int)(hero.buff(Wrath.class).cooldown()/10));
-                            disint.tryToZap(hero, affectable.get(0).pos);
-                        }
-
-                    }
-                    //Ferret Tuft:
-                    if (ref instanceof FerretTuft) {
-                        Buff.prolong( hero, Flighty.class, 2f + hero.buff(Wrath.class).cooldown()/4 );
-                    }
-                    //Mossy Clump: Spread grass and plants around while rooting enemies, amount of grass spread and turns rooted based on wrath
-                    if (ref instanceof MossyClump) {
-                        PathFinder.buildDistanceMap(hero.pos, com.watabou.utils.BArray.not(Dungeon.level.solid, null), 2);
-                        for (int i = 0; i < PathFinder.distance.length; i++) {
-                            if (PathFinder.distance[i] < Integer.MAX_VALUE) {
-
-                                //CellEmitter.get(i).burst(Speck.factory(Speck.), 5);
-
-                                int terr = Dungeon.level.map[i];
-
-                                if (!(terr == Terrain.EMPTY || terr == Terrain.EMBERS || terr == Terrain.EMPTY_DECO ||
-                                        terr == Terrain.GRASS || terr == Terrain.HIGH_GRASS || terr == Terrain.FURROWED_GRASS)) {
-
-                                } else if (Char.hasProp(Actor.findChar(i), Char.Property.IMMOVABLE)) {
-
-                                } else if (Dungeon.level.plants.get(i) != null) {
-
-                                } else {
-                                    if (terr != Terrain.HIGH_GRASS && terr != Terrain.FURROWED_GRASS) {
-                                        int r = com.watabou.utils.Random.NormalIntRange(1, 100);
-
-                                        if (r < hero.buff(Wrath.class).cooldown()) {
-                                            Level.set(i, Terrain.GRASS);
-                                            GameScene.updateMap(i);
-                                        }
-                                    }
-                                    Char ch = Actor.findChar(i);
-                                    if (ch != null) {
-                                        if (ch instanceof DwarfKing) {
-                                            Statistics.qualifiedForBossChallengeBadge = false;
-                                        }
-                                        Buff.prolong(ch, Roots.class, 1f + hero.buff(Wrath.class).cooldown() / 4);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //Mimic Tooth: Deal half of wrath bleeding to all adjacent enemies
-                    if (ref instanceof MimicTooth)
-                    {
-                        ArrayList<Integer> validtiles = new ArrayList<>();
-                        ArrayList<Mob> validmobs = new ArrayList<>();
-                        for (int i : PathFinder.NEIGHBOURS9){
-                            validtiles.add(hero.pos+i);
-                        }
-
-                        for (int validtile : validtiles) {
-                            Char ch = Actor.findChar(validtile);
-                            if (ch != null && ch.alignment == Char.Alignment.ENEMY) {
-                                Buff.affect(ch, Bleeding.class).set((int)hero.buff(Wrath.class).cooldown()/2);
-                            }
-                        }
-
-                    }
-                    //Parchment Scrap: Gives random scroll, stone or exotic scroll based on wrath
-                    if (ref instanceof ParchmentScrap)
-                    {
-                        boolean givenitem = false;
-
-                        int trueWrath = (int)hero.buff(Wrath.class).cooldown() - 10;
-
-                        int StoneChance = 100 - trueWrath;
-                        int ScrollChance = 20 + trueWrath;
-                        int ExoticChance = 0;
-                        if (trueWrath >= 50) ExoticChance += trueWrath;
-                        if (trueWrath >= 100) ScrollChance = 0;
-
-                        int r = com.watabou.utils.Random.NormalIntRange(1, 100);
-                        if (r < StoneChance && !givenitem)
-                        {
-                            Item st = Generator.random( Generator.Category.STONE );
-                            Dungeon.level.drop(st, hero.pos).sprite.drop();
-                            givenitem = true;
-                        }
-                        r = com.watabou.utils.Random.NormalIntRange(1, 100);
-                        Item sc = Generator.random( Generator.Category.SCROLL );
-                        if (r < ScrollChance && !givenitem)
-                        {
-                            Dungeon.level.drop(sc, hero.pos).sprite.drop();
-                            givenitem = true;
-                        }
-                        r = com.watabou.utils.Random.NormalIntRange(1, 100);
-                        if (r < ExoticChance && !givenitem)
-                        {
-
-                            Item ex = Generator.random(ExoticScroll.regToExo.get(sc));
-                            Dungeon.level.drop(ex, hero.pos).sprite.drop();
-                            givenitem = true;
-                        }
-
-                        if (!givenitem)
-                        {
-                            Item st = Generator.random( Generator.Category.STONE );
-                            Dungeon.level.drop(st, hero.pos).sprite.drop();
-                            givenitem = true;
-                        }
-
-                    }
-                    //Petrified Seed: Stuns adjacent enemies for a specified amount of time based on wrath
-                    if (ref instanceof PetrifiedSeed) {
-
-                        ArrayList<Integer> validtiles = new ArrayList<>();
-                        ArrayList<Mob> validmobs = new ArrayList<>();
-                        for (int i : PathFinder.NEIGHBOURS9){
-                            validtiles.add(hero.pos+i);
-                        }
-
-                        for (int validtile : validtiles) {
-                            Char ch = Actor.findChar(validtile);
-                            if (ch != null && ch.alignment == Char.Alignment.ENEMY) {
-                                Buff.prolong(ch, Paralysis.class, (int)(hero.buff(Wrath.class).cooldown()/3) + 1);
-                            }
-                        }
-
-                    }
-                    //Rat Skull:
-                    if (ref instanceof RatSkull) {
-
-                        Buff.affect(hero, AdrenalineSurge.class).reset(3 + (int)(hero.buff(Wrath.class).cooldown()/10), hero.buff(Wrath.class).cooldown());
-
-                    }
-                    //Salt Cube: Poisons visible enemies, for every poisoned enemy you gain shielding, amount poisoned determined by wrath
-                    if (ref instanceof SaltCube) {
-                        ArrayList<Mob> affectable = new ArrayList<>();
-                        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-                            if (Dungeon.level.heroFOV[mob.pos]) {
-                                affectable.add(mob);
-                            }
-                        }
-
-                        com.watabou.utils.Random.shuffle(affectable);
-                        int howmany = (int)hero.buff(Wrath.class).cooldown() - 10;
-                        int shieldamnt = 0;
-
-                        for (Mob mob: affectable ) {
-                            if (howmany > 0)
-                                Buff.affect(mob, Poison.class).set(8 + (howmany / 10));
-                                shieldamnt += 5;
-                        }
-
-                        Buff.affect(hero, Barrier.class).setShield(shieldamnt);
-
-                    }
-                    //Thirteen Leaf Clover: Deal twice wrath damage to a random visible enemy, 1 in 13 chance to target all enemies instead
-                    if (ref instanceof ThirteenLeafClover)
-                    {
-                        boolean luck = false;
-                        if (com.watabou.utils.Random.Int(13) == 1) luck = true;
-                        ArrayList<Mob> affectable = new ArrayList<>();
-
-                        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-                            if (Dungeon.level.heroFOV[mob.pos]) {
-                                if (luck) mob.damage(Math.round(5 + (int)hero.buff(Wrath.class).cooldown() * 2), this);
-                                else affectable.add(mob);
-                            }
-                        }
-                        if (affectable.size() > 0)
-                        {
-                            com.watabou.utils.Random.shuffle(affectable);
-                            affectable.get(0).damage(Math.round(5 + (int)hero.buff(Wrath.class).cooldown() * 2), this);
-
-                        }
-                    }
-                    //Blood Vial: Heal for half of wrath
-                    if (ref instanceof VialOfBlood)
-                    {
-                        Buff.affect(hero, Healing.class).setHeal((int)hero.buff(Wrath.class).cooldown()/2, 0.05f, 0);
-                    }
-                    //Shard of Oblivion:
-                    if (ref instanceof ShardOfOblivion) {
-
-                        ArrayList<Mob> affectable = new ArrayList<>();
-                        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-                            if (Dungeon.level.heroFOV[mob.pos]) {
-                                affectable.add(mob);
-                            }
-                        }
-
-                        com.watabou.utils.Random.shuffle(affectable);
-                        int howmany = (int)hero.buff(Wrath.class).cooldown() - 10;
-                        howmany = howmany / 10;
-
-                        for (Mob mob: affectable ) {
-                            if (howmany > 0)
-                            {
-                                if (ScrollOfTeleportation.teleportChar(mob)){
-
-                                        if (((Mob) mob).state == ((Mob) mob).HUNTING) ((Mob) mob).state = ((Mob) mob).WANDERING;
-                                        ((Mob) mob).beckon(Dungeon.level.randomDestination( mob ));
-                                    if (!Char.hasProp(mob, Char.Property.BOSS) && !Char.hasProp(mob, Char.Property.MINIBOSS)) {
-                                        Buff.affect(mob, Paralysis.class, howmany *= 3);
-                                    }
-
-                                }
-
-                            }
-                        }
-
-                    }
-                    //Trap Mechanism: Throws traps on enemies based on wrath amount and instantly activates them
-                    if (ref instanceof TrapMechanism) {
-
-                        ArrayList<Mob> affectable = new ArrayList<>();
-                        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-                            if (Dungeon.level.heroFOV[mob.pos]) {
-                                affectable.add(mob);
-                            }
-                        }
-
-                        com.watabou.utils.Random.shuffle(affectable);
-                        int howmany = (int)hero.buff(Wrath.class).cooldown() - 10;
-                        howmany = howmany / 10;
-
-                        for (Mob mob: affectable ) {
-                            if (howmany > 0)
-                                if (Dungeon.level.passable[mob.pos] && Dungeon.level.map[mob.pos] != Terrain.EXIT&& Dungeon.level.map[mob.pos] != Terrain.ENTRANCE) {
-                                    Level.set(mob.pos, Terrain.SECRET_TRAP);
-                                    Trap t = trapClasses[com.watabou.utils.Random.Int(trapClasses.length)];
-
-                                    Dungeon.level.setTrap(t, mob.pos);
-                                    Dungeon.level.discover(mob.pos);
-                                    t.activate();
-                                    t.disarm();
-
-                                }
-                        }
-
-                    }
-                    //Wondrous Resin: Throw an amount of cursed wand zaps based on wrath
-                    if (ref instanceof WondrousResin)
-                    {
-
-                        ArrayList<Mob> affectable = new ArrayList<>();
-                        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
-                            if (Dungeon.level.heroFOV[mob.pos]) {
-                                affectable.add(mob);
-                            }
-                        }
-
-                        com.watabou.utils.Random.shuffle(affectable);
-                        int howmany = (int)hero.buff(Wrath.class).cooldown() - 10;
-                        howmany = howmany / 10;
-                        WandOfMagicMissile temp = new WandOfMagicMissile();
-
-                        for (Mob mob: affectable ) {
-                            if (howmany > 0)
-                                //not sure if i need to do a callback here, test this later
-                                CursedWand.cursedZap(temp,
-                                        Dungeon.hero,
-                                        new Ballistica(Dungeon.hero.pos, mob.pos, Ballistica.MAGIC_BOLT), new com.watabou.utils.Callback() {
-                                            @Override
-                                            public void call() {
-                                                WondrousResin.forcePositive = true;
-                                            }
-                                        });
-
-
-                        }
-
-                    }
-
-                    Sample.INSTANCE.play( Assets.Sounds.BLAST );
-                    Buff.detach( hero, Wrath.class );
-
-                }
+                DevoteeMechanics();
 
                 //visuals
                 UpdateVisuals();
@@ -705,16 +313,162 @@ public class BloodVial extends Artifact {
         }
     }
 
+    //this logic should probably just be in the individual food classes similar to duelist abilities, but this is barely manageable now
+    private void DevoteeMechanics()
+    {
+        if (hero.subClass == HeroSubClass.DEVOTEE && DevoteeCharges > 0) {
+            if (hero.lastEaten instanceof HornOfPlenty) {
+
+
+                Class<?>[] foodclasses = Catalog.FOOD.items().toArray(new Class[0]);
+                Random.shuffle(foodclasses);
+                Food Choice1 = (Food) Reflection.newInstance(foodclasses[0]);
+                Food Choice2 = (Food) Reflection.newInstance(foodclasses[1]);
+
+
+                Game.runOnRenderThread(new Callback() {
+                    @Override
+                    public void call() {
+                        GameScene.show(
+                                new WndOptions(new ItemSprite(ItemSpriteSheet.ARTIFACT_VIAL3),
+                                        Messages.get(BloodVial.class, "horn_title"),
+                                        Messages.get(BloodVial.class, "horn_desc"),
+                                        Choice1.name(),
+                                        Choice2.name()) {
+
+                                    private float elapsed = 0f;
+
+                                    @Override
+                                    public synchronized void update() {
+                                        super.update();
+                                        elapsed += Game.elapsed;
+                                    }
+
+                                    @Override
+                                    public void hide() {
+                                        if (elapsed > 0.5f) {
+                                            super.hide();
+                                        }
+                                    }
+
+                                    @Override
+                                    protected void onSelect(int index) {
+                                        if (elapsed > 0.2f) {
+                                            if (index == 0) hero.lastEaten = Choice1;
+                                            if (index == 1) hero.lastEaten = Choice2;
+                                            DevoteeCharges++;
+                                            DevoteeMechanics();
+                                        }
+                                    }
+                                }
+                        );
+                    }
+                });
+            }
+
+            if (hero.lastEaten instanceof Pasty || hero.lastEaten instanceof MeatPie)
+            {
+                int amnt = hero.HT/6;
+                if (GourmandCheck()) amnt = (int)(amnt * 1.5f);
+                Buff.affect(hero, Healing.class).setHeal(amnt, 0, 1);
+            }
+            if (hero.lastEaten instanceof SmallRation || hero.lastEaten instanceof LargeRadish)
+            {
+                Class type = hero.lastEaten instanceof SmallRation ? Shrink.class :  Grow.class;
+                int amnt = 20;
+                if (GourmandCheck()) amnt = (int)(amnt * 1.5f);
+                Buff.affect(hero, type, amnt);
+            }
+            else if (hero.lastEaten instanceof ChargrilledMeat || hero.lastEaten instanceof FrozenCarpaccio ||
+                    hero.lastEaten instanceof MysteryMeat || hero.lastEaten instanceof PhantomMeat)
+            {
+                int severity = 3;
+                if (GourmandCheck()) severity++;
+                for (Char m : GetNearVis(severity)) {
+                    if (hero.lastEaten instanceof ChargrilledMeat) Buff.affect( m, Burning.class ).reignite( m );
+                    if (hero.lastEaten instanceof FrozenCarpaccio) Freezing.freeze( m.pos );
+                    if (hero.lastEaten instanceof MysteryMeat) MysteryMeat.effect(m, false);
+                    if (hero.lastEaten instanceof PhantomMeat) ScrollOfTeleportation.teleportChar(m);
+                }
+            }
+            else if (hero.lastEaten instanceof StewedMeat)
+            {
+                if (GourmandCheck()) Buff.affect(hero, AdrenalineSurge.class).reset(3, 30);
+                else Buff.affect(hero, AdrenalineSurge.class).reset(4, 40);
+            }
+            else if (hero.lastEaten instanceof ArcaneRoot)
+            {
+                if (GourmandCheck()) Buff.affect(hero, ArcaneRoot.MagicArena.class).setup(hero.pos,30);
+                else Buff.affect(hero, ArcaneRoot.MagicArena.class).setup(hero.pos, 20);
+            }
+            else if (hero.lastEaten instanceof CrystalApple)
+            {
+                if (GourmandCheck()) hero.Heal(5);
+                //This just adds 1 max hp
+                Dungeon.hero.bountyhunterbuff += 0.334f;
+                Dungeon.hero.updateHT(false);
+            }
+            else if (hero.lastEaten instanceof Berry)
+            {
+                if (GourmandCheck()) BowFragment.PlantEffect(hero, 5, true);
+                else BowFragment.PlantEffect(hero, 8, true);
+
+            }
+            //This HAS to be at the end, since a regular ration is just defined as "Food", but every
+            //other piece of food is also an instanceof food
+            else if ( hero.lastEaten instanceof MeatPie || hero.lastEaten instanceof SupplyRation || hero.lastEaten instanceof Food )
+            {
+                ArrayList<Mob> targets = new ArrayList<>();
+                for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+                    if (Dungeon.level.heroFOV[mob.pos]) {
+                        targets.add(mob);
+                    }
+                }
+                for (Mob mob : targets)
+                {
+                    int dmg = com.watabou.utils.Random.NormalIntRange(6 + (Dungeon.scalingDepth() /2) - targets.size(), 12 + Dungeon.scalingDepth() - targets.size());
+                    if (GourmandCheck()) dmg += 8;
+                    if (hero.lastEaten instanceof SupplyRation) dmg *= 0.7f;
+                    dmg -= mob.drRoll();
+
+                    mob.damage(dmg, this);
+                    if (hero.lastEaten instanceof SupplyRation) Buff.affect(hero, Invisibility.class, targets.size());
+                }
+            }
+
+            DevoteeCharges--;
+            Sample.INSTANCE.play( Assets.Sounds.BLAST );
+        }
+
+    }
+
+    private boolean GourmandCheck() {
+        return (hero.pointsInTalent(Talent.GOURMAND) == 3 && DevoteeCharges == 3);
+    }
+
+    private ArrayList<Char> GetNearVis(int amnt)
+    {
+        ArrayList<Char> select = new ArrayList<>();
+        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+            if (Dungeon.level.heroFOV[mob.pos]) {
+            select.add(mob);
+            }
+        }
+        return Dungeon.level.sortByDist(select, hero);
+    }
+
+
     private static String STALING = "STALING";
     private static String COOLDOWN = "COOLDOWN";
-
     private static String REALCHARGE = "REALCHARGE";
+    private static String DEVOTEECHARGES = "DEVOTEECHARGES";
+
     @Override
     public void storeInBundle( Bundle bundle ) {
 
         bundle.put(COOLDOWN, bloodvialcooldown);
         bundle.put(STALING, staling);
-
+        bundle.put(DEVOTEECHARGES, DevoteeCharges);
 
         //this is here because of some stupid bug where it just does not update the charge cap automatically in the restoure function, so that also resets the charge to 1
         //so i have to manually save and apply it again later
@@ -731,6 +485,7 @@ public class BloodVial extends Artifact {
         charge = bundle.getInt( REALCHARGE );
         staling = bundle.getInt( STALING );
         bloodvialcooldown = bundle.getInt( COOLDOWN );
+        DevoteeCharges = bundle.getInt( DEVOTEECHARGES );
 
         Item.updateQuickslot();
         UpdateVisuals();

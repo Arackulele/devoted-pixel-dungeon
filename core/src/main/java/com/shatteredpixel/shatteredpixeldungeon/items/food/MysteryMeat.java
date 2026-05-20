@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.food;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
@@ -44,29 +45,29 @@ public class MysteryMeat extends Food {
 	@Override
 	protected void satisfy(Hero hero) {
 		super.satisfy(hero);
-		effect(hero);
+		effect(hero, true);
 	}
 
 	public int value() {
 		return 5 * quantity;
 	}
 
-	public static void effect(Hero hero){
+	public static void effect(Char hero, boolean announce){
 		switch (Random.Int( 5 )) {
 			case 0:
-				GLog.w( Messages.get(MysteryMeat.class, "hot") );
+				if (announce)GLog.w( Messages.get(MysteryMeat.class, "hot") );
 				Buff.affect( hero, Burning.class ).reignite( hero );
 				break;
 			case 1:
-				GLog.w( Messages.get(MysteryMeat.class, "legs") );
+                if (announce)GLog.w( Messages.get(MysteryMeat.class, "legs") );
 				Buff.prolong( hero, Roots.class, Roots.DURATION*2f );
 				break;
 			case 2:
-				GLog.w( Messages.get(MysteryMeat.class, "not_well") );
+                if (announce)GLog.w( Messages.get(MysteryMeat.class, "not_well") );
 				Buff.affect( hero, Poison.class ).set( hero.HT / 5 );
 				break;
 			case 3:
-				GLog.w( Messages.get(MysteryMeat.class, "stuffed") );
+                if (announce)GLog.w( Messages.get(MysteryMeat.class, "stuffed") );
 				Buff.prolong( hero, Slow.class, Slow.DURATION );
 				break;
 		}

@@ -37,6 +37,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Torch;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.ArcaneRoot;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.CrystalApple;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.LargeRadish;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SupplyRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.DocumentPage;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.GuidePage;
@@ -44,9 +47,16 @@ import com.shatteredpixel.shatteredpixeldungeon.items.journal.RegionLorePage;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.CrystalKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.GoldenKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.Key;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.Pickaxe;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfIntuition;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.MimicTooth;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrinketCatalyst;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dirk;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.HandAxe;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Quarterstaff;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Shortsword;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Sickle;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Spear;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.Builder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.FigureEightBuilder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.builders.LoopBuilder;
@@ -85,6 +95,7 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
+import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -463,6 +474,22 @@ public abstract class RegularLevel extends Level {
 
         }
 
+        if (Dungeon.hero.hasTalent(Talent.GOURMAND))
+        {
+            int amnt = Random.Int(0, Dungeon.hero.pointsInTalent(Talent.GOURMAND) + 1);
+
+            Class<? extends Item>[] types = new Class[]{ LargeRadish.class };
+            if (Dungeon.hero.pointsInTalent(Talent.GOURMAND) == 2) types = new Class[]{ LargeRadish.class, ArcaneRoot.class };
+            if (Dungeon.hero.pointsInTalent(Talent.GOURMAND) == 3) types = new Class[]{ LargeRadish.class, ArcaneRoot.class, CrystalApple.class };
+            Random.shuffle(types);
+            while (amnt > 0) {
+                addItemToSpawn(Reflection.newInstance(types[0]));
+                Random.shuffle(types);
+                amnt--;
+            }
+
+        }
+
         for (Item item : itemsToSpawn) {
             int cell = randomDropCell();
             if (item instanceof TrinketCatalyst){
@@ -562,7 +589,7 @@ public abstract class RegularLevel extends Level {
             Talent.CachedRationsDropped dropped = Buff.affect(Dungeon.hero, Talent.CachedRationsDropped.class);
             int targetFloor = (int)(2 + dropped.count());
             if (dropped.count() > 4) targetFloor++;
-            if (Dungeon.depth >= targetFloor && dropped.count() < 2 + 2*Dungeon.hero.pointsInTalent(Talent.CACHED_RATIONS)){
+            if (Dungeon.depth >= targetFloor && dropped.count() < 2 + 2* (Dungeon.hero.pointsInTalent(Talent.CACHED_RATIONS) + Dungeon.hero.pointsInTalent(Talent.DEMONIC_INTUITION))){
                 int cell;
                 int tries = 100;
                 boolean valid;

@@ -48,14 +48,21 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.Cal
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.EternalBalance;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.zealot.WealAndWoe;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Infernobomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.ArcaneRoot;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Berry;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.CrystalApple;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.LargeRadish;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLevitation;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.RockBlock;
@@ -65,6 +72,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ScrollOfAnt
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.CurseInfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfBlink;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfPrismaticLight;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HolyTome;
@@ -104,6 +112,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingSp
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.shatteredpixeldungeon.items.*;
 import com.watabou.utils.DeviceCompat;
+
+import java.util.ArrayList;
 
 public enum HeroClass {
 
@@ -180,28 +190,32 @@ public enum HeroClass {
 		}
 
 		if (DeviceCompat.isDebug()) {
-            MasterThievesArmband test2 = new MasterThievesArmband();
-            test2.quantity(1).collect();
-            test2.charge(hero, 1000);
 
-			hero.earnExp( 1400, null );
+            ArrayList<Item> ToAdd = new ArrayList<Item>();
+            ToAdd.add(new HornOfPlenty());
+            ToAdd.add(new PotionOfHealing());
+            ToAdd.add(new ScrollOfUpgrade());
+            ToAdd.add(new PotionOfMindVision());
+            ToAdd.add(new Berry());
+            ToAdd.add(new ArcaneRoot());
+            ToAdd.add(new CrystalApple());
+            ToAdd.add(new WandOfMagicMissile());
+
+            for (Item q : ToAdd)
+            {
+                q.identify();
+                if (q instanceof Artifact) ((Artifact)q).charge(hero, 100);
+                if (q instanceof EquipableItem) q.quantity(1).collect();
+                if (q instanceof Weapon) q.upgrade(20);
+                else q.quantity(99).collect();
+            }
+
+            hero.earnExp( 1400, null );
 			Dungeon.energy += 100;
 
 			hero.belongings.weapon.level(20);
 			hero.belongings.armor.level(20);
 			hero.belongings.weapon.upgrade();
-
-			PotionOfHealing he = new PotionOfHealing();
-			he.quantity(99).collect();
-			he.identify();
-
-			ScrollOfUpgrade f = new ScrollOfUpgrade();
-			f.quantity(99).collect();
-			f.identify();
-
-			PotionOfMindVision b = new PotionOfMindVision();
-			b.quantity(99).collect();
-			b.identify();
 
 			Meal res = new Meal();
 			res.quantity(1).collect();
@@ -209,7 +223,7 @@ public enum HeroClass {
 			RoyalSeal crw = new RoyalSeal();
 			crw.quantity(1).collect();
 
-            Dungeon.depth = 20;
+            Dungeon.depth = 21;
 			//Dungeon.branch = 1;
 
 		}

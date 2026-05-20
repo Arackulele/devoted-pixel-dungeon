@@ -177,7 +177,7 @@ public class Hero extends Char {
 	public ArrayList<LinkedHashMap<Talent, Integer>> talents = new ArrayList<>();
 	public LinkedHashMap<Talent, Talent> metamorphedTalents = new LinkedHashMap<>();
 
-    public int bountyhunterbuff = 0;
+    public float bountyhunterbuff = 0;
     public String BOUNTYHUNTERBUFF = "bountyhunterbuff";
 
 	public int attackSkill = 10;
@@ -204,6 +204,8 @@ public class Hero extends Char {
 
 	public int HTBoost = 0;
 
+    public Item lastEaten;
+
 	private ArrayList<Mob> visibleEnemies;
 
 	//This list is maintained so that some logic checks can be skipped
@@ -227,7 +229,7 @@ public class Hero extends Char {
 		int curHT = HT;
 
 		HT = 20 + 5*(lvl-1) + HTBoost;
-        HT += bountyhunterbuff * 3;
+        HT += (int) (bountyhunterbuff * 3);
 		float multiplier = RingOfMight.HTMultiplier(this);
 		HT = Math.round(multiplier * HT);
 
@@ -271,7 +273,10 @@ public class Hero extends Char {
 	private static final String LEVEL		= "lvl";
 	private static final String EXPERIENCE	= "exp";
 	private static final String HTBOOST     = "htboost";
-	@Override
+
+    private static final String LASTEATEN     = "lasteaten";
+
+    @Override
 	public void storeInBundle( Bundle bundle ) {
 
 		super.storeInBundle( bundle );
@@ -284,6 +289,7 @@ public class Hero extends Char {
 		bundle.put( ATTACK, attackSkill );
 		bundle.put( DEFENSE, defenseSkill );
         bundle.put( BOUNTYHUNTERBUFF, bountyhunterbuff );
+        bundle.put( LASTEATEN, lastEaten);
 
 
         bundle.put( STRENGTH, STR );
@@ -313,9 +319,11 @@ public class Hero extends Char {
 
 		attackSkill = bundle.getInt( ATTACK );
 		defenseSkill = bundle.getInt( DEFENSE );
-        bountyhunterbuff = bundle.getInt( BOUNTYHUNTERBUFF );
+        bountyhunterbuff = bundle.getFloat( BOUNTYHUNTERBUFF );
 
 		STR = bundle.getInt( STRENGTH );
+
+        lastEaten = (Item) bundle.get(LASTEATEN);
 
 		belongings.restoreFromBundle( bundle );
 
@@ -952,7 +960,6 @@ public class Hero extends Char {
 
             if (curAction instanceof HeroAction.Move) {
                 actResult = actMove( (HeroAction.Move)curAction );
-                Buff.detach(this, GardensRootCounter.class);
             } else if (curAction instanceof HeroAction.Interact) {
                 actResult = actInteract( (HeroAction.Interact)curAction );
 
@@ -998,8 +1005,7 @@ public class Hero extends Char {
             }
             else Buff.detach(this, WaterPoisonCounter.class);
         }
-
-        if (Dungeon.isChallenged(Challenges.REGION_DIFFS) &&
+        else if (Dungeon.isChallenged(Challenges.REGION_DIFFS) &&
                 Dungeon.currentRegion() == Dungeon.Region.GARDENS){
             GardensRootCounter count = Buff.count(this, GardensRootCounter.class, 1);
             if (count.count() == 6) Buff.affect(this, Roots.class, 2f);
@@ -1009,8 +1015,6 @@ public class Hero extends Char {
                 plant.activate( isAlive() ? this : null );
 
             }
-
-
         }
 
 
@@ -1067,6 +1071,9 @@ public class Hero extends Char {
     }
 
     private boolean actMove( HeroAction.Move action ) {
+
+        Buff.detach(this, GardensRootCounter.class);
+
 
         if (Dungeon.level instanceof LavaLakeLevel && Dungeon.level.map[pos] == Terrain.WATER
         && buff(Levitation.class) == null && !flying && !isImmune( Burning.class )
@@ -1694,10 +1701,6 @@ public class Hero extends Char {
 
         if (pointsInTalent(Talent.HIDDEN_POWER) != 0){
             if (dmg>=HT/5) Buff.affect(this, Invisibility.class, 1f+pointsInTalent(Talent.HIDDEN_POWER));
-        }
-
-        if (subClass == HeroSubClass.DEVOTEE && src instanceof Mob){
-            Buff.affect(this, Wrath.class, dmg);
         }
 
         //temporarily assign to a float to avoid rounding a bunch

@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -131,6 +132,11 @@ public class HornOfPlenty extends Artifact {
 		}
 
 		Buff.affect(hero, Hunger.class).satisfy(satietyPerCharge * chargesToUse);
+        hero.lastEaten = this;
+        if (hero.subClass == HeroSubClass.DEVOTEE) {
+            BloodVial ref = hero.belongings.getItem(BloodVial.class);
+            if (ref != null) ref.DevoteeCharges = Math.min(1 + hero.pointsInTalent(Talent.DEVOUR_RITUAL) , 3);
+        }
 
 		Statistics.foodEaten++;
 

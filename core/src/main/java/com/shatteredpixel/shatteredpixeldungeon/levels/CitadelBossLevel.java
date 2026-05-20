@@ -285,14 +285,13 @@ public class CitadelBossLevel extends Level {
 	@Override
 	public void occupyCell(Char ch) {
 
-
-		super.occupyCell( ch );
 		int gatePos = pointToCell(new Point(gate.left, gate.top));
 		if (ch == Dungeon.hero && Dungeon.level.distance(ch.pos, entrance()) >= 4 && !killed) {
 			seal();
 		}
+        super.occupyCell( ch );
 
-	}
+    }
 
 	public static Mob boss;
 	public static Mob yuria;

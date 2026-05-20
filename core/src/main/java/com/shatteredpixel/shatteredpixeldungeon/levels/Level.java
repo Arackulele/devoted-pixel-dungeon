@@ -106,6 +106,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public abstract class Level implements Bundlable {
 
@@ -1651,6 +1652,27 @@ public abstract class Level implements Bundlable {
         int by = b / width();
         return (float)Math.sqrt(Math.pow(Math.abs( ax - bx ), 2) + Math.pow(Math.abs( ay - by ), 2));
     }
+
+    public ArrayList<Char> sortByDist(ArrayList<Char> l, Char source) {
+
+        //this is easier to do on an array
+        Char[] a = new Char[l.size()];
+        l.toArray(a);
+        for (int i = 1; i < a.length; i++) {
+            boolean is_sorted = true;
+            for (int j = 0; j < a.length - i; j++) {
+                if (a[j].distance(source) > a[j + 1].distance(source)) {
+                    Char temp = a[j];
+                    a[j] = a[j + 1];
+                    a[j + 1] = temp;
+                    is_sorted = false;
+                }
+            }
+            if (is_sorted) return new ArrayList<Char>(List.of(a));
+        }
+        return l;
+    }
+
 
     //usually just if a cell is solid, but other cases exist too
     public boolean invalidHeroPos( int tile ){

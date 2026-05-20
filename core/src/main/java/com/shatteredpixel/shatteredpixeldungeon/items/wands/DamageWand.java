@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.WandEmpower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.ArcaneRoot;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.noosa.audio.Sample;
 
@@ -59,6 +60,8 @@ public abstract class DamageWand extends Wand{
 			}
 			Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG, 0.75f, 1.2f);
 		}
+        if (Dungeon.hero.buff(ArcaneRoot.MagicArena.class) != null &&
+                Dungeon.hero.buff(ArcaneRoot.MagicArena.class).arenaPositions.contains(Dungeon.hero.pos)) dmg *= 1.2f;
 		return dmg;
 	}
 

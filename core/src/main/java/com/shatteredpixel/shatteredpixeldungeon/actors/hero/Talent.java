@@ -197,7 +197,7 @@ public enum Talent {
 	ELDRITCH_ENERGY(203, 3), HIVE_MIND(204, 3), TAG_TEAM(205, 3),
 
 	//Devotee T3
-	NIHILISM(206, 3), RUNIC_DIVINATION(207, 3), ANGER_MANAGEMENT(208, 3),
+	NIHILISM(206, 3), GOURMAND(207, 3), DEVOUR_RITUAL(208, 3),
 
 	//Calling Beyond T4
 	FORBIDDEN_KNOWLEDGE(209, 4), FORTIFIED_CONCIOUSNESS(210, 4), CAUTION_TO_THE_WIND(211, 4),
@@ -815,8 +815,6 @@ public enum Talent {
 				Buff.prolong(hero, RecallInscription.UsedItemTracker.class, hero.pointsInTalent(RECALL_INSCRIPTION) == 2 ? 300 : 10).item = cls;
 			} else {
 
-				if (Dungeon.hero.hasTalent(Talent.RUNIC_DIVINATION)) Buff.affect(Dungeon.hero, Wrath.class, 6 + (Dungeon.hero.pointsInTalent(Talent.RUNIC_DIVINATION) * 3));
-
 				//don't trigger on 1st intuition use
 				if (cls.equals(StoneOfIntuition.class) && hero.buff(StoneOfIntuition.IntuitionUseTracker.class) != null){
 					return;
@@ -991,7 +989,6 @@ public enum Talent {
 		public int object;
 		{ type = Buff.buffType.POSITIVE; }
 		public int icon() { return BuffIndicator.WRATH_BLOOD; }
-		public void tintIcon(Image icon) { icon.hardlight(0f, 0.75f, 1f); }
 		public float iconFadePercent() { return Math.max(0, 1f - (visualcooldown() / 5)); }
 		private static final String OBJECT    = "object";
 		@Override
@@ -1179,7 +1176,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, ELDRITCH_ENERGY, HIVE_MIND, TAG_TEAM);
 				break;
 			case DEVOTEE:
-				Collections.addAll(tierTalents, NIHILISM, RUNIC_DIVINATION, ANGER_MANAGEMENT);
+				Collections.addAll(tierTalents, NIHILISM, GOURMAND, DEVOUR_RITUAL);
 				break;
 		}
 		for (Talent talent : tierTalents){

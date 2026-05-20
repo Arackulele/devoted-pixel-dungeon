@@ -123,7 +123,7 @@ public class ArtbookScene extends PixelScene {
         };
         goRight.icon().originToCenter();
         goRight.icon().angle = 90f;
-        goRight.setRect(w-40, h/2, 20, 21);
+        goRight.setRect(w*0.95f, h/2, 20, 21);
         add(goRight);
 
         goLeft = new IconButton(Icons.CHEVRON.get()){
@@ -135,7 +135,7 @@ public class ArtbookScene extends PixelScene {
         };
         goLeft.icon().originToCenter();
         goLeft.icon().angle = 270f;
-        goLeft.setRect(40, h/2, 20, 21);
+        goLeft.setRect((w*0.05f) - 20, h/2, 20, 21);
         add(goLeft);
 
         ExitButton btnExit = new ExitButton();
@@ -152,17 +152,16 @@ public class ArtbookScene extends PixelScene {
 
 
         pic = new Image(imgs[index]);
-        float topRegion = Math.max(pic.height - 6, h*0.45f);
-        pic.scale.scale(Math.max(0.001f, w/ 1150f));
+        pic.scale.scale((float) Math.max(0.001f, (w+h) * 0.0005 ));
         pic.x = (w - pic.width()) / 2f;
-        pic.y =  (- 70 )+ (topRegion - pic.height()) / 2f;
+        pic.y = h/10;
         align(pic);
 
         bg = new Image(Assets.Artbook.BG);
         add( bg );
         bg.scale = pic.scale;
         bg.x = (w - bg.width()) / 2f;
-        bg.y = (- 70 )+ (topRegion - bg.height()) / 2f;
+        bg.y = h/40;
         align(bg);
         add( pic );
 

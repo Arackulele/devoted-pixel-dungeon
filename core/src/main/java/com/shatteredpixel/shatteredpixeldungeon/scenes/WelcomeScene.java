@@ -255,7 +255,7 @@ public class WelcomeScene extends PixelScene {
 
 			//pre-unlock Cleric for those who already have a win
 			if (previousVersion <= ShatteredPixelDungeon.v2_5_4){
-				if (Badges.isUnlocked(Badges.Badge.VICTORY) && !Badges.isUnlocked(Badges.Badge.UNLOCK_CLERIC)){
+				if (Badges.hasVictory() && !Badges.isUnlocked(Badges.Badge.UNLOCK_CLERIC)){
 					Badges.unlock(Badges.Badge.UNLOCK_CLERIC);
 				}
 			}

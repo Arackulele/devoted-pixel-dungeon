@@ -312,8 +312,6 @@ public class Thymor extends Mob {
 		resistances.add(Roots.class);
 		resistances.add(Slow.class);
 		resistances.add(Doom.class);
-		immunities.add(Fire.class);
-		immunities.add(Smog.class);
 	}
 
 	private static final String TIMER = "TIMER";

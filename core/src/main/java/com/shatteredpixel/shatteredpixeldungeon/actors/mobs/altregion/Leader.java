@@ -133,7 +133,7 @@ public class Leader extends Mob {
 		int left = 0;
 
 		{
-			type = buffType.POSITIVE;
+			type = buffType.NEGATIVE;
 		}
 
 		@Override

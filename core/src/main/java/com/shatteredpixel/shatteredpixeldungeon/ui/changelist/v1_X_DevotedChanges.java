@@ -41,6 +41,7 @@ public class v1_X_DevotedChanges {
 
 	public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ){
 		add_Coming_Soon(changeInfos);
+        add_v1_0_0_Beta_9_Changes(changeInfos);
         add_v1_0_0_Beta_8_Changes(changeInfos);
         add_v1_0_0_Beta_7_Changes(changeInfos);
         add_v1_0_0_Beta_Changes(changeInfos);
@@ -87,6 +88,43 @@ public class v1_X_DevotedChanges {
 
 
 	}
+
+    public static void add_v1_0_0_Beta_9_Changes( ArrayList<ChangeInfo> changeInfos ) {
+
+        ChangeInfo changes = new ChangeInfo("Beta 9", true, "");
+        changes.hardlight(Window.TITLE_COLOR);
+        changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(HeroSprite.avatar(HeroClass.ZEALOT, 4), "Another Subclass Overhaul",
+                "Major Overhaul to the Devotee Subclass; includes:\n" +
+                        "\n" +
+                        "-Removal of the Wrath Mechanic and Trinket Synergy" +
+                        "\n" +
+                        "-A new set of abilities based on the last food eaten" +
+                        "\n" +
+                        "-Two new Talents ( one of which adds entirely new foods )" +
+                        "\n" +
+                        "-Unique abilities for every type of food in the game"
+
+        ));
+
+
+
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
+                "-Another crash affecting mobile devices\n" +
+                        "-The nihilism Talent not properly scaling based on the amount of talent points invested\n" +
+                        "-Winning an alt-region run not unlocking challenges\n" +
+                        "-Some bugs affecting the new 10th challenge\n" +
+                        "-Artbook sizing issues\n" +
+                        "Various bugs fixed that reappeared upon the new shattered version switch:\n" +
+                        "-Ascension challenge not working properly in alt-regions\n" +
+                        "-Some items missing from the catalogue\n" +
+                        "-Catalogue crash on the bestiary page\n" +
+                        "-Warpick not being a possible roll when transmorphing a T1 Weapon"
+        ));
+
+
+    }
 
     public static void add_v1_0_0_Beta_8_Changes( ArrayList<ChangeInfo> changeInfos ) {
 

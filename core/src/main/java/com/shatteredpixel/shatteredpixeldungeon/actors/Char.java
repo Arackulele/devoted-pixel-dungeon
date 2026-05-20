@@ -474,6 +474,12 @@ public abstract class Char extends Actor {
 				if (enemy.buff(Vulnerable.class) != null) {
 					effectiveDamage *= 1.33f;
 				}
+                if (enemy.buff(Shrink.class) != null) {
+                    effectiveDamage *= 1.2f;
+                }
+                if (enemy.buff(Grow.class) != null) {
+                    effectiveDamage *= 0.6f;
+                }
 
 				effectiveDamage = attackProc(enemy, effectiveDamage);
 			}
@@ -652,7 +658,8 @@ public abstract class Char extends Actor {
 
 		float acuRoll = Random.Float( acuStat );
 		if (attacker.buff(Bless.class) != null) acuRoll *= 1.25f;
-		if (attacker.buff(  Hex.class) != null) acuRoll *= 0.8f;
+        if (attacker.buff(Grow.class) != null) acuRoll *= 1.2f;
+        if (attacker.buff(  Hex.class) != null) acuRoll *= 0.8f;
 		if (attacker.buff( Daze.class) != null) acuRoll *= 0.5f;
 		for (ChampionEnemy buff : attacker.buffs(ChampionEnemy.class)){
 			acuRoll *= buff.evasionAndAccuracyFactor();
@@ -668,9 +675,10 @@ public abstract class Char extends Actor {
 
 		float defRoll = Random.Float( defStat );
 		if (defender.buff(Bless.class) != null) defRoll *= 1.25f;
-		if (defender.buff(  Hex.class) != null) defRoll *= 0.8f;
+        if (defender.buff(Shrink.class)!= null) defRoll *= 1.2f;
+        if (defender.buff(  Hex.class) != null) defRoll *= 0.8f;
 		if (defender.buff( Daze.class) != null) defRoll *= 0.5f;
-		for (ChampionEnemy buff : defender.buffs(ChampionEnemy.class)){
+        for (ChampionEnemy buff : defender.buffs(ChampionEnemy.class)){
 			defRoll *= buff.evasionAndAccuracyFactor();
 		}
 		defRoll *= AscensionChallenge.statModifier(defender);
@@ -778,7 +786,9 @@ public abstract class Char extends Actor {
 		float speed = baseSpeed;
 		if ( buff( Cripple.class ) != null ) speed /= 2f;
 		if ( buff( Stamina.class ) != null) speed *= 1.5f;
-		if ( buff( Adrenaline.class ) != null) speed *= 2f;
+        if ( buff( Shrink.class ) != null) speed *= 1.2f;
+        if ( buff( Grow.class ) != null) speed *= 0.75f;
+        if ( buff( Adrenaline.class ) != null) speed *= 2f;
 		if ( buff( Haste.class ) != null) speed *= 3f;
 		if ( buff( Dread.class ) != null) speed *= 2f;
 

@@ -29,6 +29,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Golem;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Leader;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.altregion.Warden;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.DwarfToken;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
@@ -246,8 +248,8 @@ public class Imp extends NPC {
 		
 		public static void process( Mob mob ) {
 			if (spawned && given && !completed && Dungeon.depth != 20) {
-				if ((alternative && mob instanceof Monk) ||
-					(!alternative && mob instanceof Golem)) {
+				if ((alternative && (mob instanceof Monk || mob instanceof Leader)) ||
+					(!alternative && (mob instanceof Golem || mob instanceof Warden))) {
 					
 					Dungeon.level.drop( new DwarfToken(), mob.pos ).sprite.drop();
 				}
